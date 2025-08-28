@@ -1,25 +1,55 @@
+import Link from 'next/link'
+
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="container mx-auto px-4 py-16">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-slate-900 mb-4">
-            欢迎来到我的博客
+    <div className="max-w-4xl mx-auto">
+      {/* Hero Section */}
+      <section className="text-center py-16">
+        <div className="mb-8">
+          <h1 className="text-4xl md:text-6xl font-bold text-slate-900 mb-4">
+            你好，我是 
+            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent ml-2">
+              开发者
+            </span>
           </h1>
-          <p className="text-xl text-slate-600">
-            这是一个使用 Next.js 和 Tailwind CSS 构建的博客
+          <p className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
+            软件工程专业学生，热爱编程与创造。在这里分享我的学习历程、项目经验和生活感悟。
           </p>
-          <div className="mt-8 p-6 bg-white rounded-lg shadow-sm max-w-2xl mx-auto">
-            <h2 className="text-2xl font-semibold mb-4">测试样式</h2>
-            <p className="text-gray-600">
-              如果你能看到这个带有样式的页面，说明 Tailwind CSS 配置成功！
-            </p>
-            <button className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-              测试按钮
-            </button>
+        </div>
+        
+        <div className="flex flex-wrap justify-center gap-4">
+          <Link 
+            href="/blog" 
+            className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            阅读博客
+          </Link>
+          <Link 
+            href="/about" 
+            className="inline-flex items-center px-6 py-3 border border-slate-300 text-slate-700 rounded-lg hover:border-slate-400 hover:text-slate-900 transition-colors"
+          >
+            了解更多
+          </Link>
+        </div>
+      </section>
+
+      {/* 简单的技能展示 */}
+      <section className="py-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+          <div className="p-6 bg-white rounded-lg shadow-sm">
+            <h3 className="text-xl font-semibold text-slate-900 mb-2">前端开发</h3>
+            <p className="text-slate-600">React, Next.js, Vue, TypeScript</p>
+          </div>
+          <div className="p-6 bg-white rounded-lg shadow-sm">
+            <h3 className="text-xl font-semibold text-slate-900 mb-2">后端开发</h3>
+            <p className="text-slate-600">Node.js, Python, Java</p>
+          </div>
+          <div className="p-6 bg-white rounded-lg shadow-sm">
+            <h3 className="text-xl font-semibold text-slate-900 mb-2">数据库</h3>
+            <p className="text-slate-600">MySQL, MongoDB, Redis</p>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   )
 }
