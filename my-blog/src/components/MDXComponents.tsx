@@ -1,21 +1,9 @@
 import { MDXComponents } from 'mdx/types'
-import Image from 'next/image'
+import { CopyButton } from './CopyButton'
 
 // 高亮文本组件
 const Highlight = ({ children, color = '#DF2A3F' }: { children: React.ReactNode, color?: string }) => (
   <span style={{ color, fontWeight: 'bold' }}>{children}</span>
-)
-
-// 代码块组件
-const CodeBlock = ({ children, language = 'text' }: { children: React.ReactNode, language?: string }) => (
-  <div className="relative">
-    <div className="absolute top-2 right-2 text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded">
-      {language}
-    </div>
-    <pre className="bg-gray-900 text-green-400 rounded-lg p-4 overflow-x-auto mb-4">
-      <code>{children}</code>
-    </pre>
-  </div>
 )
 
 // 引用块组件
@@ -27,99 +15,123 @@ const Quote = ({ children }: { children: React.ReactNode }) => (
 
 const components: MDXComponents = {
   // 基础组件
-  h1: ({ children }) => (
-    <h1 className="text-3xl font-bold text-slate-900 mb-6 mt-8 first:mt-0 border-b-2 border-gray-200 pb-2">
+  h1: ({ children, ...props }) => (
+    <h1 className="text-3xl font-bold text-slate-900 mb-6 mt-8 first:mt-0 border-b-2 border-gray-200 pb-2" {...props}>
       {children}
     </h1>
   ),
-  h2: ({ children }) => (
-    <h2 className="text-2xl font-semibold text-slate-900 mb-4 mt-8">
+  h2: ({ children, ...props }) => (
+    <h2 className="text-2xl font-semibold text-slate-900 mb-4 mt-8" {...props}>
       {children}
     </h2>
   ),
-  h3: ({ children }) => (
-    <h3 className="text-xl font-semibold text-slate-900 mb-3 mt-6">
+  h3: ({ children, ...props }) => (
+    <h3 className="text-xl font-semibold text-slate-900 mb-3 mt-6" {...props}>
       {children}
     </h3>
   ),
-  p: ({ children }) => (
-    <p className="text-slate-700 mb-4 leading-relaxed">
+  p: ({ children, ...props }) => (
+    <p className="text-slate-700 mb-4 leading-relaxed" {...props}>
       {children}
     </p>
   ),
-  a: ({ href, children }) => (
+  blockquote: ({ children, ...props }) => (
+    <Quote>{children}</Quote>
+  ),
+  ul: ({ children, ...props }) => (
+    <ul className="list-disc list-inside mb-4 space-y-2 ml-4" {...props}>
+      {children}
+    </ul>
+  ),
+  ol: ({ children, ...props }) => (
+    <ol className="list-decimal list-inside mb-4 space-y-2 ml-4" {...props}>
+      {children}
+    </ol>
+  ),
+  li: ({ children, ...props }) => (
+    <li className="text-slate-700" {...props}>
+      {children}
+    </li>
+  ),
+  // 代码块处理
+  pre: ({ children, ...props }) => {
+    // 提取代码文本内容
+    const getCodeText = (children: any): string => {
+      if (typeof children === 'string') return children
+      if (children?.props?.children) {
+        return getCodeText(children.props.children)
+      }
+      if (Array.isArray(children)) {
+        return children.map(getCodeText).join('')
+      }
+      return String(children || '')
+    }
+
+    const codeText = getCodeText(children)
+
+    return (
+      <div className="relative group mb-4">
+        <pre className="bg-gray-900 text-green-400 rounded-lg p-4 overflow-x-auto" {...props}>
+          {children}
+        </pre>
+        <CopyButton text={codeText} />
+      </div>
+    )
+  },
+  code: ({ children, className, ...props }) => {
+    // 区分内联代码和代码块
+    if (className?.includes('language-')) {
+      return <code className={className} {...props}>{children}</code>
+    }
+    return (
+      <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-red-600" {...props}>
+        {children}
+      </code>
+    )
+  },
+  a: ({ href, children, ...props }) => (
     <a 
       href={href} 
       className="text-blue-600 hover:text-blue-700 underline hover:no-underline transition-all"
       target={href?.startsWith('http') ? '_blank' : undefined}
       rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
+      {...props}
     >
       {children}
     </a>
   ),
-  pre: ({ children }) => (
-    <pre className="bg-gray-900 text-green-400 rounded-lg p-4 overflow-x-auto mb-4">
-      {children}
-    </pre>
-  ),
-  code: ({ children }) => (
-    <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-red-600">
-      {children}
-    </code>
-  ),
-  ul: ({ children }) => (
-    <ul className="list-disc list-inside mb-4 space-y-2 ml-4">
-      {children}
-    </ul>
-  ),
-  ol: ({ children }) => (
-    <ol className="list-decimal list-inside mb-4 space-y-2 ml-4">
-      {children}
-    </ol>
-  ),
-  li: ({ children }) => (
-    <li className="text-slate-700">
-      {children}
-    </li>
-  ),
-  blockquote: ({ children }) => (
-    <Quote>{children}</Quote>
-  ),
   img: ({ src, alt, ...props }) => (
-    <div className="my-6">
+    <span className="block my-6">
       <img 
         src={src} 
         alt={alt} 
         className="rounded-lg shadow-md max-w-full h-auto mx-auto"
         {...props}
       />
-    </div>
+    </span>
   ),
-  
-  // 自定义组件
-  Highlight,
-  CodeBlock,
-  Quote,
-  
-  // 处理 font 标签（向后兼容）
+  strong: ({ children, ...props }) => (
+    <strong className="font-bold text-slate-900" {...props}>
+      {children}
+    </strong>
+  ),
+  em: ({ children, ...props }) => (
+    <em className="italic" {...props}>
+      {children}
+    </em>
+  ),
+  // 处理 font 标签
   font: ({ children, style, color, ...props }) => {
-    // 解析旧的 font 标签
-    let textColor = color;
-    if (style && typeof style === 'string') {
-      const colorMatch = style.match(/color:\s*([^;]+)/);
-      if (colorMatch) {
-        textColor = colorMatch[1];
-      }
-    } else if (style && typeof style === 'object') {
-      textColor = (style as any).color || textColor;
-    }
-    
     return (
-      <span style={{ color: textColor || '#DF2A3F', fontWeight: 'bold' }}>
+      <span style={style || { color: color || '#DF2A3F', fontWeight: 'bold' }} {...props}>
         {children}
       </span>
     );
   },
+  
+  // 自定义组件
+  Highlight,
+  Quote,
 }
 
 export default components
