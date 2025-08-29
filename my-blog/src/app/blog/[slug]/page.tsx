@@ -2,6 +2,7 @@ import { getAllPosts, getPostBySlug } from '@/lib/blog'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { MDXRemote } from 'next-mdx-remote/rsc'
+import { ArrowLeft, Calendar, Clock, Tag } from 'lucide-react'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -21,7 +22,8 @@ export default async function BlogPostPage({ params }: PageProps) {
             href="/blog" 
             className="inline-flex items-center text-blue-600 hover:text-blue-700 transition-colors"
           >
-            ← 返回博客列表
+            <ArrowLeft className="mr-1" size={16} />
+            返回博客列表
           </Link>
         </div>
 
@@ -33,13 +35,15 @@ export default async function BlogPostPage({ params }: PageProps) {
           
           <div className="flex flex-wrap items-center gap-6 text-slate-600 text-sm">
             <div className="flex items-center">
-              📅 {new Date(post.date).toLocaleDateString('zh-CN')}
+              <Calendar className="mr-1" size={16} />
+              {new Date(post.date).toLocaleDateString('zh-CN')}
             </div>
             <div className="flex items-center">
-              ⏱️ {post.readingTime.text}
+              <Clock className="mr-1" size={16} />
+              {post.readingTime.text}
             </div>
             <div className="flex items-center gap-2">
-              🏷️
+              <Tag className="mr-1" size={16} />
               {post.tags.map((tag) => (
                 <span 
                   key={tag} 

@@ -1,0 +1,93 @@
+---
+title: 'Next.js 学习心得'
+date: '2024-12-18'
+description: '分享我在学习 Next.js 过程中的经验和踩坑记录。'
+tags: ['Next.js', '前端', '学习']
+
+---
+
+# Next.js 学习心得
+
+在学习 Next.js 的过程中，我遇到了不少挑战，也收获了很多经验。今天想和大家分享一下。
+
+## 为什么选择 Next.js？
+
+相比传统的 React 应用，Next.js 有以下优势：
+
+### 1. 开箱即用的功能
+
+- **服务端渲染 (SSR)**：更好的 SEO
+- **静态站点生成 (SSG)**：更快的加载速度
+- **API 路由**：可以创建后端 API
+- **图片优化**：自动优化图片性能
+
+### 2. 优秀的开发体验
+
+```bash
+# 创建项目非常简单
+npx create-next-app@latest my-app
+cd my-app
+npm run dev
+```
+
+## 学习过程中的收获
+
+### 路由系统
+
+Next.js 13+ 的 App Router 让路由管理变得超级简单：
+
+```
+app/
+├── page.tsx          # 首页
+├── about/page.tsx    # /about
+└── blog/
+    ├── page.tsx      # /blog
+    └── [slug]/page.tsx # /blog/[slug]
+```
+
+### 数据获取
+
+不同的渲染方式适用于不同场景：
+
+- **Static Generation**：适合博客文章
+- **Server-side Rendering**：适合动态内容
+- **Client-side Fetching**：适合用户交互数据
+
+## 踩坑记录
+
+### 1. 客户端 vs 服务端
+
+最开始经常搞混客户端和服务端代码，导致各种奇怪错误。
+
+**解决方案：**
+
+- 明确哪些代码在服务端运行
+- 使用 `'use client'` 指令标记客户端组件
+- 服务端组件不能使用浏览器 API
+
+### 2. 样式系统
+
+刚开始用 CSS Modules，后来发现 Tailwind CSS 更高效。
+
+### 3. 部署问题
+
+第一次部署到 Vercel 时遇到构建错误，主要是：
+
+- 环境变量配置
+- TypeScript 类型错误
+- 图片路径问题
+
+## 最佳实践总结
+
+1. **组件设计**：保持组件小而专注
+2. **类型安全**：充分利用 TypeScript
+3. **性能优化**：合理使用 SSG 和 SSR
+4. **代码组织**：按功能分模块
+
+## 推荐资源
+
+- [Next.js 官方文档](https://nextjs.org/docs)
+- [Vercel 部署指南](https://vercel.com/guides)
+- [TypeScript 手册](https://www.typescriptlang.org/docs/)
+
+学习 Next.js 是一个持续的过程，希望这些经验对你有帮助！
