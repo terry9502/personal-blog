@@ -8,6 +8,31 @@ if (typeof window !== 'undefined') {
   throw new Error('Blog utilities can only be used on the server side')
 }
 
+// 改进的预处理函数
+function preprocessMDXContent(content: string): string {
+  return content
+    // 修复所有 style="..." 为 style={{...}}
+    .replace(/style="([^"]*)"([^>]*>)/g, (match, styleString, rest) => {
+      if (!styleString.trim()) return match;
+      
+      const styles: string[] = []
+      styleString.split(';').forEach((rule: string) => {
+        const [property, value] = rule.split(':').map((s: string) => s.trim())
+        if (property && value) {
+          // 转换 CSS 属性名为驼峰命名
+          const camelProperty = property.replace(/-([a-z])/g, (g: string) => g[1].toUpperCase())
+          styles.push(`${camelProperty}: '${value}'`)
+        }
+      })
+      
+      if (styles.length === 0) return match;
+      return `style={{${styles.join(', ')}}}${rest}`
+    })
+    // 修复可能的其他样式问题
+    .replace(/color:#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})/g, "color: '#$1'")
+    .replace(/color:rgb\(([^)]+)\)/g, "color: 'rgb($1)'")
+}
+
 const postsDirectory = path.join(process.cwd(), 'src/content/posts')
 
 export interface PostData {
@@ -26,7 +51,6 @@ export interface PostData {
 }
 
 export function getAllPosts(): PostData[] {
-  // 如果目录不存在，返回空数组
   if (!fs.existsSync(postsDirectory)) {
     return []
   }
@@ -46,10 +70,13 @@ export function getPostBySlug(slug: string): PostData {
   const fullPath = path.join(postsDirectory, `${slug}.mdx`)
   const fileContents = fs.readFileSync(fullPath, 'utf8')
   const { data, content } = matter(fileContents)
+  
+  // 预处理内容
+  const processedContent = preprocessMDXContent(content)
 
   return {
     slug,
-    content,
+    content: processedContent,
     readingTime: readingTime(content),
     title: data.title || '',
     date: data.date || '',
