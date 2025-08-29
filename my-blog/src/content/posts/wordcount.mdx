@@ -25,7 +25,7 @@ tags: ['MapReduce', '分布式计算', 'Hadoop']
 
 **为了搞懂这些抽象的概念，我就举一个例子带大家了解**。
 
-![](https://cdn.nlark.com/yuque/0/2024/png/40555337/1731749543739-10bd9873-cf26-4630-bd94-0ba395085347.png)
+![工作流](/images/posts/mapreduce-workflow.png)
 
 假如说有1TB的数据要处理，那么数据先会经过分片处理后，将数据分配到datanode节点上，然后我们编写好的Java程序就会处理各个节点的任务（MapTask），这个阶段就是Map阶段。在Redcuce阶段，会对Map阶段的输出进行聚合，排序等最终处理，最后生成最终结果。
 
