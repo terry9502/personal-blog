@@ -33,7 +33,7 @@ tags: ['MapReduce', '分布式计算', 'Hadoop']
 
 # MapReduce的计算框架
 
-![](https://cdn.nlark.com/yuque/0/2024/png/40555337/1731751667317-5552afc9-0f57-46a1-87f2-bb06a7ae26ed.png)
+![计算框架](/images/posts/mapreduce-framework.png)
 
 当用户（客户端client）想要提交一个计算任务时，ResourceManager会启动两个模块（Applications Manager和Resource Scheduler）然后Node Manager会启动一个进程App Master，然后App Master会向ResourceManager请求资源（内存，cpu）,ResourceManager在收到请求后会由ApplicationManager进行接收，这个时候会由它的中间组件ResourceScheduler进行分配资源，它会告诉AppMaster向哪一个NodeManager获取资源，然后appMaster会将资源列表回复给ResourceScheduler。然后appmaster会向NodeManager分配资源。在资源分配之后，NodeManager会启动MapTask来执行具体的计算任务，同时它还会启动一个ReduceTask，然后ReduceTask会将计算状态和结果汇报给appMaster。最后将结果汇报给applicationMaster。
 
@@ -70,7 +70,7 @@ tags: ['MapReduce', '分布式计算', 'Hadoop']
 
 **过程分析：**
 
-![](https://cdn.nlark.com/yuque/0/2024/png/40555337/1731810049609-fa1a4674-2795-4fbf-b783-2a3277d6299a.png)
+![词频统计](/images/posts/wordCount.png)
 
 1. 重写map方法
 
@@ -201,7 +201,7 @@ cd /usr/local/eclipse
 
 新建一个项目
 
-![](https://cdn.nlark.com/yuque/0/2024/png/40555337/1730016171943-985cc8c4-65c0-4279-b369-338402f06ae9.png)
+![新建项目](/images/posts/newproject.png)
 
 添加以下jar包：
 
@@ -210,7 +210,7 @@ cd /usr/local/eclipse
 + `/usr/local/hadoop/share/hadoop/mapreduce`目录下的所有JAR包，但是，不包括jdiff、lib、lib-examples和sources目录，具体如下图所示。
 + `/usr/local/hadoop/share/hadoop/mapreduce/lib`目录下的所有JAR包。
 
-![](https://cdn.nlark.com/yuque/0/2024/png/40555337/1730017975022-971f8835-72e8-496d-bdf3-13e947ffe4a4.png)
+![添加jar](/images/posts/addjar.png)
 
 写入下列代码
 
@@ -283,9 +283,9 @@ public static class IntSumReducer extends Reducer<Text, IntWritable, Text, IntWr
 
 4. 导出java程序打包生成jar包
 
-![](https://cdn.nlark.com/yuque/0/2024/png/40555337/1730018068474-38b15ef2-9cf2-4e17-a286-c757a41eeb1e.png)
+![导出1](/images/posts/outputjar1.png)
 
-![](https://cdn.nlark.com/yuque/0/2024/png/40555337/1730018097091-09773417-f0aa-4ae3-9207-9fbe60879f55.png)
+![导出2](/images/posts/outputjar2.png)
 
 5. 进入Myapp下
 
