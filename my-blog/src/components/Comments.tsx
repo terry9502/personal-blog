@@ -6,15 +6,17 @@ interface CommentsProps {
 }
 
 export default function Comments({ slug }: CommentsProps) {
+  const repo = process.env.NEXT_PUBLIC_GISCUS_REPO || "terry9502/personal-blog"
+  
   return (
     <div className="mt-12 pt-8 border-t border-slate-200">
       <h3 className="text-2xl font-semibold text-slate-900 mb-6">评论</h3>
       <Giscus
         id="comments"
-        repo="terry9502/personal-blog"
-        repoId="R_kgDOPl3H1g" // 从 giscus.app 获取
+        repo={repo as `${string}/${string}`}
+        repoId={process.env.NEXT_PUBLIC_GISCUS_REPO_ID || "R_kgDOPl3H1g"}
         category="General"
-        categoryId="DIC_kwDOPl3H1s4Cuwip" // 从 giscus.app 获取
+        categoryId={process.env.NEXT_PUBLIC_GISCUS_CATEGORY_ID || "DIC_kwDOPl3H1s4Cuwip"}
         mapping="pathname"
         term={slug}
         reactionsEnabled="1"
