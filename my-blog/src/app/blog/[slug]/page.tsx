@@ -110,6 +110,24 @@ export async function generateMetadata({ params }: PageProps) {
     return {
       title: post.title,
       description: post.description,
+      keywords: post.tags,
+      authors: [{ name: '牛天润' }],
+      openGraph: {
+        title: post.title,
+        description: post.description,
+        type: 'article',
+        publishedTime: post.date,
+        url: `https://niutr.cn/blog/${slug}`,
+        tags: post.tags,
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: post.title,
+        description: post.description,
+      },
+      alternates: {
+        canonical: `https://niutr.cn/blog/${slug}`,
+      },
     }
   } catch (error) {
     return {
