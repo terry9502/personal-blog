@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { ArrowLeft, Calendar, Clock, Tag } from 'lucide-react'
 import MDXComponents from '@/components/MDXComponents'
+import Comments from '@/components/Comments'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -67,6 +68,9 @@ export default async function BlogPostPage({ params }: PageProps) {
             />
           </div>
         </article>
+
+        {/* 评论区 */}
+        <Comments slug={slug} />
 
         {/* 文章底部 */}
         <footer className="mt-12 pt-8 border-t border-slate-200">
