@@ -39,12 +39,13 @@ export default function BlogPage() {
                   <div className="flex items-center gap-2">
                     🏷️
                     {post.tags.map((tag) => (
-                      <span 
+                      <Link 
                         key={tag} 
+                        href={`/tags/${encodeURIComponent(tag)}`}
                         className="px-2 py-1 bg-slate-100 rounded-md text-xs hover:bg-slate-200 transition-colors"
                       >
                         {tag}
-                      </span>
+                      </Link>
                     ))}
                   </div>
                 </div>

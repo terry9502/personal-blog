@@ -105,12 +105,13 @@ export default function Home() {
                       <div className="flex items-center gap-2">
                         🏷️
                         {post.tags.slice(0, 2).map((tag) => (
-                          <span 
+                          <Link 
                             key={tag} 
-                            className="px-2 py-1 bg-slate-100 rounded-md text-xs"
+                            href={`/tags/${encodeURIComponent(tag)}`}
+                            className="px-2 py-1 bg-slate-100 rounded-md text-xs hover:bg-slate-200 transition-colors"
                           >
                             {tag}
-                          </span>
+                          </Link>
                         ))}
                       </div>
                     )}

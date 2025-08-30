@@ -95,3 +95,19 @@ export function getPostSlugs(): string[] {
     .filter((name) => name.endsWith('.mdx'))
     .map((name) => name.replace(/\.mdx$/, ''))
 }
+
+export function getPostsByTag(tag: string): PostData[] {
+  const allPosts = getAllPosts()
+  return allPosts.filter((post) => post.tags.includes(tag))
+}
+
+export function getAllTags(): string[] {
+  const allPosts = getAllPosts()
+  const tags = new Set<string>()
+  
+  allPosts.forEach((post) => {
+    post.tags.forEach((tag) => tags.add(tag))
+  })
+  
+  return Array.from(tags)
+}

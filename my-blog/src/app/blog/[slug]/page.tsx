@@ -45,14 +45,15 @@ export default async function BlogPostPage({ params }: PageProps) {
             </div>
             <div className="flex items-center gap-2">
               <Tag className="mr-1" size={16} />
-              {post.tags.map((tag) => (
-                <span 
-                  key={tag} 
-                  className="px-2 py-1 bg-slate-100 rounded-md text-xs"
-                >
-                  {tag}
-                </span>
-              ))}
+                {post.tags.map((tag) => (
+                  <Link 
+                    key={tag} 
+                    href={`/tags/${encodeURIComponent(tag)}`}
+                    className="px-2 py-1 bg-slate-100 rounded-md text-xs hover:bg-slate-200 transition-colors"
+                  >
+                    {tag}
+                  </Link>
+                ))}
             </div>
           </div>
         </header>
