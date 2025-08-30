@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Home, BookOpen, User, Github, Mail } from 'lucide-react'
+import { Home, BookOpen, User, Github, Mail, Search } from 'lucide-react'
 
 export default function Header() {
   return (
@@ -34,6 +34,13 @@ export default function Header() {
             >
               <User size={18} />
               <span>关于我</span>
+            </Link>
+            <Link 
+              href="/search" 
+              className="flex items-center space-x-1 text-slate-700 hover:text-blue-600 transition-colors"
+            >
+              <Search size={18} />
+              <span>搜索</span>
             </Link>
           </div>
 
@@ -77,6 +84,13 @@ export default function Header() {
           >
             <User size={16} />
             <span>关于我</span>
+          </Link>
+          <Link 
+            href="/search" 
+            className="flex items-center space-x-1 text-sm text-slate-700 hover:text-blue-600 transition-colors"
+          >
+            <Search size={16} />
+            <span>搜索</span>
           </Link>
         </div>
       </nav>
