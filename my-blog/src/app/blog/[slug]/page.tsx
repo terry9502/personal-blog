@@ -5,6 +5,7 @@ import { MDXRemote } from 'next-mdx-remote/rsc'
 import { ArrowLeft, Calendar, Clock, Tag } from 'lucide-react'
 import MDXComponents from '@/components/MDXComponents'
 import dynamic from 'next/dynamic'
+import ReadingProgress from '@/components/ReadingProgress'
 
 // 简化的动态导入
 const Comments = dynamic(() => import('@/components/Comments'))
@@ -20,6 +21,8 @@ export default async function BlogPostPage({ params }: PageProps) {
     const post = getPostBySlug(slug)
     
     return (
+      <>
+      <ReadingProgress/>
       <div className="max-w-4xl mx-auto">
         {/* 返回按钮 */}
         <div className="mb-8">
@@ -90,6 +93,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         </footer>
       </div>
+      </>
     )
   } catch (error) {
     notFound()
