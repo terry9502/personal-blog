@@ -8,7 +8,18 @@ interface PageProps {
 
 export default async function TagPage({ params }: PageProps) {
   const { tag } = await params
-  const decodedTag = decodeURIComponent(tag)
+  
+  // 解码标签名
+  let decodedTag = decodeURIComponent(tag)
+  try {
+    const testDecode = decodeURIComponent(decodedTag)
+    if (testDecode !== decodedTag) {
+      decodedTag = testDecode
+    }
+  } catch (e) {
+    // 解码失败时使用原始标签
+  }
+  
   const posts = getPostsByTag(decodedTag)
   
   return (
@@ -55,10 +66,29 @@ export default async function TagPage({ params }: PageProps) {
                 <Clock className="mr-1" size={16} />
                 {post.readingTime.text}
               </div>
+              <div className="flex items-center gap-2">
+                {post.tags.map((tag) => (
+                  <Link
+                    key={tag}
+                    href={`/tags/${encodeURIComponent(tag)}`}
+                    className="px-2 py-1 bg-slate-100 rounded-md text-xs hover:bg-slate-200 transition-colors"
+                  >
+                    {tag}
+                  </Link>
+                ))}
+              </div>
             </div>
           </article>
         ))}
       </div>
+
+      {posts.length === 0 && (
+        <div className="text-center py-16">
+          <div className="text-6xl mb-4">📝</div>
+          <h2 className="text-2xl font-semibold text-slate-900 mb-2">没有找到相关文章</h2>
+          <p className="text-slate-600">标签 "{decodedTag}" 下暂无文章</p>
+        </div>
+      )}
     </div>
   )
 }
