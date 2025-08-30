@@ -104,8 +104,9 @@ const components: MDXComponents = {
     <span className="block my-6">
       <img 
         src={src} 
-        alt={alt} 
+        alt={alt || ''} 
         className="rounded-lg shadow-md max-w-full h-auto mx-auto"
+        loading="lazy"
         {...props}
       />
     </span>

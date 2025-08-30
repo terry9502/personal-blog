@@ -4,7 +4,10 @@ import Link from 'next/link'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { ArrowLeft, Calendar, Clock, Tag } from 'lucide-react'
 import MDXComponents from '@/components/MDXComponents'
-import Comments from '@/components/Comments'
+import dynamic from 'next/dynamic'
+
+// 简化的动态导入
+const Comments = dynamic(() => import('@/components/Comments'))
 
 interface PageProps {
   params: Promise<{ slug: string }>
