@@ -2,17 +2,9 @@
 import React from 'react'
 import { MDXComponents } from 'mdx/types'
 import { CopyButton } from './CopyButton'
-import dynamic from 'next/dynamic'
+import ClickableImage from './ClickableImage'
 
-// 动态导入客户端组件，避免SSR问题
-const ClickableImage = dynamic(() => import('./ClickableImage'), {
-  ssr: false,
-  loading: () => (
-    <span className="block my-6 text-center">
-      <div className="rounded-lg bg-slate-200 dark:bg-slate-700 animate-pulse h-64 w-full max-w-lg mx-auto"></div>
-    </span>
-  )
-})
+console.log('MDXComponents file loaded')
 
 // 高亮文本组件
 const Highlight = ({ children, color = '#DF2A3F' }: { children: React.ReactNode, color?: string }) => (
@@ -144,14 +136,20 @@ const components: MDXComponents = {
     </a>
   ),
 
-  // 图片 - 支持点击放大
-  img: ({ src, alt, ...props }) => (
-    <ClickableImage 
-      src={src || ''} 
-      alt={alt || ''} 
-      {...props}
-    />
-  ),
+  // 图片 - 支持点击放大（添加调试）
+  img: ({ src, alt, ...props }) => {
+    console.log('=== MDX IMG COMPONENT CALLED ===')
+    console.log('Image props:', { src, alt, props })
+    console.log('ClickableImage component:', ClickableImage)
+    
+    return (
+      <ClickableImage 
+        src={src || ''} 
+        alt={alt || ''} 
+        {...props}
+      />
+    )
+  },
 
   // 强调
   strong: ({ children, ...props }) => (
@@ -178,5 +176,7 @@ const components: MDXComponents = {
   Highlight,
   Quote,
 }
+
+console.log('MDX Components object created:', components)
 
 export default components

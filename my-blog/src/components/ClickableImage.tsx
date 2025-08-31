@@ -19,6 +19,7 @@ function ImageModal({ src, alt, isOpen, onClose }: { src: string; alt: string; i
 
   // 关闭模态框时重置
   useEffect(() => {
+    console.log('ImageModal useEffect - isOpen:', isOpen)
     if (!isOpen) {
       resetTransform()
     }
@@ -27,6 +28,7 @@ function ImageModal({ src, alt, isOpen, onClose }: { src: string; alt: string; i
   // ESC键关闭和快捷键
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
+      console.log('Key pressed in modal:', e.key)
       if (e.key === 'Escape') {
         onClose()
       } else if (e.key === '+' || e.key === '=') {
@@ -39,11 +41,13 @@ function ImageModal({ src, alt, isOpen, onClose }: { src: string; alt: string; i
     }
 
     if (isOpen) {
+      console.log('Modal opened, adding event listener')
       document.addEventListener('keydown', handleKeyPress)
       document.body.style.overflow = 'hidden'
     }
 
     return () => {
+      console.log('Modal cleanup')
       document.removeEventListener('keydown', handleKeyPress)
       document.body.style.overflow = 'unset'
     }
@@ -51,6 +55,7 @@ function ImageModal({ src, alt, isOpen, onClose }: { src: string; alt: string; i
 
   // 鼠标拖拽
   const handleMouseDown = (e: React.MouseEvent) => {
+    console.log('Mouse down, scale:', scale)
     if (scale > 1) {
       setIsDragging(true)
       setDragStart({
@@ -77,8 +82,11 @@ function ImageModal({ src, alt, isOpen, onClose }: { src: string; alt: string; i
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault()
     const delta = e.deltaY > 0 ? -0.1 : 0.1
+    console.log('Wheel event, delta:', delta, 'current scale:', scale)
     setScale(prev => Math.min(Math.max(prev + delta, 0.5), 3))
   }
+
+  console.log('ImageModal rendering, isOpen:', isOpen, 'src:', src)
 
   if (!isOpen) return null
 
@@ -92,21 +100,30 @@ function ImageModal({ src, alt, isOpen, onClose }: { src: string; alt: string; i
         
         <div className="flex bg-black bg-opacity-80 rounded-lg p-1">
           <button
-            onClick={() => setScale(prev => Math.max(prev - 0.2, 0.5))}
+            onClick={() => {
+              console.log('Zoom out button clicked')
+              setScale(prev => Math.max(prev - 0.2, 0.5))
+            }}
             className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded transition-all"
             title="缩小"
           >
             <ZoomOut size={18} />
           </button>
           <button
-            onClick={() => setScale(prev => Math.min(prev + 0.2, 3))}
+            onClick={() => {
+              console.log('Zoom in button clicked')
+              setScale(prev => Math.min(prev + 0.2, 3))
+            }}
             className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded transition-all"
             title="放大"
           >
             <ZoomIn size={18} />
           </button>
           <button
-            onClick={() => setRotation(prev => prev + 90)}
+            onClick={() => {
+              console.log('Rotate button clicked')
+              setRotation(prev => prev + 90)
+            }}
             className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded transition-all"
             title="旋转"
           >
@@ -115,7 +132,10 @@ function ImageModal({ src, alt, isOpen, onClose }: { src: string; alt: string; i
         </div>
 
         <button
-          onClick={onClose}
+          onClick={() => {
+            console.log('Close button clicked')
+            onClose()
+          }}
           className="p-2 bg-black bg-opacity-80 text-white rounded-lg hover:bg-opacity-100 transition-all"
           title="关闭"
         >
@@ -126,7 +146,10 @@ function ImageModal({ src, alt, isOpen, onClose }: { src: string; alt: string; i
       {/* 主要显示区域 */}
       <div 
         className="w-full h-full flex items-center justify-center cursor-pointer"
-        onClick={onClose}
+        onClick={(e) => {
+          console.log('Modal background clicked')
+          onClose()
+        }}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onWheel={handleWheel}
@@ -142,8 +165,10 @@ function ImageModal({ src, alt, isOpen, onClose }: { src: string; alt: string; i
           }}
           onClick={(e) => {
             e.stopPropagation()
+            console.log('Modal image clicked, current scale:', scale)
             if (scale === 1) {
-              setScale(2) // 单击放大
+              console.log('Setting scale to 2')
+              setScale(2)
             }
           }}
           onMouseDown={handleMouseDown}
@@ -175,6 +200,9 @@ interface ClickableImageProps {
 export default function ClickableImage({ src, alt, className = '' }: ClickableImageProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
+  console.log('ClickableImage rendering with props:', { src, alt, className })
+  console.log('Current modal state:', isModalOpen)
+
   return (
     <>
       <span className="block my-6 text-center group">
@@ -184,9 +212,19 @@ export default function ClickableImage({ src, alt, className = '' }: ClickableIm
             alt={alt || ''} 
             className={`rounded-lg shadow-md max-w-full h-auto mx-auto dark:brightness-90 cursor-pointer transition-all duration-300 group-hover:brightness-110 group-hover:scale-[1.02] block ${className}`}
             loading="lazy"
-            onClick={() => {
+            onClick={(e) => {
+              console.log('=== IMAGE CLICKED ===')
               console.log('图片被点击了！', src)
+              console.log('Event object:', e)
+              console.log('Current modal state before click:', isModalOpen)
               setIsModalOpen(true)
+              console.log('Modal state should now be true')
+            }}
+            onError={(e) => {
+              console.error('Image load error:', e)
+            }}
+            onLoad={() => {
+              console.log('Image loaded successfully:', src)
             }}
           />
           
@@ -206,11 +244,15 @@ export default function ClickableImage({ src, alt, className = '' }: ClickableIm
       </span>
 
       {/* 图片放大模态框 */}
+      {console.log('About to render ImageModal, isOpen:', isModalOpen)}
       <ImageModal
         src={src}
         alt={alt}
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => {
+          console.log('Modal onClose called')
+          setIsModalOpen(false)
+        }}
       />
     </>
   )
