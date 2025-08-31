@@ -10,25 +10,25 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: {
-    default: '我的个人博客',
-    template: '%s | 我的个人博客'
+    default: '天润的个人博客',
+    template: '%s | 天润的个人博客'
   },
   description: '软件工程专业学生的技术博客，分享学习历程、项目经验和生活思考',
   keywords: ['博客', '技术', '软件工程', 'Next.js', 'React', '编程', 'MapReduce', 'Hadoop', '分布式计算'],
-  authors: [{ name: '你的名字' }],
-  creator: '你的名字',
+  authors: [{ name: '天润' }],
+  creator: '天润',
   metadataBase: new URL('https://niutr.cn'),
   openGraph: {
     type: 'website',
     locale: 'zh_CN',
     url: 'https://niutr.cn',
-    title: '我的个人博客',
+    title: '天润的个人博客',
     description: '软件工程专业学生的技术博客，分享学习历程、项目经验和生活思考',
-    siteName: '我的个人博客',
+    siteName: '天润的个人博客',
   },
   twitter: {
     card: 'summary_large_image',
-    title: '我的个人博客',
+    title: '天润的个人博客',
     description: '软件工程专业学生的技术博客',
   },
   robots: {

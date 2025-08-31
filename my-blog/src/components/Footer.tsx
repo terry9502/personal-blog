@@ -4,7 +4,7 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="text-center">
           <p className="text-slate-600">
-            © 2024 我的博客. Made with ❤️ using Next.js
+            © 2024 天润的博客. Made with ❤️ using Next.js
           </p>
           <p className="text-sm text-slate-500 mt-2">
             持续学习，持续分享

@@ -13,7 +13,7 @@ export default function Home() {
           <h1 className="text-4xl md:text-6xl font-bold text-slate-900 mb-4">
             你好，我是 
             <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent ml-2">
-              开发者
+              天润
             </span>
           </h1>
           <p className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">

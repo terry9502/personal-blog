@@ -6,7 +6,7 @@ export default function AboutPage() {
       <div className="bg-white rounded-lg shadow-sm p-8">
         <div className="text-center mb-12">
           <div className="w-32 h-32 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mx-auto mb-6 flex items-center justify-center">
-            <span className="text-white text-4xl font-bold">我</span>
+            <span className="text-white text-4xl font-bold">天润</span>
           </div>
           <h1 className="text-4xl font-bold text-slate-900 mb-4">关于我</h1>
           <p className="text-xl text-slate-600">
@@ -74,7 +74,7 @@ export default function AboutPage() {
             <h2 className="text-2xl font-semibold text-slate-900 mb-4">📬 联系我</h2>
             <div className="flex flex-wrap gap-4">
               <a 
-                href="mailto:your@email.com" 
+                href="mailto:1958577075@qq.com" 
                 className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 📧 邮件联系

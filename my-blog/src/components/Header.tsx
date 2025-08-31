@@ -8,7 +8,7 @@ export default function Header() {
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2 font-bold text-xl">
             <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white text-sm">我</span>
+              <span className="text-white text-sm">天润</span>
             </div>
             <span className="text-slate-900">的博客</span>
           </Link>
@@ -54,7 +54,7 @@ export default function Header() {
               <Github size={20} />
             </a>
             <a 
-              href="mailto:your@email.com" 
+              href="mailto:1958577075@qq.com" 
               className="text-slate-600 hover:text-slate-900 transition-colors"
             >
               <Mail size={20} />
