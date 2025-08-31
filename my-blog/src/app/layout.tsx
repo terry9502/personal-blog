@@ -64,7 +64,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
           <Header />
-          <main className="container mx-auto px-4 py-8">
+          <main className="container mx-auto px-4 py-8 pt-20">
             {children}
           </main>
           <Footer />

@@ -3,7 +3,7 @@ import { Home, BookOpen, User, Github, Mail, Search } from 'lucide-react'
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+    <header className="fixed top-0 left-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2 font-bold text-xl">
@@ -62,7 +62,6 @@ export default function Header() {
           </div>
         </div>
 
-        {/* 移动端菜单 */}
         <div className="md:hidden mt-4 flex space-x-6">
           <Link 
             href="/" 
