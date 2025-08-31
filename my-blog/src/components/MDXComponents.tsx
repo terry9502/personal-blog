@@ -32,19 +32,25 @@ const components: MDXComponents = {
     </h3>
   ),
 
-  // 段落 - 修复嵌套问题
+  // 段落 - 彻底修复嵌套问题
   p: ({ children, ...props }) => {
-    // 检查子元素是否包含块级元素
+    // 检查子元素是否包含块级元素或图片
     const hasBlockElements = React.Children.toArray(children).some((child) => {
       if (React.isValidElement(child)) {
-        // 检查是否是图片或其他块级元素
-        return child.type === 'img' || child.type === 'div' || 
-               (typeof child.type === 'function' && child.type.name === 'OptimizedImage')
+        // 检查是否是图片、div或其他块级元素
+        const type = child.type
+        if (typeof type === 'string') {
+          return ['img', 'div', 'figure', 'video', 'iframe', 'canvas'].includes(type)
+        }
+        // 检查是否是自定义组件（通常也是块级的）
+        if (typeof type === 'function') {
+          return true
+        }
       }
       return false
     })
 
-    // 如果包含块级元素，使用div而不是p
+    // 如果包含块级元素，使用div而不是p，并添加margin来模拟段落间距
     if (hasBlockElements) {
       return (
         <div className="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed" {...props}>
@@ -53,6 +59,7 @@ const components: MDXComponents = {
       )
     }
 
+    // 正常的段落
     return (
       <p className="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed" {...props}>
         {children}
@@ -132,22 +139,22 @@ const components: MDXComponents = {
     </a>
   ),
 
-  // 图片 - 修复HTML嵌套问题
+  // 图片 - 使用span避免块级嵌套问题
   img: ({ src, alt, ...props }) => (
-    <figure className="block my-6 text-center">
+    <span className="block my-6 text-center">
       <img 
         src={src} 
         alt={alt || ''} 
-        className="rounded-lg shadow-md max-w-full h-auto mx-auto dark:brightness-90"
+        className="rounded-lg shadow-md max-w-full h-auto mx-auto dark:brightness-90 block"
         loading="lazy"
         {...props}
       />
       {alt && (
-        <figcaption className="text-sm text-slate-500 dark:text-slate-400 mt-2 italic">
+        <span className="block text-sm text-slate-500 dark:text-slate-400 mt-2 italic">
           {alt}
-        </figcaption>
+        </span>
       )}
-    </figure>
+    </span>
   ),
 
   // 强调

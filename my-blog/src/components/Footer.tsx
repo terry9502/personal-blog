@@ -19,6 +19,12 @@ export default function Footer() {
               📡 RSS 订阅
             </Link>
             <Link 
+              href="/archive" 
+              className="text-sm text-slate-500 dark:text-slate-400 hover:text-purple-500 dark:hover:text-purple-400 transition-colors"
+            >
+              📚 文章归档
+            </Link>
+            <Link 
               href="/sitemap-page" 
               className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
             >

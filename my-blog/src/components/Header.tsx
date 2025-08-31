@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { Home, BookOpen, User, Github, Mail, Search, Menu, X } from 'lucide-react'
+import { Home, BookOpen, User, Github, Mail, Search, Menu, X, Archive } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
 import { useState } from 'react'
 
@@ -33,6 +33,13 @@ export default function Header() {
             >
               <BookOpen size={18} />
               <span>博客</span>
+            </Link>
+            <Link 
+              href="/archive" 
+              className="flex items-center space-x-1 text-slate-700 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+            >
+              <Archive size={18} />
+              <span>归档</span>
             </Link>
             <Link 
               href="/about" 
@@ -100,6 +107,14 @@ export default function Header() {
               >
                 <BookOpen size={18} />
                 <span>博客</span>
+              </Link>
+              <Link 
+                href="/about" 
+                className="flex items-center space-x-2 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <User size={18} />
+                <span>关于我</span>
               </Link>
               <Link 
                 href="/about" 
