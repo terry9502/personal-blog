@@ -19,9 +19,8 @@ export default function Footer() {
               📡 RSS 订阅
             </Link>
             <Link 
-              href="/sitemap.xml" 
+              href="/sitemap-page" 
               className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
-              target="_blank"
             >
               🗺️ 站点地图
             </Link>
