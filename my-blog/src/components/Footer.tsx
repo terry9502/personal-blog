@@ -13,16 +13,17 @@ export default function Footer() {
           </p>
           <div className="mt-4 flex justify-center space-x-4">
             <Link 
-              href="/rss.xml" 
-              className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+              href="/rss" 
+              className="text-sm text-slate-500 dark:text-slate-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors"
             >
-              RSS 订阅
+              📡 RSS 订阅
             </Link>
             <Link 
               href="/sitemap.xml" 
               className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+              target="_blank"
             >
-              站点地图
+              🗺️ 站点地图
             </Link>
           </div>
         </div>

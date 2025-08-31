@@ -45,10 +45,22 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: 'https://niutr.cn',
+    types: {
+      'application/rss+xml': [
+        {
+          url: 'https://niutr.cn/rss.xml',
+          title: '天润的个人博客 RSS Feed'
+        }
+      ]
+    }
   },
   verification: {
     google: '你的Google Search Console验证码',
   },
+  // 添加其他有用的元数据
+  category: 'technology',
+  classification: 'blog',
+  referrer: 'origin-when-cross-origin',
 }
 
 export default function RootLayout({
@@ -58,6 +70,25 @@ export default function RootLayout({
 }) {
   return (
     <html lang="zh-CN" suppressHydrationWarning>
+      <head>
+        {/* RSS Feed 自动发现 */}
+        <link 
+          rel="alternate" 
+          type="application/rss+xml" 
+          title="天润的个人博客 RSS Feed" 
+          href="https://niutr.cn/rss.xml" 
+        />
+        {/* 额外的RSS格式支持 */}
+        <link 
+          rel="alternate" 
+          type="application/atom+xml" 
+          title="天润的个人博客 Atom Feed" 
+          href="https://niutr.cn/rss.xml" 
+        />
+        {/* Feed图标 */}
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="icon" type="image/png" href="/favicon.png" />
+      </head>
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
