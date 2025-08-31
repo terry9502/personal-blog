@@ -1,8 +1,6 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { X, ZoomIn, ZoomOut, RotateCw } from 'lucide-react'
-
-
 
 // 图片模态框组件
 function ImageModal({ src, alt, isOpen, onClose }: { src: string; alt: string; isOpen: boolean; onClose: () => void }) {
@@ -20,14 +18,14 @@ function ImageModal({ src, alt, isOpen, onClose }: { src: string; alt: string; i
   }
 
   // 关闭模态框时重置
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isOpen) {
       resetTransform()
     }
   }, [isOpen])
 
   // ESC键关闭和快捷键
-  React.useEffect(() => {
+  useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onClose()
@@ -79,73 +77,56 @@ function ImageModal({ src, alt, isOpen, onClose }: { src: string; alt: string; i
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault()
     const delta = e.deltaY > 0 ? -0.1 : 0.1
-    setScale(prev => Math.max(0.5, Math.min(3, prev + delta)))
+    setScale(prev => Math.min(Math.max(prev + delta, 0.5), 3))
   }
 
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black bg-opacity-90 flex items-center justify-center">
-      {/* 工具栏 */}
-      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-70 text-white rounded-lg p-2 flex items-center space-x-2 z-10">
-        <button
-          onClick={() => setScale(prev => Math.max(prev - 0.2, 0.5))}
-          className="p-2 hover:bg-white hover:bg-opacity-20 rounded transition-colors"
-          title="缩小 (按键: -)"
-        >
-          <ZoomOut size={20} />
-        </button>
+    <div className="fixed inset-0 z-[9999] bg-black bg-opacity-95">
+      {/* 顶部工具栏 */}
+      <div className="absolute top-4 right-4 flex items-center space-x-2 z-10">
+        <div className="bg-black bg-opacity-80 text-white rounded-lg px-3 py-2 text-sm">
+          缩放: {Math.round(scale * 100)}%
+        </div>
         
-        <span className="text-sm px-2 py-1 bg-white bg-opacity-10 rounded">
-          {Math.round(scale * 100)}%
-        </span>
-        
+        <div className="flex bg-black bg-opacity-80 rounded-lg p-1">
+          <button
+            onClick={() => setScale(prev => Math.max(prev - 0.2, 0.5))}
+            className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded transition-all"
+            title="缩小"
+          >
+            <ZoomOut size={18} />
+          </button>
+          <button
+            onClick={() => setScale(prev => Math.min(prev + 0.2, 3))}
+            className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded transition-all"
+            title="放大"
+          >
+            <ZoomIn size={18} />
+          </button>
+          <button
+            onClick={() => setRotation(prev => prev + 90)}
+            className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded transition-all"
+            title="旋转"
+          >
+            <RotateCw size={18} />
+          </button>
+        </div>
+
         <button
-          onClick={() => setScale(prev => Math.min(prev + 0.2, 3))}
-          className="p-2 hover:bg-white hover:bg-opacity-20 rounded transition-colors"
-          title="放大 (按键: +)"
+          onClick={onClose}
+          className="p-2 bg-black bg-opacity-80 text-white rounded-lg hover:bg-opacity-100 transition-all"
+          title="关闭"
         >
-          <ZoomIn size={20} />
-        </button>
-        
-        <button
-          onClick={() => setRotation(prev => prev + 90)}
-          className="p-2 hover:bg-white hover:bg-opacity-20 rounded transition-colors"
-          title="旋转 (按键: R)"
-        >
-          <RotateCw size={20} />
-        </button>
-        
-        <button
-          onClick={resetTransform}
-          className="p-2 hover:bg-white hover:bg-opacity-20 rounded transition-colors text-sm"
-          title="重置"
-        >
-          重置
+          <X size={18} />
         </button>
       </div>
 
-      {/* 关闭按钮 */}
-      <button
+      {/* 主要显示区域 */}
+      <div 
+        className="w-full h-full flex items-center justify-center cursor-pointer"
         onClick={onClose}
-        className="absolute top-4 right-4 text-white bg-black bg-opacity-70 p-3 rounded-full hover:bg-opacity-90 transition-colors z-10"
-        title="关闭 (按键: ESC)"
-      >
-        <X size={24} />
-      </button>
-
-      {/* 图片描述 */}
-      {alt && (
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-70 text-white px-4 py-2 rounded-lg text-sm max-w-2xl text-center">
-          {alt}
-        </div>
-      )}
-
-      {/* 图片容器 */}
-      <div
-        className="w-full h-full flex items-center justify-center cursor-grab active:cursor-grabbing"
-        onClick={onClose}
-        onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onWheel={handleWheel}
@@ -153,10 +134,11 @@ function ImageModal({ src, alt, isOpen, onClose }: { src: string; alt: string; i
         <img
           src={src}
           alt={alt}
-          className="max-w-none max-h-none select-none transition-transform duration-200 ease-out"
+          className="max-w-[90vw] max-h-[90vh] object-contain select-none transition-transform duration-300"
           style={{
-            transform: `translate(${position.x}px, ${position.y}px) scale(${scale}) rotate(${rotation}deg)`,
-            cursor: scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in'
+            transform: `scale(${scale}) rotate(${rotation}deg) translate(${position.x}px, ${position.y}px)`,
+            cursor: scale > 1 ? 
+              (isDragging ? 'grabbing' : 'grab') : 'zoom-in'
           }}
           onClick={(e) => {
             e.stopPropagation()
@@ -164,9 +146,9 @@ function ImageModal({ src, alt, isOpen, onClose }: { src: string; alt: string; i
               setScale(2) // 单击放大
             }
           }}
-          onMouseDown={(e) => e.stopPropagation()}
-          onMouseMove={(e) => e.stopPropagation()}
-          onMouseUp={(e) => e.stopPropagation()}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
         />
       </div>
 

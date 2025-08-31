@@ -1,3 +1,4 @@
+'use client'
 import React from 'react'
 import { MDXComponents } from 'mdx/types'
 import { CopyButton } from './CopyButton'
