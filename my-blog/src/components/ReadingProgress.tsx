@@ -60,25 +60,25 @@ export default function ReadingProgress() {
   return (
     <>
       {/* 进度条在导航栏内部底部 */}
-      <div className="fixed top-0 left-0 w-full h-1 bg-slate-200 z-40 mt-16"> {/* 降低z-index，添加top margin */}
+      <div className="fixed top-0 left-0 w-full h-1 bg-slate-200 dark:bg-slate-700 z-40 mt-16">
         <div
           className="h-full bg-gradient-to-r from-blue-600 to-purple-600 transition-all duration-300"
           style={{ width: `${progress}%` }}
         />
       </div>
       
-      {/* 当前标题提示 */}
+      {/* 当前标题提示 - 深色模式适配 */}
       {currentHeading && progress > 5 && (
-        <div className="fixed top-17 left-0 w-full bg-white/95 backdrop-blur-sm shadow-sm border-b border-slate-200 z-40"> {/* 调整位置 */}
+        <div className="fixed top-17 left-0 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-sm border-b border-slate-200 dark:border-slate-700 z-40 transition-colors">
           <div className="container mx-auto px-4 py-2">
             <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center space-x-2 text-slate-600">
+              <div className="flex items-center space-x-2 text-slate-600 dark:text-slate-400">
                 <span>正在阅读:</span>
-                <span className="font-medium text-slate-900 truncate max-w-md">
+                <span className="font-medium text-slate-900 dark:text-white truncate max-w-md">
                   {currentHeading}
                 </span>
               </div>
-              <div className="text-slate-500 text-xs">
+              <div className="text-slate-500 dark:text-slate-400 text-xs">
                 {Math.round(progress)}%
               </div>
             </div>
