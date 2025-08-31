@@ -37,7 +37,6 @@ export default async function BlogPostPage({ params }: PageProps) {
           </Link>
         </div>
 
-        // 在文章头部部分
         <header className="mb-12">
           <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-6">
             {post.title}

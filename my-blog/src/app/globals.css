@@ -23,23 +23,20 @@ body {
   overflow-x: hidden;
 }
 
+/* 移除有问题的CSS变量背景，改用Tailwind类 */
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  @apply transition-colors duration-200;
 }
 
 a {
   color: inherit;
   text-decoration: none;
 }
-/* 代码块样式优化 */
+
+/* 代码块样式优化 - 针对深色模式进行改进 */
 pre {
   position: relative;
+  @apply bg-slate-900 dark:bg-slate-800 text-slate-100 rounded-lg p-4 overflow-x-auto;
 }
 
 pre:hover .copy-button {
@@ -51,9 +48,9 @@ pre:hover .copy-button {
   transition: opacity 0.2s;
 }
 
-/* 代码语法高亮颜色 */
+/* 代码语法高亮颜色 - 深色主题优化 */
 pre code {
-  color: #e6ffed;
+  @apply text-slate-100;
 }
 
 pre code .keyword {
@@ -66,4 +63,33 @@ pre code .string {
 
 pre code .comment {
   color: #6272a4;
+}
+
+/* 内联代码样式 */
+code:not(pre code) {
+  @apply bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 px-1 py-0.5 rounded text-sm font-mono;
+}
+
+/* 确保主题切换时的平滑过渡 */
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+/* 修复可能的滚动条样式 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-100 dark:bg-slate-800;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 dark:bg-slate-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-slate-400 dark:bg-slate-500;
 }
