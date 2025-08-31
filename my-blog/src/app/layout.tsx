@@ -5,6 +5,7 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { Analytics } from '@vercel/analytics/react'
 import { GoogleAnalytics } from '@next/third-parties/google'
+import { ThemeProvider } from '@/components/ThemeProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -56,19 +57,22 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="zh-CN">
-      <head>
-        <link rel="icon" href="/favicon.ico" />
-        <link rel="canonical" href="https://niutr.cn" />
-      </head>
+    <html lang="zh-CN" suppressHydrationWarning>
       <body className={inter.className}>
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-          <Header />
-          <main className="container mx-auto px-4 py-8 pt-20">
-            {children}
-          </main>
-          <Footer />
-        </div>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 transition-colors">
+            <Header />
+            <main className="container mx-auto px-4 py-8 pt-20">
+              {children}
+            </main>
+            <Footer />
+          </div>
+        </ThemeProvider>
         <Analytics />
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
       </body>
