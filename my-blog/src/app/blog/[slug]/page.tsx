@@ -37,13 +37,13 @@ export default async function BlogPostPage({ params }: PageProps) {
           </Link>
         </div>
 
-        {/* 文章头部 */}
+        // 在文章头部部分
         <header className="mb-12">
-          <h1 className="text-4xl font-bold text-slate-900 mb-6">
+          <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-6">
             {post.title}
           </h1>
           
-          <div className="flex flex-wrap items-center gap-6 text-slate-600 text-sm">
+          <div className="flex flex-wrap items-center gap-6 text-slate-600 dark:text-slate-400 text-sm">
             <div className="flex items-center">
               <Calendar className="mr-1" size={16} />
               {new Date(post.date).toLocaleDateString('zh-CN')}
@@ -54,22 +54,22 @@ export default async function BlogPostPage({ params }: PageProps) {
             </div>
             <div className="flex items-center gap-2">
               <Tag className="mr-1" size={16} />
-                {post.tags.map((tag) => (
-                  <Link 
-                    key={tag} 
-                    href={`/tags/${encodeURIComponent(tag)}`}
-                    className="px-2 py-1 bg-slate-100 rounded-md text-xs hover:bg-slate-200 transition-colors"
-                  >
-                    {tag}
-                  </Link>
-                ))}
+              {post.tags.map((tag) => (
+                <Link
+                  key={tag}
+                  href={`/tags/${encodeURIComponent(tag)}`}
+                  className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded-md text-xs hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+                >
+                  {tag}
+                </Link>
+              ))}
             </div>
           </div>
         </header>
 
-        {/* 文章内容 */}
+        {/* 文章内容部分 */}
         <article className="max-w-none">
-          <div className="bg-white rounded-lg shadow-sm p-8">
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-8">
             <MDXRemote 
               source={post.content} 
               components={MDXComponents}

@@ -61,11 +61,10 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
+          defaultTheme="system"
+          enableSystem={true}
         >
-          <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 transition-colors">
+          <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors">
             <Header />
             <main className="container mx-auto px-4 py-8 pt-20">
               {children}
@@ -73,7 +72,6 @@ export default function RootLayout({
             <Footer />
           </div>
         </ThemeProvider>
-        <Analytics />
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
       </body>
     </html>
