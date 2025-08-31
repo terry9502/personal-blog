@@ -1,10 +1,9 @@
-'use client'
 import React from 'react'
 import { MDXComponents } from 'mdx/types'
 import { CopyButton } from './CopyButton'
-import ClickableImage from './ClickableImage'
 
-console.log('MDXComponents file loaded')
+// 直接导入，不使用动态导入
+import ClickableImage from './ClickableImage'
 
 // 高亮文本组件
 const Highlight = ({ children, color = '#DF2A3F' }: { children: React.ReactNode, color?: string }) => (
@@ -136,11 +135,11 @@ const components: MDXComponents = {
     </a>
   ),
 
-  // 图片 - 支持点击放大（添加调试）
+  // 图片 - 支持点击放大
   img: ({ src, alt, ...props }) => {
     console.log('=== MDX IMG COMPONENT CALLED ===')
-    console.log('Image props:', { src, alt, props })
-    console.log('ClickableImage component:', ClickableImage)
+    console.log('Image props received:', { src, alt, props })
+    console.log('ClickableImage component check:', typeof ClickableImage)
     
     return (
       <ClickableImage 
@@ -176,7 +175,5 @@ const components: MDXComponents = {
   Highlight,
   Quote,
 }
-
-console.log('MDX Components object created:', components)
 
 export default components
