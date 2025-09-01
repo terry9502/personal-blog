@@ -1,5 +1,7 @@
-import React from 'react'
+// src/components/MDXComponents.tsx
+import React, { useState } from 'react' // 添加 useState 导入
 import { MDXComponents } from 'mdx/types'
+import { Download, Check, Copy } from 'lucide-react' // 添加缺失的图标导入
 import { CopyButton } from './CopyButton'
 // 直接导入，不使用动态导入
 import ClickableImage from './ClickableImage'
@@ -423,14 +425,15 @@ const components: MDXComponents = {
   ),
 
   // 水平分割线
-  hr: ({ ...props }: any) => (
+  hr: (props: any) => (
     <hr className="my-8 border-gray-200 dark:border-gray-700" {...props} />
   ),
 
   // 处理 font 标签（向后兼容）
-  font: ({ children, style, color, ...props }: any) => {
+  font: ({ children, style, color, ...restProps }: any) => {
+    const fontStyle = style || { color: color || '#DF2A3F', fontWeight: 'bold' }
     return (
-      <span style={style || { color: color || '#DF2A3F', fontWeight: 'bold' }} {...props}>
+      <span style={fontStyle} {...restProps}>
         {children}
       </span>
     );

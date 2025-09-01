@@ -300,44 +300,45 @@ export const LANGUAGE_FORMATTING: { [key: string]: { tabSize: number; insertSpac
   'makefile': { tabSize: 8, insertSpaces: false }, // Makefile 使用 tab
 }
 
-/**
- * 获取语言的格式化配置
- */
-export const getLanguageFormatting = (lang: string) => {
-  const normalized = normalizeLanguage(lang)
-  return LANGUAGE_FORMATTING[normalized] || { tabSize: 2, insertSpaces: true }
-}
-
-/**
- * 格式化代码（基础版本）
- */
+// 完全替换有问题的 formatCode 函数：
 export const formatCode = (code: string, language: string): string => {
   const formatting = getLanguageFormatting(language)
   const lines = code.split('\n')
   
-  // 基础的缩进修复
   let indentLevel = 0
-  const formatted = lines.map(line => {
+  const result: string[] = []
+  
+  for (const line of lines) {
     const trimmed = line.trim()
-    if (!trimmed) return ''
     
-    // 简单的缩进逻辑
+    if (!trimmed) {
+      result.push('')
+      continue
+    }
+    
+    // 减少缩进
     if (trimmed.includes('}') || trimmed.includes(']') || trimmed.includes(')'))) {
       indentLevel = Math.max(0, indentLevel - 1)
     }
     
+    // 生成缩进
     const indent = formatting.insertSpaces 
       ? ' '.repeat(indentLevel * formatting.tabSize)
       : '\t'.repeat(indentLevel)
-      
-    const result = indent + trimmed
     
+    result.push(indent + trimmed)
+    
+    // 增加缩进
     if (trimmed.includes('{') || trimmed.includes('[') || trimmed.includes('('))) {
       indentLevel++
     }
-    
-    return result
-  })
+  }
   
-  return formatted.join('\n')
+  return result.join('\n')
+}
+
+// 确保 getLanguageFormatting 有正确的返回类型
+export const getLanguageFormatting = (lang: string): { tabSize: number; insertSpaces: boolean } => {
+  const normalized = normalizeLanguage(lang)
+  return LANGUAGE_FORMATTING[normalized] || { tabSize: 2, insertSpaces: true }
 }
