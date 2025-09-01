@@ -136,19 +136,13 @@ const components: MDXComponents = {
   ),
 
   // 图片 - 支持点击放大
-  img: ({ src, alt, ...props }) => {
-    console.log('=== MDX IMG COMPONENT CALLED ===')
-    console.log('Image props received:', { src, alt, props })
-    console.log('ClickableImage component check:', typeof ClickableImage)
-    
-    return (
-      <ClickableImage 
-        src={src || ''} 
-        alt={alt || ''} 
-        {...props}
-      />
-    )
-  },
+  img: ({ src, alt, ...props }) => (
+    <ClickableImage 
+      src={src || ''} 
+      alt={alt || ''} 
+      {...props}
+    />
+  ),
 
   // 强调
   strong: ({ children, ...props }) => (
