@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { Home, BookOpen, User, Github, Mail, Search, Menu, X, Archive } from 'lucide-react'
+import { Home, BookOpen, User, Github, Mail, Search, Menu, X, Archive, Edit } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
 import { useState } from 'react'
 
@@ -40,6 +40,14 @@ export default function Header() {
             >
               <Archive size={18} />
               <span>归档</span>
+            </Link>
+            {/* 新增编辑器链接 */}
+            <Link 
+              href="/editor" 
+              className="flex items-center space-x-1 text-slate-700 dark:text-slate-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+            >
+              <Edit size={18} />
+              <span>编辑器</span>
             </Link>
             <Link 
               href="/about" 
@@ -88,7 +96,7 @@ export default function Header() {
           </div>
         </div>
 
-        {/* 移动端菜单 - 移除额外的主题切换按钮 */}
+        {/* 移动端菜单 */}
         {isMobileMenuOpen && (
           <div className="md:hidden mt-4 border-t border-slate-200 dark:border-slate-700 pt-4">
             <div className="flex flex-col space-y-4">
@@ -109,12 +117,21 @@ export default function Header() {
                 <span>博客</span>
               </Link>
               <Link 
-                href="/about" 
-                className="flex items-center space-x-2 text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                href="/archive" 
+                className="flex items-center space-x-2 text-slate-700 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <User size={18} />
-                <span>关于我</span>
+                <Archive size={18} />
+                <span>归档</span>
+              </Link>
+              {/* 新增移动端编辑器链接 */}
+              <Link 
+                href="/editor" 
+                className="flex items-center space-x-2 text-slate-700 dark:text-slate-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Edit size={18} />
+                <span>编辑器</span>
               </Link>
               <Link 
                 href="/about" 
