@@ -1,146 +1,16 @@
-// src/components/MDXComponents.tsx
 'use client'
-
-import React, { useState } from 'react' // 添加 useState 导入
+import React, { useState } from 'react'
 import { MDXComponents } from 'mdx/types'
-import { Download, Check, Copy } from 'lucide-react' // 添加缺失的图标导入
-import { CopyButton } from './CopyButton'
-// 直接导入，不使用动态导入
+import { Copy, Check } from 'lucide-react'
 import ClickableImage from './ClickableImage'
 
-// 高亮文本组件
-const Highlight = ({ children, color = '#DF2A3F' }: { children: React.ReactNode, color?: string }) => (
-  <span style={{ color, fontWeight: 'bold' }}>{children}</span>
-)
-
-// 引用块组件
-const Quote = ({ children }: { children: React.ReactNode }) => (
-  <blockquote className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900 pl-6 py-4 my-6 rounded-r-lg">
-    <div className="text-blue-900 dark:text-blue-100">{children}</div>
-  </blockquote>
-)
-
-// 语言映射表
-const languageMap: { [key: string]: string } = {
-  'js': 'JavaScript',
-  'javascript': 'JavaScript',
-  'jsx': 'JSX',
-  'ts': 'TypeScript',
-  'typescript': 'TypeScript',
-  'tsx': 'TSX',
-  'py': 'Python',
-  'python': 'Python',
-  'java': 'Java',
-  'cpp': 'C++',
-  'c++': 'C++',
-  'c': 'C',
-  'cs': 'C#',
-  'csharp': 'C#',
-  'php': 'PHP',
-  'rb': 'Ruby',
-  'ruby': 'Ruby',
-  'go': 'Go',
-  'rust': 'Rust',
-  'swift': 'Swift',
-  'kotlin': 'Kotlin',
-  'scala': 'Scala',
-  'html': 'HTML',
-  'xml': 'XML',
-  'css': 'CSS',
-  'scss': 'SCSS',
-  'sass': 'Sass',
-  'json': 'JSON',
-  'yaml': 'YAML',
-  'sql': 'SQL',
-  'bash': 'Bash',
-  'shell': 'Shell',
-  'dockerfile': 'Dockerfile',
-  'nginx': 'Nginx',
-  'terraform': 'Terraform',
-  'vue': 'Vue',
-  'svelte': 'Svelte',
-  'angular': 'Angular',
-  'react': 'React',
-  'graphql': 'GraphQL',
-  'solidity': 'Solidity',
-  'markdown': 'Markdown',
-  'md': 'Markdown',
-  'diff': 'Diff',
-  'latex': 'LaTeX',
-  'r': 'R',
-  'lua': 'Lua',
-  'perl': 'Perl',
-  'assembly': 'Assembly',
-  'makefile': 'Makefile',
-  'plain': 'Plain Text',
-  'text': 'Plain Text'
-}
-
-// 语言颜色映射
-const languageColors: { [key: string]: string } = {
-  'javascript': '#f7df1e',
-  'typescript': '#3178c6',
-  'python': '#3776ab',
-  'java': '#ed8b00',
-  'cpp': '#00599c',
-  'c': '#555555',
-  'csharp': '#239120',
-  'php': '#777bb4',
-  'ruby': '#cc342d',
-  'go': '#00add8',
-  'rust': '#000000',
-  'html': '#e34f26',
-  'css': '#1572b6',
-  'json': '#000000',
-  'sql': '#e38c00',
-  'bash': '#4eaa25',
-  'dockerfile': '#384d54',
-}
-
-// 获取语言显示名称
-const getLanguageDisplayName = (className?: string): string => {
-  if (!className) return 'Code'
-  
-  const languageMatch = className.match(/language-(\w+)/)
-  if (!languageMatch) return 'Code'
-  
-  const language = languageMatch[1].toLowerCase()
-  return languageMap[language] || language.charAt(0).toUpperCase() + language.slice(1)
-}
-
-// 获取语言颜色
-const getLanguageColor = (className?: string): string => {
-  if (!className) return '#6b7280'
-  
-  const languageMatch = className.match(/language-(\w+)/)
-  if (!languageMatch) return '#6b7280'
-  
-  const language = languageMatch[1].toLowerCase()
-  return languageColors[language] || '#6b7280'
-}
-
-// 增强的代码块组件
-const EnhancedCodeBlock = ({ children, className, filename, title, ...props }: any) => {
+// 简单的复制按钮组件
+const CopyButton = ({ text }: { text: string }) => {
   const [copied, setCopied] = useState(false)
-
-  const getCodeText = (children: any): string => {
-    if (typeof children === 'string') return children
-    if (children?.props?.children) {
-      return getCodeText(children.props.children)
-    }
-    if (Array.isArray(children)) {
-      return children.map(getCodeText).join('')
-    }
-    return String(children || '')
-  }
-
-  const codeText = getCodeText(children)
-  const languageName = getLanguageDisplayName(className)
-  const languageColor = getLanguageColor(className)
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(codeText)
+      await navigator.clipboard.writeText(text)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch (err) {
@@ -148,93 +18,27 @@ const EnhancedCodeBlock = ({ children, className, filename, title, ...props }: a
     }
   }
 
-  const handleDownload = () => {
-    const getFileExtension = (className?: string): string => {
-      if (!className) return '.txt'
-      const languageMatch = className.match(/language-(\w+)/)
-      if (!languageMatch) return '.txt'
-      
-      const extensionMap: { [key: string]: string } = {
-        'javascript': '.js', 'typescript': '.ts', 'python': '.py', 'java': '.java',
-        'cpp': '.cpp', 'c': '.c', 'html': '.html', 'css': '.css', 'json': '.json',
-        'sql': '.sql', 'bash': '.sh', 'php': '.php', 'ruby': '.rb', 'go': '.go'
-      }
-      return extensionMap[languageMatch[1].toLowerCase()] || '.txt'
-    }
-
-    const fileExtension = getFileExtension(className)
-    const fileName = filename || `code-snippet${fileExtension}`
-    
-    const blob = new Blob([codeText], { type: 'text/plain' })
-    const url = URL.createObjectURL(blob)
-    
-    const link = document.createElement('a')
-    link.href = url
-    link.download = fileName
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
-  }
-
   return (
-    <div className="relative group mb-6 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
-      {/* 语言标签和工具栏 */}
-      <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-800 px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2">
-            <div 
-              className="w-3 h-3 rounded-full"
-              style={{ backgroundColor: languageColor }}
-            />
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {title || languageName}
-            </span>
-          </div>
-          {filename && (
-            <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">
-              {filename}
-            </span>
-          )}
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleDownload}
-            className="p-1.5 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all duration-200 opacity-0 group-hover:opacity-100"
-            title="下载代码"
-          >
-            <Download size={12} />
-          </button>
-          <button
-            onClick={handleCopy}
-            className={`p-1.5 rounded-md transition-all duration-200 ${
-              copied 
-                ? 'bg-green-600 text-white opacity-100' 
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600 opacity-70 group-hover:opacity-100'
-            }`}
-            title={copied ? '已复制!' : '复制代码'}
-          >
-            {copied ? <Check size={12} /> : <Copy size={12} />}
-          </button>
-        </div>
-      </div>
-      
-      {/* 代码内容 */}
-      <pre 
-        className="!mt-0 !rounded-t-none bg-slate-900 dark:bg-gray-900 text-slate-100 p-4 overflow-x-auto"
-        style={{ 
-          maxHeight: '500px',
-          fontFamily: "'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace"
-        }}
-        {...props}
-      >
-        <code className={className}>
-          {children}
-        </code>
-      </pre>
-    </div>
+    <button
+      onClick={handleCopy}
+      className="absolute top-2 right-2 p-2 bg-white/10 hover:bg-white/20 rounded transition-colors"
+      title={copied ? '已复制!' : '复制代码'}
+    >
+      {copied ? <Check size={16} /> : <Copy size={16} />}
+    </button>
   )
+}
+
+// 获取代码文本的辅助函数
+const getCodeText = (children: any): string => {
+  if (typeof children === 'string') return children
+  if (children?.props?.children) {
+    return getCodeText(children.props.children)
+  }
+  if (Array.isArray(children)) {
+    return children.map(getCodeText).join('')
+  }
+  return String(children || '')
 }
 
 const components: MDXComponents = {
@@ -255,40 +59,41 @@ const components: MDXComponents = {
     </h3>
   ),
 
-  // 段落 - 智能检测块级元素
-  p: ({ children, ...props }) => {
-    const hasBlockElements = React.Children.toArray(children).some((child) => {
-      if (React.isValidElement(child)) {
-        const type = child.type
-        if (typeof type === 'string') {
-          return ['img', 'div', 'figure', 'video', 'iframe'].includes(type)
-        }
-        if (typeof type === 'function') {
-          return true
-        }
-      }
-      return false
-    })
+  // 段落
+  p: ({ children, ...props }) => (
+    <p className="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed" {...props}>
+      {children}
+    </p>
+  ),
 
-    if (hasBlockElements) {
-      return (
-        <div className="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed" {...props}>
-          {children}
-        </div>
-      )
-    }
-
+  // 🔥 关键修复：简化的代码块处理
+  pre: ({ children, ...props }: any) => {
+    const codeText = getCodeText(children)
+    
     return (
-      <p className="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed" {...props}>
-        {children}
-      </p>
+      <div className="relative group mb-6">
+        <pre className="hljs" {...props}>
+          {children}
+        </pre>
+        <CopyButton text={codeText} />
+      </div>
     )
   },
 
-  // 引用块
-  blockquote: ({ children, ...props }) => (
-    <Quote>{children}</Quote>
-  ),
+  // 🔥 关键修复：简化的内联代码处理
+  code: ({ children, className, ...props }: any) => {
+    // 代码块内的代码，保持原样
+    if (className?.includes('language-')) {
+      return <code className={className} {...props}>{children}</code>
+    }
+    
+    // 内联代码
+    return (
+      <code {...props}>
+        {children}
+      </code>
+    )
+  },
 
   // 列表
   ul: ({ children, ...props }) => (
@@ -307,31 +112,12 @@ const components: MDXComponents = {
     </li>
   ),
 
-  // 增强的代码块处理
-  pre: ({ children, ...props }: any) => {
-    return (
-      <div className="relative group mb-6">
-        <pre className="hljs !my-0" {...props}>
-          {children}
-        </pre>
-      </div>
-    )
-  },
-
-  // 内联代码
-  code: ({ children, className, ...props }: any) => {
-    // 如果是代码块内的代码，保持原样
-    if (className?.includes('language-')) {
-      return <code className={className} {...props}>{children}</code>
-    }
-    
-    // 内联代码的样式
-    return (
-      <code {...props}>
-        {children}
-      </code>
-    )
-  },
+  // 引用块
+  blockquote: ({ children, ...props }) => (
+    <blockquote className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900 pl-6 py-4 my-6 rounded-r-lg" {...props}>
+      <div className="text-blue-900 dark:text-blue-100">{children}</div>
+    </blockquote>
+  ),
 
   // 链接
   a: ({ href, children, ...props }: any) => (
@@ -346,7 +132,7 @@ const components: MDXComponents = {
     </a>
   ),
 
-  // 图片 - 支持点击放大
+  // 图片
   img: ({ src, alt, ...props }: any) => (
     <ClickableImage 
       src={src || ''} 
@@ -361,13 +147,8 @@ const components: MDXComponents = {
       {children}
     </strong>
   ),
-  em: ({ children, ...props }: any) => (
-    <em className="italic text-slate-700 dark:text-slate-300" {...props}>
-      {children}
-    </em>
-  ),
 
-  // 表格增强
+  // 表格
   table: ({ children, ...props }: any) => (
     <div className="overflow-x-auto mb-6">
       <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden" {...props}>
@@ -405,17 +186,6 @@ const components: MDXComponents = {
   hr: (props: any) => (
     <hr className="my-8 border-gray-200 dark:border-gray-700" {...props} />
   ),
-
-  // 处理 font 标签（向后兼容）
-  font: ({ children, style, color }: any) => (
-    <span style={style || { color: color || '#DF2A3F', fontWeight: 'bold' }}>
-      {children}
-    </span>
-  ),
-
-  // 自定义组件
-  Highlight,
-  Quote,
 }
 
 export default components
