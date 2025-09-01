@@ -1,42 +1,17 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { X, ZoomIn, ZoomOut, RotateCw } from 'lucide-react'
+import { X, ZoomIn } from 'lucide-react'
 
-// 图片模态框组件
+// 简化的图片模态框组件
 function ImageModal({ src, alt, isOpen, onClose }: { src: string; alt: string; isOpen: boolean; onClose: () => void }) {
-  const [scale, setScale] = useState(1)
-  const [rotation, setRotation] = useState(0)
-  const [position, setPosition] = useState({ x: 0, y: 0 })
-  const [isDragging, setIsDragging] = useState(false)
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
+  console.log('ImageModal rendered with:', { src, alt, isOpen })
 
-  // 重置状态
-  const resetTransform = () => {
-    setScale(1)
-    setRotation(0)
-    setPosition({ x: 0, y: 0 })
-  }
-
-  // 关闭模态框时重置
-  useEffect(() => {
-    console.log('ImageModal useEffect - isOpen:', isOpen)
-    if (!isOpen) {
-      resetTransform()
-    }
-  }, [isOpen])
-
-  // ESC键关闭和快捷键
+  // ESC键关闭
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       console.log('Key pressed in modal:', e.key)
       if (e.key === 'Escape') {
         onClose()
-      } else if (e.key === '+' || e.key === '=') {
-        setScale(prev => Math.min(prev + 0.2, 3))
-      } else if (e.key === '-') {
-        setScale(prev => Math.max(prev - 0.2, 0.5))
-      } else if (e.key === 'r' || e.key === 'R') {
-        setRotation(prev => prev + 90)
       }
     }
 
@@ -53,139 +28,52 @@ function ImageModal({ src, alt, isOpen, onClose }: { src: string; alt: string; i
     }
   }, [isOpen, onClose])
 
-  // 鼠标拖拽
-  const handleMouseDown = (e: React.MouseEvent) => {
-    console.log('Mouse down, scale:', scale)
-    if (scale > 1) {
-      setIsDragging(true)
-      setDragStart({
-        x: e.clientX - position.x,
-        y: e.clientY - position.y
-      })
-    }
-  }
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (isDragging && scale > 1) {
-      setPosition({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y
-      })
-    }
-  }
-
-  const handleMouseUp = () => {
-    setIsDragging(false)
-  }
-
-  // 滚轮缩放
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault()
-    const delta = e.deltaY > 0 ? -0.1 : 0.1
-    console.log('Wheel event, delta:', delta, 'current scale:', scale)
-    setScale(prev => Math.min(Math.max(prev + delta, 0.5), 3))
-  }
-
-  console.log('ImageModal rendering, isOpen:', isOpen, 'src:', src)
-
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black bg-opacity-95">
-      {/* 顶部工具栏 */}
-      <div className="absolute top-4 right-4 flex items-center space-x-2 z-10">
-        <div className="bg-black bg-opacity-80 text-white rounded-lg px-3 py-2 text-sm">
-          缩放: {Math.round(scale * 100)}%
-        </div>
-        
-        <div className="flex bg-black bg-opacity-80 rounded-lg p-1">
-          <button
-            onClick={() => {
-              console.log('Zoom out button clicked')
-              setScale(prev => Math.max(prev - 0.2, 0.5))
-            }}
-            className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded transition-all"
-            title="缩小"
-          >
-            <ZoomOut size={18} />
-          </button>
-          <button
-            onClick={() => {
-              console.log('Zoom in button clicked')
-              setScale(prev => Math.min(prev + 0.2, 3))
-            }}
-            className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded transition-all"
-            title="放大"
-          >
-            <ZoomIn size={18} />
-          </button>
-          <button
-            onClick={() => {
-              console.log('Rotate button clicked')
-              setRotation(prev => prev + 90)
-            }}
-            className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded transition-all"
-            title="旋转"
-          >
-            <RotateCw size={18} />
-          </button>
-        </div>
+    <div className="fixed inset-0 z-[9999] bg-black bg-opacity-95 flex items-center justify-center">
+      {/* 关闭按钮 */}
+      <button
+        onClick={() => {
+          console.log('Close button clicked')
+          onClose()
+        }}
+        className="absolute top-4 right-4 text-white bg-black bg-opacity-80 p-3 rounded-full hover:bg-opacity-100 transition-all z-10"
+        title="关闭 (ESC)"
+      >
+        <X size={24} />
+      </button>
 
-        <button
-          onClick={() => {
-            console.log('Close button clicked')
-            onClose()
-          }}
-          className="p-2 bg-black bg-opacity-80 text-white rounded-lg hover:bg-opacity-100 transition-all"
-          title="关闭"
-        >
-          <X size={18} />
-        </button>
-      </div>
-
-      {/* 主要显示区域 */}
+      {/* 背景点击关闭 */}
       <div 
         className="w-full h-full flex items-center justify-center cursor-pointer"
         onClick={(e) => {
           console.log('Modal background clicked')
           onClose()
         }}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onWheel={handleWheel}
       >
+        {/* 图片 */}
         <img
           src={src}
           alt={alt}
-          className="max-w-[90vw] max-h-[90vh] object-contain select-none transition-transform duration-300"
-          style={{
-            transform: `scale(${scale}) rotate(${rotation}deg) translate(${position.x}px, ${position.y}px)`,
-            cursor: scale > 1 ? 
-              (isDragging ? 'grabbing' : 'grab') : 'zoom-in'
-          }}
+          className="max-w-[90vw] max-h-[90vh] object-contain select-none"
           onClick={(e) => {
+            console.log('Modal image clicked, preventing close')
             e.stopPropagation()
-            console.log('Modal image clicked, current scale:', scale)
-            if (scale === 1) {
-              console.log('Setting scale to 2')
-              setScale(2)
-            }
           }}
-          onMouseDown={handleMouseDown}
-          onMouseMove={handleMouseMove}
-          onMouseUp={handleMouseUp}
         />
       </div>
 
-      {/* 使用提示 */}
-      <div className="absolute bottom-4 right-4 bg-black bg-opacity-70 text-white text-xs p-3 rounded-lg max-w-48">
-        <div className="space-y-1">
-          <div>ESC: 关闭</div>
-          <div>滚轮: 缩放</div>
-          <div>拖拽: 移动</div>
-          <div>+/-: 缩放</div>
-          <div>R: 旋转</div>
+      {/* 图片描述 */}
+      {alt && (
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black bg-opacity-80 text-white px-4 py-2 rounded-lg text-sm max-w-2xl text-center">
+          {alt}
         </div>
+      )}
+
+      {/* 使用提示 */}
+      <div className="absolute bottom-4 right-4 bg-black bg-opacity-80 text-white text-xs p-3 rounded-lg">
+        <div>ESC: 关闭</div>
       </div>
     </div>
   )
@@ -200,8 +88,8 @@ interface ClickableImageProps {
 export default function ClickableImage({ src, alt, className = '' }: ClickableImageProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  console.log('ClickableImage rendering with props:', { src, alt, className })
-  console.log('Current modal state:', isModalOpen)
+  console.log('ClickableImage rendering with:', { src, alt, className })
+  console.log('Modal state:', isModalOpen)
 
   return (
     <>
@@ -213,15 +101,17 @@ export default function ClickableImage({ src, alt, className = '' }: ClickableIm
             className={`rounded-lg shadow-md max-w-full h-auto mx-auto dark:brightness-90 cursor-pointer transition-all duration-300 group-hover:brightness-110 group-hover:scale-[1.02] block ${className}`}
             loading="lazy"
             onClick={(e) => {
-              console.log('=== IMAGE CLICKED ===')
+              console.log('=== MAIN IMAGE CLICKED ===')
               console.log('图片被点击了！', src)
-              console.log('Event object:', e)
-              console.log('Current modal state before click:', isModalOpen)
+              console.log('Event:', e)
+              console.log('Current modal state:', isModalOpen)
+              e.preventDefault()
+              e.stopPropagation()
               setIsModalOpen(true)
-              console.log('Modal state should now be true')
+              console.log('Modal should open now')
             }}
             onError={(e) => {
-              console.error('Image load error:', e)
+              console.error('Image load error for:', src)
             }}
             onLoad={() => {
               console.log('Image loaded successfully:', src)
@@ -229,7 +119,7 @@ export default function ClickableImage({ src, alt, className = '' }: ClickableIm
           />
           
           {/* 放大图标提示 */}
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-20 rounded-lg">
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-20 rounded-lg pointer-events-none">
             <div className="bg-white dark:bg-slate-800 p-2 rounded-full shadow-lg">
               <ZoomIn size={24} className="text-slate-700 dark:text-slate-300" />
             </div>
@@ -244,13 +134,12 @@ export default function ClickableImage({ src, alt, className = '' }: ClickableIm
       </span>
 
       {/* 图片放大模态框 */}
-      {console.log('About to render ImageModal, isOpen:', isModalOpen)}
       <ImageModal
         src={src}
         alt={alt}
         isOpen={isModalOpen}
         onClose={() => {
-          console.log('Modal onClose called')
+          console.log('Modal closing...')
           setIsModalOpen(false)
         }}
       />

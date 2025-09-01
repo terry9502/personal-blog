@@ -1,4 +1,7 @@
 import type { NextConfig } from 'next'
+import createMDX from '@next/mdx'
+import remarkGfm from 'remark-gfm'
+import rehypeHighlight from 'rehype-highlight'
 
 const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
@@ -12,20 +15,20 @@ const nextConfig: NextConfig = {
     return config
   },
   eslint: {
-    // ⬅️ 关键：忽略 ESLint 报错（避免构建失败）
+    // 忽略 ESLint 报错（避免构建失败）
     ignoreDuringBuilds: true,
   },
   typescript: {
-    // ⬅️ 可选：忽略 TS 类型检查报错
+    // 忽略 TS 类型检查报错
     ignoreBuildErrors: true,
   },
 }
 
-const withMDX = require('@next/mdx')({
+const withMDX = createMDX({
   extension: /\.mdx?$/,
   options: {
-    remarkPlugins: [],
-    rehypePlugins: [],
+    remarkPlugins: [remarkGfm],
+    rehypePlugins: [rehypeHighlight],
   },
 })
 
