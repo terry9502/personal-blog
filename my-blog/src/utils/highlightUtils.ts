@@ -300,14 +300,61 @@ export const LANGUAGE_FORMATTING: { [key: string]: { tabSize: number; insertSpac
   'makefile': { tabSize: 8, insertSpaces: false }, // Makefile 使用 tab
 }
 
-// 完全替换有问题的 formatCode 函数：
-export const formatCode = (code: string, language: string): string => {
-  // 临时的简单实现，避免复杂的语法
-  return code
-}
-
-// 确保 getLanguageFormatting 有正确的返回类型
+/**
+ * 获取语言的格式化配置
+ */
 export const getLanguageFormatting = (lang: string): { tabSize: number; insertSpaces: boolean } => {
   const normalized = normalizeLanguage(lang)
   return LANGUAGE_FORMATTING[normalized] || { tabSize: 2, insertSpaces: true }
+}
+
+/**
+ * 格式化代码（完整版本 - 恢复博客代码块正常显示）
+ */
+export const formatCode = (code: string, language: string): string => {
+  if (!code || typeof code !== 'string') {
+    return ''
+  }
+
+  try {
+    const formatting = getLanguageFormatting(language)
+    const lines = code.split('\n')
+    
+    let indentLevel = 0
+    const formattedLines: string[] = []
+    
+    for (const line of lines) {
+      const trimmedLine = line.trim()
+      
+      // 处理空行
+      if (!trimmedLine) {
+        formattedLines.push('')
+        continue
+      }
+      
+      // 检查是否需要减少缩进（闭合括号）
+      if (trimmedLine.startsWith('}') || trimmedLine.startsWith(']') || trimmedLine.startsWith(')')) {
+        indentLevel = Math.max(0, indentLevel - 1)
+      }
+      
+      // 生成当前行的缩进
+      const indentStr = formatting.insertSpaces 
+        ? ' '.repeat(indentLevel * formatting.tabSize)
+        : '\t'.repeat(indentLevel)
+      
+      // 添加格式化的行
+      formattedLines.push(indentStr + trimmedLine)
+      
+      // 检查是否需要增加缩进（开放括号）
+      if (trimmedLine.endsWith('{') || trimmedLine.endsWith('[') || trimmedLine.endsWith('(')) {
+        indentLevel++
+      }
+    }
+    
+    return formattedLines.join('\n')
+  } catch (error) {
+    // 如果格式化失败，返回原始代码
+    console.warn('代码格式化失败:', error)
+    return code
+  }
 }
