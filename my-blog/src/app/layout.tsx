@@ -78,6 +78,8 @@ export default function RootLayout({
           crossOrigin="anonymous"
           referrerPolicy="no-referrer"
         />
+        {/* 🔥 修复 favicon - 只保留存在的文件 */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
         {/* RSS Feed 自动发现 */}
         <link 
           rel="alternate" 
