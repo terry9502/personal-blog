@@ -106,7 +106,7 @@ export default async function BlogPostPage({ params }: PageProps) {
         {/* 文章底部 */}
         <footer className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-700">
           {/* 文章底部分享 */}
-          <div className="text-center">
+          <div className="text-center mb-8">
             <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
               觉得这篇文章有用？
             </h3>
@@ -116,9 +116,21 @@ export default async function BlogPostPage({ params }: PageProps) {
                 description={post.description}
               />
               <p className="text-sm text-slate-600 dark:text-slate-300">
-                分享给更多需要的朋友，让知识传递下去！ ❤️
+                分享给更多需要的朋友吧！
               </p>
             </div>
+          </div>
+
+          <div className="text-center border-t border-slate-200 dark:border-slate-700 pt-6">
+            <p className="text-slate-600 dark:text-slate-300 mb-4">
+              如果这篇文章对你有帮助，欢迎分享给更多人！
+            </p>
+            <Link 
+              href="/blog" 
+              className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              阅读更多文章
+            </Link>
           </div>
         </footer>
       </div>

@@ -71,15 +71,6 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <head>
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css"
-          integrity="sha512-rO+olRTkcf304DQBxSWxln8JXCzTHlKnIdnMUwYvQa9/Jd4cQaNkItIUj6Z4nvW1dqK0SKXLbn9h4KwZTNtAyw=="
-          crossOrigin="anonymous"
-          referrerPolicy="no-referrer"
-        />
-        {/* 🔥 修复 favicon - 只保留存在的文件 */}
-        <link rel="icon" href="/favicon.ico" sizes="any" />
         {/* RSS Feed 自动发现 */}
         <link 
           rel="alternate" 
@@ -104,9 +95,9 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem={true}
         >
-          <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900 transition-colors">
+          <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors">
             <Header />
-            <main className="flex-1 container mx-auto px-4 py-8 pt-20 max-w-7xl">
+            <main className="container mx-auto px-4 py-8 pt-20">
               {children}
             </main>
             <Footer />

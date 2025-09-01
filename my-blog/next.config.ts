@@ -15,31 +15,20 @@ const nextConfig: NextConfig = {
     return config
   },
   eslint: {
+    // 忽略 ESLint 报错（避免构建失败）
     ignoreDuringBuilds: true,
   },
   typescript: {
+    // 忽略 TS 类型检查报错
     ignoreBuildErrors: true,
   },
 }
 
 const withMDX = createMDX({
+  extension: /\.mdx?$/,
   options: {
     remarkPlugins: [remarkGfm],
-    rehypePlugins: [
-      [rehypeHighlight, {
-        // 简化配置，让 highlight.js 自动检测语言
-        detect: true,
-        ignoreMissing: true,
-        // 可选：指定特定语言的别名
-        aliases: {
-          'js': 'javascript',
-          'ts': 'typescript',
-          'py': 'python',
-          'sh': 'bash',
-          'yml': 'yaml'
-        }
-      }]
-    ],
+    rehypePlugins: [rehypeHighlight],
   },
 })
 
