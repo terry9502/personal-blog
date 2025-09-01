@@ -71,8 +71,8 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         </header>
 
-        {/* 文章内容部分 */}
-        <article className="max-w-none">
+        {/* 文章内容部分 - 确保用 article 标签包裹 */}
+        <article className="max-w-none" id="article-content">
           <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-8">
             <MDXRemote 
               source={post.content} 
@@ -81,10 +81,10 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         </article>
 
-        {/* 相关文章推荐 */}
+        {/* 相关文章推荐 - 在 article 外部 */}
         <RelatedPosts relatedPosts={relatedPosts} />
 
-        {/* 评论区 */}
+        {/* 评论区 - 在 article 外部 */}
         <Comments slug={slug} />
 
         {/* 文章底部 */}
