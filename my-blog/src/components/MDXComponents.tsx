@@ -1,4 +1,6 @@
 // src/components/MDXComponents.tsx
+'use client'
+
 import React, { useState } from 'react' // 添加 useState 导入
 import { MDXComponents } from 'mdx/types'
 import { Download, Check, Copy } from 'lucide-react' // 添加缺失的图标导入
@@ -311,7 +313,9 @@ const components: MDXComponents = {
     try {
       const child = React.Children.only(children) as React.ReactElement
       if (child && React.isValidElement(child) && child.type === 'code') {
-        return <EnhancedCodeBlock {...child.props} />
+        // 安全地传递 props，确保 child.props 是对象
+        const childProps = child.props || {}
+        return <EnhancedCodeBlock {...childProps} />
       }
     } catch (error) {
       // 如果不是单个子元素，使用 fallback
@@ -430,14 +434,11 @@ const components: MDXComponents = {
   ),
 
   // 处理 font 标签（向后兼容）
-  font: ({ children, style, color, ...restProps }: any) => {
-    const fontStyle = style || { color: color || '#DF2A3F', fontWeight: 'bold' }
-    return (
-      <span style={fontStyle} {...restProps}>
-        {children}
-      </span>
-    );
-  },
+  font: ({ children, style, color }: any) => (
+    <span style={style || { color: color || '#DF2A3F', fontWeight: 'bold' }}>
+      {children}
+    </span>
+  ),
 
   // 自定义组件
   Highlight,
