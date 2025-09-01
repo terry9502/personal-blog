@@ -1,9 +1,12 @@
+// src/app/blog/[slug]/page.tsx
 import { getAllPosts, getPostBySlug } from '@/lib/blog'
+import { getRelatedPosts } from '@/lib/relatedPosts'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { ArrowLeft, Calendar, Clock, Tag } from 'lucide-react'
 import MDXComponents from '@/components/MDXComponents'
+import RelatedPosts from '@/components/RelatedPosts'
 import dynamic from 'next/dynamic'
 import ReadingProgress from '@/components/ReadingProgress'
 import TableOfContents from '@/components/TableOfContents'
@@ -20,6 +23,8 @@ export default async function BlogPostPage({ params }: PageProps) {
   
   try {
     const post = getPostBySlug(slug)
+    const allPosts = getAllPosts()
+    const relatedPosts = getRelatedPosts(post, allPosts, 3)
     
     return (
       <>
@@ -76,13 +81,16 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         </article>
 
+        {/* 相关文章推荐 */}
+        <RelatedPosts relatedPosts={relatedPosts} />
+
         {/* 评论区 */}
         <Comments slug={slug} />
 
         {/* 文章底部 */}
-        <footer className="mt-12 pt-8 border-t border-slate-200">
+        <footer className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-700">
           <div className="text-center">
-            <p className="text-slate-600 mb-4">
+            <p className="text-slate-600 dark:text-slate-300 mb-4">
               如果这篇文章对你有帮助，欢迎分享给更多人！
             </p>
             <Link 
@@ -119,7 +127,7 @@ export async function generateMetadata({ params }: PageProps) {
       title: post.title,
       description: post.description,
       keywords: post.tags,
-      authors: [{ name: '牛天润' }],
+      authors: [{ name: '天润' }],
       openGraph: {
         title: post.title,
         description: post.description,
