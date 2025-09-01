@@ -1,21 +1,45 @@
-import React from 'react'
+'use client'
+import React, { useState } from 'react'
 import { MDXComponents } from 'mdx/types'
-import { CopyButton } from './CopyButton'
-
-// 直接导入，不使用动态导入
+import { Copy, Check } from 'lucide-react'
 import ClickableImage from './ClickableImage'
 
-// 高亮文本组件
-const Highlight = ({ children, color = '#DF2A3F' }: { children: React.ReactNode, color?: string }) => (
-  <span style={{ color, fontWeight: 'bold' }}>{children}</span>
-)
+// 简单的复制按钮组件
+const CopyButton = ({ text }: { text: string }) => {
+  const [copied, setCopied] = useState(false)
 
-// 引用块组件
-const Quote = ({ children }: { children: React.ReactNode }) => (
-  <blockquote className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900 pl-6 py-4 my-6 rounded-r-lg">
-    <div className="text-blue-900 dark:text-blue-100">{children}</div>
-  </blockquote>
-)
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch (err) {
+      console.error('复制失败:', err)
+    }
+  }
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="absolute top-2 right-2 p-2 bg-white/10 hover:bg-white/20 rounded transition-colors"
+      title={copied ? '已复制!' : '复制代码'}
+    >
+      {copied ? <Check size={16} /> : <Copy size={16} />}
+    </button>
+  )
+}
+
+// 获取代码文本的辅助函数
+const getCodeText = (children: any): string => {
+  if (typeof children === 'string') return children
+  if (children?.props?.children) {
+    return getCodeText(children.props.children)
+  }
+  if (Array.isArray(children)) {
+    return children.map(getCodeText).join('')
+  }
+  return String(children || '')
+}
 
 const components: MDXComponents = {
   // 标题
@@ -35,40 +59,41 @@ const components: MDXComponents = {
     </h3>
   ),
 
-  // 段落 - 智能检测块级元素
-  p: ({ children, ...props }) => {
-    const hasBlockElements = React.Children.toArray(children).some((child) => {
-      if (React.isValidElement(child)) {
-        const type = child.type
-        if (typeof type === 'string') {
-          return ['img', 'div', 'figure', 'video', 'iframe'].includes(type)
-        }
-        if (typeof type === 'function') {
-          return true
-        }
-      }
-      return false
-    })
+  // 段落
+  p: ({ children, ...props }) => (
+    <p className="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed" {...props}>
+      {children}
+    </p>
+  ),
 
-    if (hasBlockElements) {
-      return (
-        <div className="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed" {...props}>
-          {children}
-        </div>
-      )
-    }
-
+  // 🔥 关键修复：简化的代码块处理
+  pre: ({ children, ...props }: any) => {
+    const codeText = getCodeText(children)
+    
     return (
-      <p className="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed" {...props}>
-        {children}
-      </p>
+      <div className="relative group mb-6">
+        <pre className="hljs" {...props}>
+          {children}
+        </pre>
+        <CopyButton text={codeText} />
+      </div>
     )
   },
 
-  // 引用块
-  blockquote: ({ children, ...props }) => (
-    <Quote>{children}</Quote>
-  ),
+  // 🔥 关键修复：简化的内联代码处理
+  code: ({ children, className, ...props }: any) => {
+    // 代码块内的代码，保持原样
+    if (className?.includes('language-')) {
+      return <code className={className} {...props}>{children}</code>
+    }
+    
+    // 内联代码
+    return (
+      <code {...props}>
+        {children}
+      </code>
+    )
+  },
 
   // 列表
   ul: ({ children, ...props }) => (
@@ -87,43 +112,15 @@ const components: MDXComponents = {
     </li>
   ),
 
-  // 代码块处理
-  pre: ({ children, ...props }) => {
-    const getCodeText = (children: any): string => {
-      if (typeof children === 'string') return children
-      if (children?.props?.children) {
-        return getCodeText(children.props.children)
-      }
-      if (Array.isArray(children)) {
-        return children.map(getCodeText).join('')
-      }
-      return String(children || '')
-    }
-
-    const codeText = getCodeText(children)
-
-    return (
-      <div className="relative group mb-4">
-        <pre className="bg-gray-900 text-green-400 dark:bg-gray-800 dark:text-green-300 rounded-lg p-4 overflow-x-auto" {...props}>
-          {children}
-        </pre>
-        <CopyButton text={codeText} />
-      </div>
-    )
-  },
-  code: ({ children, className, ...props }) => {
-    if (className?.includes('language-')) {
-      return <code className={className} {...props}>{children}</code>
-    }
-    return (
-      <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono text-red-600 dark:text-red-400" {...props}>
-        {children}
-      </code>
-    )
-  },
+  // 引用块
+  blockquote: ({ children, ...props }) => (
+    <blockquote className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900 pl-6 py-4 my-6 rounded-r-lg" {...props}>
+      <div className="text-blue-900 dark:text-blue-100">{children}</div>
+    </blockquote>
+  ),
 
   // 链接
-  a: ({ href, children, ...props }) => (
+  a: ({ href, children, ...props }: any) => (
     <a 
       href={href} 
       className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline hover:no-underline transition-all"
@@ -135,8 +132,8 @@ const components: MDXComponents = {
     </a>
   ),
 
-  // 图片 - 支持点击放大
-  img: ({ src, alt, ...props }) => (
+  // 图片
+  img: ({ src, alt, ...props }: any) => (
     <ClickableImage 
       src={src || ''} 
       alt={alt || ''} 
@@ -145,29 +142,50 @@ const components: MDXComponents = {
   ),
 
   // 强调
-  strong: ({ children, ...props }) => (
+  strong: ({ children, ...props }: any) => (
     <strong className="font-bold text-slate-900 dark:text-white" {...props}>
       {children}
     </strong>
   ),
-  em: ({ children, ...props }) => (
-    <em className="italic text-slate-700 dark:text-slate-300" {...props}>
+
+  // 表格
+  table: ({ children, ...props }: any) => (
+    <div className="overflow-x-auto mb-6">
+      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden" {...props}>
+        {children}
+      </table>
+    </div>
+  ),
+  thead: ({ children, ...props }: any) => (
+    <thead className="bg-gray-50 dark:bg-gray-800" {...props}>
       {children}
-    </em>
+    </thead>
+  ),
+  tbody: ({ children, ...props }: any) => (
+    <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700" {...props}>
+      {children}
+    </tbody>
+  ),
+  tr: ({ children, ...props }: any) => (
+    <tr className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" {...props}>
+      {children}
+    </tr>
+  ),
+  th: ({ children, ...props }: any) => (
+    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider" {...props}>
+      {children}
+    </th>
+  ),
+  td: ({ children, ...props }: any) => (
+    <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100" {...props}>
+      {children}
+    </td>
   ),
 
-  // 处理 font 标签
-  font: ({ children, style, color, ...props }) => {
-    return (
-      <span style={style || { color: color || '#DF2A3F', fontWeight: 'bold' }} {...props}>
-        {children}
-      </span>
-    );
-  },
-
-  // 自定义组件
-  Highlight,
-  Quote,
+  // 水平分割线
+  hr: (props: any) => (
+    <hr className="my-8 border-gray-200 dark:border-gray-700" {...props} />
+  ),
 }
 
 export default components

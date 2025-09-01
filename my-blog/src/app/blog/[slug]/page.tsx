@@ -7,6 +7,8 @@ import { MDXRemote } from 'next-mdx-remote/rsc'
 import { ArrowLeft, Calendar, Clock, Tag } from 'lucide-react'
 import MDXComponents from '@/components/MDXComponents'
 import RelatedPosts from '@/components/RelatedPosts'
+import SocialShare from '@/components/SocialShare'
+import CompactShareButtons from '@/components/CompactShareButtons'
 import dynamic from 'next/dynamic'
 import ReadingProgress from '@/components/ReadingProgress'
 import TableOfContents from '@/components/TableOfContents'
@@ -47,7 +49,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             {post.title}
           </h1>
           
-          <div className="flex flex-wrap items-center gap-6 text-slate-600 dark:text-slate-400 text-sm">
+          <div className="flex flex-wrap items-center gap-6 text-slate-600 dark:text-slate-400 text-sm mb-6">
             <div className="flex items-center">
               <Calendar className="mr-1" size={16} />
               {new Date(post.date).toLocaleDateString('zh-CN')}
@@ -69,10 +71,24 @@ export default async function BlogPostPage({ params }: PageProps) {
               ))}
             </div>
           </div>
+
+          {/* 文章顶部分享按钮 */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 py-4 border-t border-b border-slate-200 dark:border-slate-700">
+            <CompactShareButtons
+              title={post.title}
+              description={post.description}
+              className=""
+            />
+            <SocialShare
+              title={post.title}
+              description={post.description}
+              className=""
+            />
+          </div>
         </header>
 
-        {/* 文章内容部分 */}
-        <article className="max-w-none">
+        {/* 文章内容部分 - 确保用 article 标签包裹 */}
+        <article className="max-w-none" id="article-content">
           <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-8">
             <MDXRemote 
               source={post.content} 
@@ -81,24 +97,28 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         </article>
 
-        {/* 相关文章推荐 */}
+        {/* 相关文章推荐 - 在 article 外部 */}
         <RelatedPosts relatedPosts={relatedPosts} />
 
-        {/* 评论区 */}
+        {/* 评论区 - 在 article 外部 */}
         <Comments slug={slug} />
 
         {/* 文章底部 */}
         <footer className="mt-12 pt-8 border-t border-slate-200 dark:border-slate-700">
+          {/* 文章底部分享 */}
           <div className="text-center">
-            <p className="text-slate-600 dark:text-slate-300 mb-4">
-              如果这篇文章对你有帮助，欢迎分享给更多人！
-            </p>
-            <Link 
-              href="/blog" 
-              className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              阅读更多文章
-            </Link>
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+              觉得这篇文章有用？
+            </h3>
+            <div className="flex flex-col items-center gap-4">
+              <CompactShareButtons
+                title={post.title}
+                description={post.description}
+              />
+              <p className="text-sm text-slate-600 dark:text-slate-300">
+                分享给更多需要的朋友，让知识传递下去！ ❤️
+              </p>
+            </div>
           </div>
         </footer>
       </div>
