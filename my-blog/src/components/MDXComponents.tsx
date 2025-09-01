@@ -309,52 +309,25 @@ const components: MDXComponents = {
 
   // 增强的代码块处理
   pre: ({ children, ...props }: any) => {
-    // 检查是否是代码块
-    try {
-      const child = React.Children.only(children) as React.ReactElement
-      if (child && React.isValidElement(child) && child.type === 'code') {
-        // 安全地传递 props，确保 child.props 是对象
-        const childProps = child.props || {}
-        return <EnhancedCodeBlock {...childProps} />
-      }
-    } catch (error) {
-      // 如果不是单个子元素，使用 fallback
-    }
-
-    // fallback 到原始 pre 标签
-    const getCodeText = (children: any): string => {
-      if (typeof children === 'string') return children
-      if (children?.props?.children) {
-        return getCodeText(children.props.children)
-      }
-      if (Array.isArray(children)) {
-        return children.map(getCodeText).join('')
-      }
-      return String(children || '')
-    }
-
-    const codeText = getCodeText(children)
-
     return (
-      <div className="relative group mb-4">
-        <pre className="bg-gray-900 text-green-400 dark:bg-gray-800 dark:text-green-300 rounded-lg p-4 overflow-x-auto" {...props}>
+      <div className="relative group mb-6">
+        <pre className="hljs !my-0" {...props}>
           {children}
         </pre>
-        <CopyButton text={codeText} />
       </div>
     )
   },
 
   // 内联代码
   code: ({ children, className, ...props }: any) => {
-    // 如果有语言类名，说明是代码块内的代码
+    // 如果是代码块内的代码，保持原样
     if (className?.includes('language-')) {
       return <code className={className} {...props}>{children}</code>
     }
     
-    // 内联代码样式
+    // 内联代码的样式
     return (
-      <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono text-red-600 dark:text-red-400 border border-gray-200 dark:border-gray-700" {...props}>
+      <code {...props}>
         {children}
       </code>
     )
