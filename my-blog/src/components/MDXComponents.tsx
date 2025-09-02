@@ -41,7 +41,7 @@ const components: MDXComponents = {
       if (React.isValidElement(child)) {
         const type = child.type
         if (typeof type === 'string') {
-          return ['img', 'div', 'figure', 'video', 'iframe'].includes(type)
+          return ['img', 'div', 'figure', 'video', 'iframe', 'table'].includes(type)
         }
         if (typeof type === 'function') {
           return true
@@ -85,6 +85,40 @@ const components: MDXComponents = {
     <li className="text-slate-700 dark:text-slate-300" {...props}>
       {children}
     </li>
+  ),
+
+  // 表格组件 - 新增！
+  table: ({ children, ...props }) => (
+    <div className="overflow-x-auto my-6">
+      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200 dark:border-gray-700 rounded-lg" {...props}>
+        {children}
+      </table>
+    </div>
+  ),
+  thead: ({ children, ...props }) => (
+    <thead className="bg-gray-50 dark:bg-gray-800" {...props}>
+      {children}
+    </thead>
+  ),
+  tbody: ({ children, ...props }) => (
+    <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700" {...props}>
+      {children}
+    </tbody>
+  ),
+  tr: ({ children, ...props }) => (
+    <tr className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" {...props}>
+      {children}
+    </tr>
+  ),
+  th: ({ children, ...props }) => (
+    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" {...props}>
+      {children}
+    </th>
+  ),
+  td: ({ children, ...props }) => (
+    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100" {...props}>
+      {children}
+    </td>
   ),
 
   // 代码块处理
@@ -164,6 +198,11 @@ const components: MDXComponents = {
       </span>
     );
   },
+
+  // 水平分割线
+  hr: ({ ...props }) => (
+    <hr className="my-8 border-gray-200 dark:border-gray-700" {...props} />
+  ),
 
   // 自定义组件
   Highlight,
