@@ -90,123 +90,64 @@ export default function HomePage() {
           </Link>
         </div>
 
-        <div className="space-y-6">
-          {/* 第一篇文章 - 特色展示 */}
-          {posts.length > 0 && (
-            <article className="group bg-white dark:bg-slate-800 rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500 overflow-hidden">
-              <div className="p-6">
-                <div className="flex flex-col">
-                  <Link href={`/blog/${posts[0].slug}`}>
-                    <h3 className="text-2xl font-semibold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-3 line-clamp-2">
-                      {posts[0].title}
+        {/* 改为统一的2列网格，不让第一篇文章跨列 */}
+        <div className="grid gap-6 md:grid-cols-2">
+          {posts.length > 0 ? posts.map((post, index) => (
+            <article 
+              key={post.slug} 
+              className="group bg-white dark:bg-slate-800 rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 p-6 border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500"
+            >
+              <div className="flex flex-col h-full">
+                <div className="flex-1">
+                  <Link href={`/blog/${post.slug}`}>
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-3 line-clamp-2">
+                      {post.title}
                     </h3>
                   </Link>
                   
-                  <p className="text-base text-slate-600 dark:text-slate-300 line-clamp-2 mb-4">
-                    {posts[0].description}
+                  <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-4">
+                    {post.description}
                   </p>
+                </div>
 
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                    <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
-                      <span className="flex items-center">
-                        <Calendar size={14} className="mr-1" />
-                        {new Date(posts[0].date).toLocaleDateString('zh-CN')}
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+                    <span className="flex items-center">
+                      <Calendar size={14} className="mr-1" />
+                      {new Date(post.date).toLocaleDateString('zh-CN')}
+                    </span>
+                    <span className="flex items-center">
+                      <Clock size={14} className="mr-1" />
+                      {post.readingTime.text}
+                    </span>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-2">
+                    {post.tags.slice(0, 3).map(tag => (
+                      <Link
+                        key={tag}
+                        href={`/blog?tag=${encodeURIComponent(tag)}`}
+                        className="inline-flex items-center px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs rounded-full hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                      >
+                        <Tag size={10} className="mr-1" />
+                        {tag}
+                      </Link>
+                    ))}
+                    {post.tags.length > 3 && (
+                      <span className="text-xs text-slate-500 dark:text-slate-400 px-2 py-1">
+                        +{post.tags.length - 3} 更多
                       </span>
-                      <span className="flex items-center">
-                        <Clock size={14} className="mr-1" />
-                        {posts[0].readingTime.text}
-                      </span>
-                    </div>
-                    
-                    <div className="flex flex-wrap gap-2">
-                      {posts[0].tags.slice(0, 4).map(tag => (
-                        <Link
-                          key={tag}
-                          href={`/blog?tag=${encodeURIComponent(tag)}`}
-                          className="inline-flex items-center px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs rounded-full hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                        >
-                          <Tag size={10} className="mr-1" />
-                          {tag}
-                        </Link>
-                      ))}
-                      {posts[0].tags.length > 4 && (
-                        <span className="text-xs text-slate-500 dark:text-slate-400 px-2 py-1">
-                          +{posts[0].tags.length - 4} 更多
-                        </span>
-                      )}
-                    </div>
+                    )}
                   </div>
                 </div>
               </div>
             </article>
-          )}
-
-          {/* 其余文章 - 网格布局 */}
-          {posts.length > 1 && (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {posts.slice(1).map((post, index) => (
-                <article 
-                  key={post.slug} 
-                  className="group bg-white dark:bg-slate-800 rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500 overflow-hidden"
-                >
-                  <div className="p-6">
-                    <div className="flex flex-col h-full">
-                      <div className="flex-1">
-                        <Link href={`/blog/${post.slug}`}>
-                          <h3 className="text-lg font-semibold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-3 line-clamp-2">
-                            {post.title}
-                          </h3>
-                        </Link>
-                        
-                        <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-4">
-                          {post.description}
-                        </p>
-                      </div>
-
-                      <div className="flex flex-col gap-3">
-                        <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
-                          <span className="flex items-center">
-                            <Calendar size={14} className="mr-1" />
-                            {new Date(post.date).toLocaleDateString('zh-CN')}
-                          </span>
-                          <span className="flex items-center">
-                            <Clock size={14} className="mr-1" />
-                            {post.readingTime.text}
-                          </span>
-                        </div>
-                        
-                        <div className="flex flex-wrap gap-2">
-                          {post.tags.slice(0, 3).map(tag => (
-                            <Link
-                              key={tag}
-                              href={`/blog?tag=${encodeURIComponent(tag)}`}
-                              className="inline-flex items-center px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs rounded-full hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                            >
-                              <Tag size={10} className="mr-1" />
-                              {tag}
-                            </Link>
-                          ))}
-                          {post.tags.length > 3 && (
-                            <span className="text-xs text-slate-500 dark:text-slate-400 px-2 py-1">
-                              +{post.tags.length - 3} 更多
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
-
-          {/* 如果没有文章 */}
-          {posts.length === 0 && (
-            <div className="text-center py-12">
-              <p className="text-slate-500 dark:text-slate-400 mb-4">暂无文章，开始创作第一篇吧！</p>
+          )) : (
+            <div className="md:col-span-2 text-center py-12">
+              <p className="text-slate-500 dark:text-slate-400">暂无文章，开始创作第一篇吧！</p>
               <Link 
                 href="/editor" 
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="inline-flex items-center mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
                 开始写作
               </Link>
