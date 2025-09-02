@@ -1,8 +1,6 @@
 import React from 'react'
 import { MDXComponents } from 'mdx/types'
 import { CopyButton } from './CopyButton'
-
-// 直接导入，不使用动态导入
 import ClickableImage from './ClickableImage'
 
 // 高亮文本组件
@@ -15,6 +13,15 @@ const Quote = ({ children }: { children: React.ReactNode }) => (
   <blockquote className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900 pl-6 py-4 my-6 rounded-r-lg">
     <div className="text-blue-900 dark:text-blue-100">{children}</div>
   </blockquote>
+)
+
+// 表格包装组件
+const TableWrapper = ({ children, className = '' }: { children: React.ReactNode, className?: string }) => (
+  <div className={`overflow-x-auto my-8 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm ${className}`}>
+    <div className="min-w-full">
+      {children}
+    </div>
+  </div>
 )
 
 const components: MDXComponents = {
@@ -33,6 +40,11 @@ const components: MDXComponents = {
     <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3 mt-6" {...props}>
       {children}
     </h3>
+  ),
+  h4: ({ children, ...props }) => (
+    <h4 className="text-lg font-semibold text-slate-900 dark:text-white mb-2 mt-4" {...props}>
+      {children}
+    </h4>
   ),
 
   // 段落 - 智能检测块级元素
@@ -87,37 +99,100 @@ const components: MDXComponents = {
     </li>
   ),
 
-  // 表格组件 - 新增！
+  // 表格组件 - 使用内联样式强制显示
   table: ({ children, ...props }) => (
-    <div className="overflow-x-auto my-6">
-      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200 dark:border-gray-700 rounded-lg" {...props}>
+    <TableWrapper>
+      <table 
+        style={{
+          width: '100%',
+          borderCollapse: 'collapse',
+          fontSize: '0.875rem',
+          lineHeight: '1.25rem',
+          border: '1px solid #e5e7eb'
+        }}
+        className="min-w-full"
+        {...props}
+      >
         {children}
       </table>
-    </div>
+    </TableWrapper>
   ),
+  
   thead: ({ children, ...props }) => (
-    <thead className="bg-gray-50 dark:bg-gray-800" {...props}>
+    <thead 
+      style={{ 
+        backgroundColor: '#f9fafb'
+      }}
+      {...props}
+    >
       {children}
     </thead>
   ),
+  
   tbody: ({ children, ...props }) => (
-    <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700" {...props}>
+    <tbody 
+      style={{ 
+        backgroundColor: '#ffffff'
+      }}
+      {...props}
+    >
       {children}
     </tbody>
   ),
+  
   tr: ({ children, ...props }) => (
-    <tr className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" {...props}>
+    <tr 
+      style={{
+        borderBottom: '1px solid #e5e7eb'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = '#f3f4f6'
+      }}
+      onMouseLeave={(e) => {
+        const isEven = Array.from(e.currentTarget.parentElement?.children || []).indexOf(e.currentTarget) % 2 === 1
+        e.currentTarget.style.backgroundColor = isEven ? '#f9fafb' : '#ffffff'
+      }}
+      {...props}
+    >
       {children}
     </tr>
   ),
+  
   th: ({ children, ...props }) => (
-    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider" {...props}>
+    <th 
+      style={{
+        padding: '12px 16px',
+        textAlign: 'left',
+        fontWeight: '600',
+        fontSize: '0.75rem',
+        textTransform: 'uppercase',
+        letterSpacing: '0.05em',
+        color: '#374151',
+        backgroundColor: '#f9fafb',
+        border: '1px solid #e5e7eb',
+        borderBottom: '2px solid #d1d5db'
+      }}
+      {...props}
+    >
       {children}
     </th>
   ),
+  
   td: ({ children, ...props }) => (
-    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100" {...props}>
-      {children}
+    <td 
+      style={{
+        padding: '12px 16px',
+        fontSize: '0.875rem',
+        color: '#1f2937',
+        border: '1px solid #e5e7eb',
+        verticalAlign: 'top',
+        wordBreak: 'break-word'
+      }}
+      {...props}
+    >
+      <div style={{ maxWidth: '300px' }}>
+        {children}
+      </div>
     </td>
   ),
 
@@ -145,6 +220,7 @@ const components: MDXComponents = {
       </div>
     )
   },
+
   code: ({ children, className, ...props }) => {
     if (className?.includes('language-')) {
       return <code className={className} {...props}>{children}</code>

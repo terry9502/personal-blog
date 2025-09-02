@@ -93,3 +93,80 @@ code:not(pre code) {
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-slate-400 dark:bg-slate-500;
 }
+/* 表格样式强制修复 */
+.prose table {
+  width: 100% !important;
+  margin: 2rem 0 !important;
+  border-collapse: collapse !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.5rem !important;
+  overflow: hidden !important;
+}
+
+.prose thead {
+  background-color: #f9fafb !important;
+}
+
+.prose th {
+  padding: 0.75rem 1rem !important;
+  text-align: left !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
+  border: 1px solid #e5e7eb !important;
+  border-bottom: 2px solid #d1d5db !important;
+}
+
+.prose td {
+  padding: 0.75rem 1rem !important;
+  border: 1px solid #e5e7eb !important;
+  color: #1f2937 !important;
+  vertical-align: top !important;
+}
+
+.prose tbody tr:nth-child(even) {
+  background-color: #f9fafb !important;
+}
+
+.prose tbody tr:hover {
+  background-color: #f3f4f6 !important;
+}
+
+/* 深色模式表格样式 */
+.dark .prose table {
+  border-color: #4b5563 !important;
+}
+
+.dark .prose thead {
+  background-color: #1f2937 !important;
+}
+
+.dark .prose th {
+  color: #d1d5db !important;
+  border-color: #4b5563 !important;
+  background-color: #1f2937 !important;
+}
+
+.dark .prose td {
+  color: #e5e7eb !important;
+  border-color: #4b5563 !important;
+}
+
+.dark .prose tbody tr:nth-child(even) {
+  background-color: #111827 !important;
+}
+
+.dark .prose tbody tr:hover {
+  background-color: #1f2937 !important;
+}
+
+/* 确保表格在小屏幕上可滚动 */
+.prose .table-wrapper {
+  overflow-x: auto;
+  margin: 2rem 0;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+.dark .prose .table-wrapper {
+  border-color: #4b5563;
+}
