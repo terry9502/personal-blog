@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "download-images": "node scripts/download-images.js",
-    "fix-tables": "node scripts/fix-tables.js",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
