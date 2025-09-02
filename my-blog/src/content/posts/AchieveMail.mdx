@@ -1,0 +1,916 @@
+﻿---
+title: '实现邮件信息查看功能'
+date: '2024-04-25'
+description: '本项目实现了一个基础邮件管理系统，包含以下核心功能：
+
+邮件列表展示：主界面以表格形式展示邮件标题、发件人、收件日期等信息
+邮件详情查看：点击标题跳转详情页，显示完整邮件内容及元数据
+邮件删除功能：通过操作按钮实现单条邮件删除'
+tags: ['Java']
+
+---
+# 需求分析
+| 需求描述 | --- | 需求概述 |  | 备注 |
+| --- | --- | --- | --- | --- |
+| 主界面 | 邮件列表界面 | 列表中包含标题，发件人，收件信息 |  |  |
+| 邮件详情界面 | 查询邮件详情 |  点击列表中的邮件标题则在新页面中显示邮件完整信息。   |  |  包含： 标题、发件人、收件日期及邮件内容。在邮件显示页面中点击“返 回”按键将返回邮件列表页面   |
+| 删除功能 | 实现邮件的删除 |  点击邮件列表中的“删除”按钮将删除当前邮件   |  |  |
+
+# 数据库设计
+**数据库名**：school_db
+**数据表名**：sys_mail
+
+| 字段 | 类型 | 特征 | 说明 |
+| --- | --- | --- | --- |
+| Mail_id | Int(4) | PK、自增 | 主键 |
+| Title | Varchar(50) | Not null | 邮件标题 |
+| Recive_date | Date |  | 收件日期 |
+| Sender | Varchar(20) |  | 发件人 |
+| Content | Varchar(200) |  | 邮件内容 |
+
+# 前端设计
+技术栈：HTML+CSS
+**实现效果：**
+![image.png](/images/image_png_a3439814f548.png)
+**参考代码：**
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邮件管理系统</title>
+    <style>
+      body { font-family: Arial, sans-serif; }
+      table { width: 100%; border-collapse: collapse; }
+      th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+      th { background-color: #f2f2f2; }
+      .btn { padding: 8px 16px; text-decoration: none; color: white; background-color: #007BFF; border: none; border-radius: 5px; }
+      .btn-danger { background-color: #dc3545; }
+    </style>
+  </head>
+  <body>
+    <h1>邮件列表</h1>
+    <table>
+      <tr>
+        <th>邮件标题</th>
+        <th>发件人</th>
+        <th>收件日期</th>
+        <th>操作</th>
+      </tr>
+      <!-- 示例数据 -->
+      <tr>
+        <td><a href="mail-detail.html">会议通知</a></td>
+        <td>管理员</td>
+        <td>2021-09-01</td>
+        <td>
+          <button class="btn">查看</button>
+          <button class="btn btn-danger">删除</button>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
+```
+邮件详情界面：
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邮件详情</title>
+    <style>
+      body { font-family: Arial, sans-serif; background-color: #f4f4f4; }
+      .container { background-color: white; padding: 20px; margin: 20px auto; width: 80%; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+      h1 { color: #333; }
+      .metadata { color: #666; margin-bottom:
+        20px; }
+      .content { margin-top: 20px; }
+      .btn {
+        padding: 10px 20px;
+        text-decoration: none;
+        color: white;
+        background-color: #007BFF;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+
+  </head>
+  <body>
+    <div class="container">
+      <h1>邮件标题</h1>
+      <div class="metadata">
+        <p><strong>发件人：</strong>管理员</p>
+        <p><strong>收件日期：</strong>2021-09-01</p>
+      </div>
+      <div class="content">
+        <p>这是邮件内容的文本。此处可以填写邮件的具体内容，包括支持格式化的文本、链接、图片等，具体根据需要来调整。</p>
+      </div>
+      <button class="btn" onclick="window.history.back();">返回邮件列表</button>
+    </div>
+  </body>
+</html>
+```
+界面展示：
+![image.png](/images/image_png_f7664ba1cf11.png)
+# 后端技术实现
+## 数据库创建
+**数据库管理工具：**Navicat Premium 16
+**数据库类型：**MySQL
+**操作步骤：**
+
+- 创建school_db数据库
+
+![image.png](/images/image_png_88e9ec0f9664.png)
+
+- 添加表中字段数据
+
+![image.png](/images/image_png_39b339344543.png)
+**附上查询SQL**
+```sql
+/*
+ Navicat Premium Data Transfer
+
+ Source Server         : test
+ Source Server Type    : MySQL
+ Source Server Version : 80033
+ Source Host           : localhost:3306
+ Source Schema         : school_db
+
+ Target Server Type    : MySQL
+ Target Server Version : 80033
+ File Encoding         : 65001
+
+ Date: 23/04/2024 11:24:47
+*/
+
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for sys_grade
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_grade`;
+CREATE TABLE `sys_grade`  (
+  `grade_id` int NOT NULL AUTO_INCREMENT COMMENT '记录ID',
+  `grade_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '年级名称',
+  `memo` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`grade_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Table structure for sys_mail
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_mail`;
+CREATE TABLE `sys_mail`  (
+  `Mail_id` int NOT NULL AUTO_INCREMENT,
+  `Title` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+  `Recive_date` date NULL DEFAULT NULL,
+  `Sender` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
+  `Content` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NULL DEFAULT NULL,
+  PRIMARY KEY (`Mail_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_bin ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Table structure for sys_students
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_students`;
+CREATE TABLE `sys_students`  (
+  `stu_no` int NOT NULL AUTO_INCREMENT COMMENT '学号',
+  `stu_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT '学生姓名',
+  `gender` bit(1) NULL DEFAULT b'1' COMMENT '性别(bit(1)相当于boolean类型)',
+  `age` int NULL DEFAULT 18 COMMENT '年龄',
+  `tel` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '联系电话',
+  `address` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '家庭住址',
+  `grade_id` int NULL DEFAULT NULL COMMENT '所属年级ID',
+  `state` int NULL DEFAULT 1 COMMENT '状态(1-在校;2-休学；3-退学；4-入伍；5-离校',
+  PRIMARY KEY (`stu_no`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+```
+## JavaWeb项目部署
+**项目部署所用的技术**：数据库操作（CRUD），后端框架（Mybatis）来处理数据请求和发送响应。
+### 框架部署
+创建一个Java项目
+这里jdk版本选择1.8即可，我这里是为了方便演示
+![image.png](/images/image_png_3c9e849906ae.png)
+点击File选择Project Structure打开
+![image.png](/images/image_png_413fe13548d9.png)
+选择Modules添加web组件
+![image.png](/images/image_png_d91add093663.png)
+添加完web组件之后会提升我们缺少web组件所需的可执行文件或部署包，创建即可
+![image.png](/images/image_png_a9aa789b2def.png)
+完整之后，我们要添加tomcat的依赖
+![image.png](/images/image_png_0a10de123c9f.png)
+选择这个Modules选项-->点击项目名称-->选择Dependences选项-->点击+添加Library
+![image.png](/images/image_png_7a6c47781990.png)
+选择适合的tomcat版本，我这里使用的是tomcat9.0.87
+![image.png](/images/image_png_6d8fdf8fd967.png)
+点击ok，返回到项目界面，添加tomcat配置
+![image.png](/images/image_png_3f715939ee5d.png)
+选择tomcat选项
+![image.png](/images/image_png_0abc1c782635.png)
+如果没有tomcat选择tomcat的目标路径
+![image.png](/images/image_png_0f358411dd3a.png)
+我这里已经配置过tomcat路径了这里就不配置了。这里提示我们没有标记为部署工件，点击fix进行修复
+![image.png](/images/image_png_5332a7798358.png)
+点击ok返回项目界面
+![image.png](/images/image_png_d349f8e64bfc.png)
+我们可以在web项目文件夹下面创建一个index.jsp测试文件
+![image.png](/images/image_png_d90cf571fecf.png)
+可以测试一下
+![image.png](/images/image_png_76397b3e9bfb.png)
+我这里就不测试了，打印了一行hello world
+完成我们的项目部署之后，如果我们想要链接数据库，我们应该怎么做呢?
+#### 添加依赖
+在WEB-INF文件夹下创建一个目录lib用来存放依赖文件
+![image.png](/images/image_png_928fee3eb05a.png)
+将添加的jar包添加到library中，选中所有jar包
+![image.png](/images/image_png_6be40deffd7a.png)
+#### 创建resources文件
+在项目文件夹下创建一个resources文件夹用来存放配置文件，并标记
+![image.png](/images/image_png_bc9d2efd3318.png)
+#### 编写Mybatis配置文件
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+  <properties resource="jdbc.properties"/>
+  <!-- 开启自动命名转换 -->
+  <settings>
+    <setting name="mapUnderscoreToCamelCase" value="true"/>
+  </settings>
+  <typeAliases>
+    <package name=""/>
+  </typeAliases>
+  <environments default="development">
+    <environment id="development">
+      <transactionManager type="JDBC"/>
+      <dataSource type="POOLED">
+        <property name="driver" value="${driver}"/>
+        <property name="url" value="${url}"/>
+        <property name="username" value="${username}"/>
+        <property name="password" value="${password}"/>
+      </dataSource>
+    </environment>
+  </environments>
+  <mappers>
+    <package name=""/>
+  </mappers>
+</configuration>
+```
+#### 创建jdbc.properties配置
+```properties
+driver=com.mysql.cj.jdbc.Driver
+url=jdbc:mysql://localhost:3306/school_db?serverTimezone=UTC
+username=root
+password=123456
+```
+如下图
+![image.png](/images/image_png_8f60f93f5408.png)
+完成项目配置后我们就要进行实体类设计了
+index内容参照前端设计部分。
+### 创建Mail实体类
+在src文件夹下创建一个名为pojo的包用来存放我们的实体类
+![image.png](/images/image_png_66c516a19b5f.png)
+在pojo包下创建一个名为Mail的实体类
+```java
+package cn.niutr.pojo;
+
+import java.util.Date;
+
+public class Mail {
+    private int mailId;
+    private String title;
+    private Date reciveDate;
+    private String sender;
+    private String content;
+
+    public Mail() {
+    }
+
+    public Mail(int mailId, String title, Date reciveDate, String sender, String content) {
+        this.mailId = mailId;
+        this.title = title;
+        this.reciveDate = reciveDate;
+        this.sender = sender;
+        this.content = content;
+    }
+
+    public int getMailId() {
+        return mailId;
+    }
+
+    public void setMailId(int mailId) {
+        this.mailId = mailId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Date getReciveDate() {
+        return reciveDate;
+    }
+
+    public void setReciveDate(Date reciveDate) {
+        this.reciveDate = reciveDate;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    @Override
+    public String toString() {
+        return "Mail{" +
+                "mailId=" + mailId +
+                ", title='" + title + '\'' +
+                ", reciveDate=" + reciveDate +
+                ", sender='" + sender + '\'' +
+                ", content='" + content + '\'' +
+                '}';
+    }
+}
+
+```
+我们现在已经创建完了实体类，下一步应该做什么呢？我们知道我们想要从前端获取后端的数据必须向后端发送一个请求来获取数据库中的数据，然而数据库中的数据不能通过web端直接获取，要通过一个中间件Servlet来获取，再将请求给数据库端。
+![image.png](/images/image_png_a78b36f86950.png)
+### 创建Mapper接口
+在cn.niutr.mapper包下创建MailMapper接口
+![image.png](/images/image_png_9e7885d545c0.png)
+添加接口方法
+```java
+package cn.niutr.mapper;
+
+import cn.niutr.pojo.Mail;
+
+import java.util.List;
+
+public interface MailMapper {
+    /**
+     * 查询所有的邮件信息
+     * @return
+     */
+    List<Mail> findAll();
+}
+
+```
+### 创建MailMapper映射文件
+为了使代码层次清晰，我将xml文件和Java代码进行了分离。
+在resources文件夹下创建一个和mapper接口同名的mapper映射文件，如下：
+![image.png](/images/image_png_fd7e83e41695.png)
+注意：要以包的形式进行创建
+![image.png](/images/image_png_62dd2dc5c099.png)
+创建完成之后我们对映射文件进行完善
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.niutr.mapper.MailMapper">
+  <!--List<Mail> findAll();-->
+  <select id="findAll" resultType="Mail">
+    select * from sys_mail order by Mail_id
+  </select>
+</mapper>
+```
+编写完成后记得修改我们的Mybatis核心配置文件，注册我们的Mapper映射
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <!-- 引入外部资源文件-->
+    <properties resource="db.properties" />
+
+    <!-- 开启自动映射配置-->
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+    
+    <typeAliases>
+        <package name="cn.niutr.pojo"/>
+    </typeAliases>
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <package name="cn.niutr.mapper"/>
+    </mappers>
+</configuration>
+```
+### 创建ListServlet
+我们为什么要创建一个ListServlet呢？正如上面所说，前端html不能直接获取数据库中的数据，而是要通过Servlet这个中间件来获取。
+**步骤：**
+在cn.niutr下分别创建一个Servlet的包和util的包用来存放我们的ListServlet和我们的SessionUtil工具类。
+![image.png](/images/image_png_5d4d29b373a4.png)
+代码如下：
+```java
+package cn.niutr.servlet;
+
+import cn.niutr.mapper.MailMapper;
+import cn.niutr.pojo.Mail;
+import cn.niutr.util.SessionUtil;
+import org.apache.ibatis.session.SqlSession;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+
+/**
+ * Servlet类
+ *  Servlet既可以像web资源一样进行访问，也可以像java代码一样进行执行
+ *
+ *  步骤：
+ *      1、创建类并继承于HttpServlet
+ *      2、在类上使用@WebServlet或在web.xml文件配置
+ *      3、重写service方法
+ */
+public class ListServlet extends HttpServlet {
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //从数据库加载数据
+        SqlSession session = SessionUtil.getSession();
+        //通过session获取mapper接口对象
+        MailMapper mapper = session.getMapper(MailMapper.class);
+        //执行查询操作
+        List<Mail> list = mapper.findAll();
+        //关闭session对象
+        SessionUtil.close();
+
+        //将数据添加到作用域中
+        req.setAttribute("list",list);
+
+        //跳转到index界面
+        req.getRequestDispatcher("index.jsp").forward(req,resp);
+    }
+}
+
+```
+### 编写邮件列表功能
+列表详细功能设置见上方的前端设计部分
+![image.png](/images/image_png_a3439814f548.png)
+#### 绑定数据
+在上一步我们把数据提交到Jsp界面，而我们没有绑定数据，下面我们会进行数据的绑定操作使我们提交的表单能够访问到数据中的邮件数据.
+首先我们要引入jstl的jsp标签库，因为我们之后会对jstl标签库进行迭代等操作，如下指令：
+```java
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+```
+代码如下所示：
+```html
+<%--
+  Created by IntelliJ IDEA.
+  User: 19585
+  Date: 2024/4/24
+  Time: 13:02
+  To change this template use File | Settings | File Templates.
+  --%>
+  <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>邮件管理系统</title>
+        <style>
+          body { font-family: Arial, sans-serif; }
+          table { width: 100%; border-collapse: collapse; }
+          th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+          th { background-color: #f2f2f2; }
+          .btn { padding: 8px 16px; text-decoration: none; color: white; background-color: #007BFF; border: none; border-radius: 5px; }
+          .btn-danger { background-color: #dc3545; }
+        </style>
+      </head>
+      <body>
+        <h1>邮件列表</h1>
+        <table>
+          <tr>
+            <th>邮件标题</th>
+            <th>发件人</th>
+            <th>收件日期</th>
+            <th>操作</th>
+          </tr>
+          <c:forEach items="${list}" var="l">
+            <tr>
+              <td><a href="mail-detail.html">${l.title}</a></td>
+              <td>${l.sender}</td>
+              <td>${l.reciveDate}</td>
+              <td>
+                <button class="btn">查看</button>
+                <button class="btn btn-danger">删除</button>
+              </td>
+            </tr>
+          </c:forEach>
+        </table>
+      </body>
+    </html>
+
+
+```
+效果如下：
+![image.png](/images/image_png_e4b529c3027d.png)
+### 显示邮件详细信息
+我们应该怎么查询一个邮件的详细信息呢？想要从数据库中获取详情数据首先我们要知道我们要查询的是那一条数据。我们知道每一个邮件都对应一个邮件ID，而我们第一步其实已经将查询的数绑定到list作用域中了，我们仅需将邮件的ID发送到负责加载邮件详细信息的Servlet中，通过从前端获取的邮件ID来查找邮件的详细数据，将邮件详细信息绑定到作用域中，最后返回到详情界面。
+![](/images/3521d231cbb2305019b6_d4c428b9161f.jpeg)
+#### 编写Mapper接口
+```java
+/**
+     * 按Id查找邮件信息
+     */
+Mail findById(@Param("id") int id);
+```
+#### 编写Mapper映射文件
+```xml
+    <!--Mail findById(@Param("id") int id);-->
+    <select id="findById" resultType="Mail">
+        select * from sys_mail where Mail_id = #{id}
+    </select>
+```
+由于我们这两次查询都用到了select查询语句，所以我们可以使用动态sql来提高代码的利用性和安全性，如下所示：
+```xml
+<sql id="findStatement">select * from sys_mail</sql>
+
+<!--List<Mail> findAll();-->
+<select id="findAll" resultType="Mail">
+  <include refid="findStatement"/> order by Mail_id
+</select>
+
+<!--Mail findById(@Param("id") int id);-->
+<select id="findById" resultType="Mail">
+  <include refid="findStatement"/> where Mail_id = #{id}
+</select>
+```
+#### 编写LoadServlet
+```java
+package cn.niutr.servlet;
+
+import cn.niutr.mapper.MailMapper;
+import cn.niutr.pojo.Mail;
+import cn.niutr.util.SessionUtil;
+import org.apache.ibatis.session.SqlSession;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+@WebServlet("/load")
+public class LoadServlet extends HttpServlet {
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //获取查询到的邮件Id
+        int id = Integer.parseInt(req.getParameter("id"));
+
+        //2、调用mapper对象的方法获取数据
+        //获取Session对象
+        SqlSession session = SessionUtil.getSession(false);
+
+        //获取Mapper对象
+        MailMapper mapper = session.getMapper(MailMapper.class);
+        //执行方法
+        Mail mail = mapper.findById(id);
+
+        //将查询到的信息绑定到作用域中
+        req.setAttribute("mail",mail);
+
+        //跳转到邮件详细界面
+        req.getRequestDispatcher("detail.jsp").forward(req,resp);
+    }
+}
+
+```
+下面我们就要编写detail的代码
+注意我们编写完LoadServlet后还要修改我们的index提交部分的代码：
+![image.png](/images/image_png_e46430cce41a.png)
+同时为了使按钮也能实现查看详细信息，可以更换为a标签
+![image.png](/images/image_png_4b907afae645.png)
+#### 邮件详情界面
+邮件详情界面设计如上前端代码设计部分，绑定数据如下：
+```html
+<%--
+  Created by IntelliJ IDEA.
+  User: 19585
+  Date: 2024/4/24
+  Time: 16:06
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邮件详情</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; }
+        .container { background-color: white; padding: 20px; margin: 20px auto; width: 80%; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        .metadata { color: #666; margin-bottom:
+                20px; }
+        .content { margin-top: 20px; }
+        .btn {
+            padding: 10px 20px;
+            text-decoration: none;
+            color: white;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+
+</head>
+<body>
+<div class="container">
+    <h1>${mail.title}</h1>
+    <div class="metadata">
+        <p><strong>发件人：</strong>${mail.sender}</p>
+        <p><strong>收件日期：</strong>${mail.reciveDate}</p>
+    </div>
+    <div class="content">
+        <p>${mail.content}</p>
+    </div>
+    <button class="btn" onclick="window.history.back();">返回邮件列表</button>
+</div>
+</body>
+</html>
+
+```
+当然返回也可以用a标签：`<a href="list">返回</a>`来实现
+效果如下：
+![image.png](/images/image_png_4305d502f7e6.png)
+### 删除功能实现
+![image.png](/images/image_png_a78b36f86950.png)
+**删除功能实现思路**：index将要删除邮件的ID发送给Servlet，Servlet获取到邮件id之后，通过dao查找数据库对应的邮件并删除，将结果返回Servlet，最后重定向到list
+#### 编写DeleteMapper接口
+```java
+/**
+     * 按Id删除邮件信息
+     */
+int delById(@Param("id") int id);
+```
+#### 编写DeleteMapper映射
+```xml
+<!--int delById(@Param("id") int id);-->
+<delete id="delById">
+  delete from sys_mail where Mail_id = #{id}
+</delete>
+```
+#### 创建DeleteServlet方法
+在Servlet包下创建一个名为DeleteServlet的方法
+```java
+package cn.niutr.servlet;
+
+import cn.niutr.mapper.MailMapper;
+import cn.niutr.util.SessionUtil;
+import org.apache.ibatis.session.SqlSession;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+@WebServlet("/del")
+public class DeleteServlet extends HttpServlet {
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //获取要删除邮件的id
+        int id = Integer.parseInt(req.getParameter("id"));
+
+        //2、调用Mapper对象的方法删除数据
+        //a、获取Session对象
+        SqlSession session = SessionUtil.getSession();
+        //获取mapper对象
+        MailMapper mapper = session.getMapper(MailMapper.class);
+        //执行方法
+        mapper.delById(id);
+        //关闭session对象
+        SessionUtil.close();
+
+        //跳转回index界面
+        req.getRequestDispatcher("list").forward(req,resp);
+    }
+}
+
+```
+注意我们编写完DeleteServlet后还要修改我们的index提交部分的代码：
+![image.png](/images/image_png_27d61042027f.png)
+### 查询邮件信息
+添加一个搜索表单
+```html
+<%--
+  Created by IntelliJ IDEA.
+  User: 19585
+  Date: 2024/4/24
+  Time: 13:02
+  To change this template use File | Settings | File Templates.
+  --%>
+  <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>邮件管理系统</title>
+        <style>
+          body { font-family: Arial, sans-serif; }
+          table { width: 100%; border-collapse: collapse; }
+          th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+          th { background-color: #f2f2f2; }
+          .btn { padding: 8px 16px; text-decoration: none; color: white; background-color: #007BFF; border: none; border-radius: 5px; }
+          .btn-danger { background-color: #dc3545; }
+          /* 新增搜索框样式 */
+          .search-bar {
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 20px;
+          }
+          .search-input {
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            width: 300px;
+            margin-right: 10px;
+          }
+          .search-button {
+            border: none;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+          }
+          .search-button:hover {
+            background-color: #218838;
+          }
+        </style>
+      </head>
+      <body>
+        <h1>邮件列表</h1>
+
+        <!-- 搜索表单 -->
+        <div class="search-bar">
+          <form action="searchMail" method="get">
+            <input type="text" name="keyword" placeholder="输入标题或发件人搜索" class="search-input" required>
+            <button type="submit" class="btn search-button">搜索</button>
+          </form>
+        </div>
+
+        <table>
+          <tr>
+            <th>邮件标题</th>
+            <th>发件人</th>
+            <th>收件日期</th>
+            <th>操作</th>
+          </tr>
+          <c:forEach items="${list}" var="l">
+            <tr>
+              <td><a href="load?id=${l.mailId}">${l.title}</a></td>
+              <td>${l.sender}</td>
+              <td>${l.reciveDate}</td>
+              <td>
+                <a href="load?id=${l.mailId}" class="btn">查看</a>
+                <a href="del?id=${l.mailId}" class="btn btn-danger">删除</a>
+              </td>
+            </tr>
+          </c:forEach>
+        </table>
+      </body>
+    </html>
+```
+效果如下：
+![image.png](/images/image_png_18c90f23de3d.png)
+我们想要查询一个邮件的信息，可能输入的是标题或者发件人，所以我们要进行多条件的查询
+#### 输入标题进行搜索接口
+```java
+    /**
+     *  实现输入标题进行搜索
+     */
+    List<Mail> findAll2(@Param("title") String title);
+```
+#### 输入标题进行搜索映射文件
+```xml
+    <!--List<Mail> findAll2(@Param("mail") Mail mail);-->
+    <select id="findAll2" resultType="Mail">
+        <include refid="findStatement"/>
+
+        <where>
+            <if test="title!=null and title!=''">
+                and title like "%"#{title}"%"
+            </if>
+        </where>
+    </select>
+```
+#### 编写条件查询Servlet
+在Servlet包下创建一个FindByExpServlet的方法
+```java
+package cn.niutr.servlet;
+
+import cn.niutr.mapper.MailMapper;
+import cn.niutr.pojo.Mail;
+import cn.niutr.util.SessionUtil;
+import org.apache.ibatis.session.SqlSession;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+
+@WebServlet("/exp")
+public class FindByExpServlet extends HttpServlet {
+    @Override
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //设置编码格式
+        req.setCharacterEncoding("utf-8");
+        Mail mail = new Mail();
+
+        if(req.getParameter("keyword").length()>0)
+            mail.setTitle(req.getParameter("keyword"));
+
+        //获取session对象
+        SqlSession session = SessionUtil.getSession(false);
+        //获取mapper对象
+        MailMapper mapper = session.getMapper(MailMapper.class);
+        //调用方法
+        List<Mail> list = mapper.findAll2(mail.getTitle());
+        //关闭session对象
+        SessionUtil.close();
+
+        //设置作用域
+        req.setAttribute("list",list);
+        //跳转回index界面
+        req.getRequestDispatcher("index.jsp").forward(req,resp);
+    }
+}
+
+```
+最后记得修改我们的index请求对象为exp，如下：
+```html
+<!-- 搜索表单 -->
+<div class="search-bar">
+  <form action="exp" method="post">
+    <input type="text" name="keyword" placeholder="输入标题进行搜索" class="search-input" required>
+    <button type="submit" class="btn search-button">搜索</button>
+  </form>
+</div>
+```
+### 新增检索按钮
+我们在访问首页时，如果想查询所有邮件信息，可以点击检索按钮进行查询
+**添加代码在index.jsp中**
+```html
+<!-- 搜索表单 -->
+<div class="search-bar">
+    <form action="exp" method="post">
+        <input type="text" name="keyword" placeholder="输入标题进行搜索" class="search-input" required>
+        <button type="submit" class="btn search-button">搜索</button>
+        <!-- 新增检索按钮 -->
+        <button type="button" class="btn search-button" onclick="location.href='list'">检索</button>
+    </form>
+</div>
+```
+效果如下：
+![image.png](/images/image_png_c3a60c8d4907.png)
