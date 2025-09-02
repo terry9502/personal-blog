@@ -1,7 +1,7 @@
 ﻿---
 title: '整合JavaSSM框架【超详细】'
 date: '2024-6-18'
-description: '本文介绍了Java SSM框架（Spring、Spring MVC、MyBatis）的整合方法。首先概述了各框架特点：Spring提供依赖注入和AOP支持，Spring MVC实现MVC架构，MyBatis简化数据库操作。'
+description: '本文介绍了Java SSM框架（Spring、Spring MVC、MyBatis）的整合方法。'
 tags: ['Java', 'Spring', 'mvc', 'mybatis']
 
 ---
@@ -41,39 +41,39 @@ SDK版本：1.8
 Tomcat版本：9.0.87
 当然其他版本的项目创建可能略有差别。
 ## 新建一个Java项目
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/c23329929ac3733b953c121af62f5eca.png)
+![image.png](/images/image_png_1ddb0340b75c.png)
 ## 创建一个web模块
 选择File->Project Structure
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/9480dbb68cd644f74b0893a497a53f19.png)
+![image.png](/images/image_png_8bf2bb7cc279.png)
 添加一个Web Module
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/027bc06b8abb423b1cd9436dfce93378.png)
+![image.png](/images/image_png_c4c3d697e778.png)
 提示没有任何工件，创建一个新工件
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/33f2c4f22186ca01673b73607c438df7.png)
+![image.png](/images/image_png_806d133f4a97.png)
 应用并完成
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/c037894387d74248d1b4f652d6c8f238.png)
+![image.png](/images/image_png_5082f97264c2.png)
 ## 创建resources文件夹和lib文件夹
 创建一个resources文件夹
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/cee786164b2da5b47032210ac9850d87.png)
+![image.png](/images/image_png_14070804d085.png)
 标记为资源根目录
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/f900281eb62adfe77fd0ed87889fff5e.png)
+![image.png](/images/image_png_fa4444c8cd74.png)
 同样的在WEB-INF文件夹下创建一个lib文件夹
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/d51c4f601e9385fc58e16b43788fea0f.png)
+![image.png](/images/image_png_9598eb29ff07.png)
 ## 添加Tomcat
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/70eb6b658e8ddc72a670e26a2f6312f2.png)
+![image.png](/images/image_png_f3ca1c1d042c.png)
 点击+号，选择Tomcat Server
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/a144c3f0413cb6d2835b574089438a6a.png)
+![image.png](/images/image_png_8fc98ec1f2ea.png)
 这里提示没有任何工件被标记为依赖，这里修复一下，然后点击ok确认即可
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/dbcdd9b8edf902c3c10513f179ac24a4.png)
+![image.png](/images/image_png_5765807e88ce.png)
 在File->Project Structure中，添加Tomcat的依赖
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/eef4273157792703ec2914fbc173a24e.png)
+![image.png](/images/image_png_8e5c8cbe8aa1.png)
 选择Tomcat9.0.87，选择应用即可
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/c34918ca7a3a1421324d9a7e68381304.png)
+![image.png](/images/image_png_93514a1bcb9f.png)
 最后可以在web文件夹下创建一个index.jsp测试一下
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/6c9d9530207cc6f4f99e9376190b6956.png)
+![image.png](/images/image_png_efae248d263b.png)
 这样就完成了初步项目的创建工作
 # 整合SSM框架
 **整合SSM框架的目的**：利用各个框架的优势，将其集中在一个项目中进行使用
-![](https://i-blog.csdnimg.cn/blog_migrate/9ae88025e6bbe55101b875853f0e1e4d.jpeg)
+![](/images/9ae88025e6bbe55101b8_da9fcfc8c669.jpeg)
 ## 准备依赖文件
 ### Spring所需的依赖文件
 [spring-beans-4.3.3.RELEASE.jar](https://www.yuque.com/attachments/yuque/0/2024/jar/40555337/1718590924978-d494c09f-0fdf-4e47-976d-face430f4b95.jar?_lake_card=%7B%22src%22%3A%22https%3A%2F%2Fwww.yuque.com%2Fattachments%2Fyuque%2F0%2F2024%2Fjar%2F40555337%2F1718590924978-d494c09f-0fdf-4e47-976d-face430f4b95.jar%22%2C%22name%22%3A%22spring-beans-4.3.3.RELEASE.jar%22%2C%22size%22%3A760602%2C%22ext%22%3A%22jar%22%2C%22source%22%3A%22%22%2C%22status%22%3A%22done%22%2C%22download%22%3Atrue%2C%22taskId%22%3A%22u737a85c1-7f52-469f-8d50-d62e4155409%22%2C%22taskType%22%3A%22upload%22%2C%22type%22%3A%22%22%2C%22__spacing%22%3A%22both%22%2C%22mode%22%3A%22title%22%2C%22id%22%3A%22vNqn1%22%2C%22margin%22%3A%7B%22top%22%3Atrue%2C%22bottom%22%3Atrue%7D%2C%22card%22%3A%22file%22%7D)[spring-context-4.3.3.RELEASE.jar](https://www.yuque.com/attachments/yuque/0/2024/jar/40555337/1718590925178-47c9a98e-f093-4b5f-8806-1b912f61d74d.jar?_lake_card=%7B%22src%22%3A%22https%3A%2F%2Fwww.yuque.com%2Fattachments%2Fyuque%2F0%2F2024%2Fjar%2F40555337%2F1718590925178-47c9a98e-f093-4b5f-8806-1b912f61d74d.jar%22%2C%22name%22%3A%22spring-context-4.3.3.RELEASE.jar%22%2C%22size%22%3A1134792%2C%22ext%22%3A%22jar%22%2C%22source%22%3A%22%22%2C%22status%22%3A%22done%22%2C%22download%22%3Atrue%2C%22taskId%22%3A%22u07ea2a68-cd0a-4ff3-ad90-6e11a064a3c%22%2C%22taskType%22%3A%22upload%22%2C%22type%22%3A%22%22%2C%22__spacing%22%3A%22both%22%2C%22mode%22%3A%22title%22%2C%22id%22%3A%22euRK2%22%2C%22margin%22%3A%7B%22top%22%3Atrue%2C%22bottom%22%3Atrue%7D%2C%22card%22%3A%22file%22%7D)[spring-core-4.3.3.RELEASE.jar](https://www.yuque.com/attachments/yuque/0/2024/jar/40555337/1718590925576-fb260ae5-3200-4062-b3db-6b89f6810b80.jar?_lake_card=%7B%22src%22%3A%22https%3A%2F%2Fwww.yuque.com%2Fattachments%2Fyuque%2F0%2F2024%2Fjar%2F40555337%2F1718590925576-fb260ae5-3200-4062-b3db-6b89f6810b80.jar%22%2C%22name%22%3A%22spring-core-4.3.3.RELEASE.jar%22%2C%22size%22%3A1110374%2C%22ext%22%3A%22jar%22%2C%22source%22%3A%22%22%2C%22status%22%3A%22done%22%2C%22download%22%3Atrue%2C%22taskId%22%3A%22ua1c07cee-ae24-44b6-b42b-91fba710b9f%22%2C%22taskType%22%3A%22upload%22%2C%22type%22%3A%22%22%2C%22__spacing%22%3A%22both%22%2C%22mode%22%3A%22title%22%2C%22id%22%3A%22G7Ij5%22%2C%22margin%22%3A%7B%22top%22%3Atrue%2C%22bottom%22%3Atrue%7D%2C%22card%22%3A%22file%22%7D)[spring-expression-4.3.3.RELEASE.jar](https://www.yuque.com/attachments/yuque/0/2024/jar/40555337/1718590924594-5d85f231-6bc0-4c2e-9115-fcb0fee3975b.jar?_lake_card=%7B%22src%22%3A%22https%3A%2F%2Fwww.yuque.com%2Fattachments%2Fyuque%2F0%2F2024%2Fjar%2F40555337%2F1718590924594-5d85f231-6bc0-4c2e-9115-fcb0fee3975b.jar%22%2C%22name%22%3A%22spring-expression-4.3.3.RELEASE.jar%22%2C%22size%22%3A263744%2C%22ext%22%3A%22jar%22%2C%22source%22%3A%22%22%2C%22status%22%3A%22done%22%2C%22download%22%3Atrue%2C%22taskId%22%3A%22u012c6e96-ca6b-4e53-8e24-7a5eed89d08%22%2C%22taskType%22%3A%22upload%22%2C%22type%22%3A%22%22%2C%22__spacing%22%3A%22both%22%2C%22mode%22%3A%22title%22%2C%22id%22%3A%22fi6Rm%22%2C%22margin%22%3A%7B%22top%22%3Atrue%2C%22bottom%22%3Atrue%7D%2C%22card%22%3A%22file%22%7D)[aopalliance-1.0.jar](https://www.yuque.com/attachments/yuque/0/2024/jar/40555337/1718590924205-af7643dd-c3f6-4941-aee6-d6ee80d086c8.jar?_lake_card=%7B%22src%22%3A%22https%3A%2F%2Fwww.yuque.com%2Fattachments%2Fyuque%2F0%2F2024%2Fjar%2F40555337%2F1718590924205-af7643dd-c3f6-4941-aee6-d6ee80d086c8.jar%22%2C%22name%22%3A%22aopalliance-1.0.jar%22%2C%22size%22%3A4467%2C%22ext%22%3A%22jar%22%2C%22source%22%3A%22%22%2C%22status%22%3A%22done%22%2C%22download%22%3Atrue%2C%22taskId%22%3A%22u40c4587b-863d-4521-be58-787390e906f%22%2C%22taskType%22%3A%22upload%22%2C%22type%22%3A%22%22%2C%22__spacing%22%3A%22both%22%2C%22mode%22%3A%22title%22%2C%22id%22%3A%22ty3zz%22%2C%22margin%22%3A%7B%22top%22%3Atrue%2C%22bottom%22%3Atrue%7D%2C%22card%22%3A%22file%22%7D)[aspectjweaver-1.8.9.jar](https://www.yuque.com/attachments/yuque/0/2024/jar/40555337/1718590924519-52982eab-0426-409d-a5db-9a086b5f305d.jar?_lake_card=%7B%22src%22%3A%22https%3A%2F%2Fwww.yuque.com%2Fattachments%2Fyuque%2F0%2F2024%2Fjar%2F40555337%2F1718590924519-52982eab-0426-409d-a5db-9a086b5f305d.jar%22%2C%22name%22%3A%22aspectjweaver-1.8.9.jar%22%2C%22size%22%3A1864922%2C%22ext%22%3A%22jar%22%2C%22source%22%3A%22%22%2C%22status%22%3A%22done%22%2C%22download%22%3Atrue%2C%22taskId%22%3A%22u5aa1dac0-1249-453e-98c1-0e3a7064c60%22%2C%22taskType%22%3A%22upload%22%2C%22type%22%3A%22%22%2C%22__spacing%22%3A%22both%22%2C%22mode%22%3A%22title%22%2C%22id%22%3A%22KBEji%22%2C%22margin%22%3A%7B%22top%22%3Atrue%2C%22bottom%22%3Atrue%7D%2C%22card%22%3A%22file%22%7D)[commons-logging-1.2.jar](https://www.yuque.com/attachments/yuque/0/2024/jar/40555337/1718590924858-b35a3632-9cd8-47d9-87dd-23252547d706.jar?_lake_card=%7B%22src%22%3A%22https%3A%2F%2Fwww.yuque.com%2Fattachments%2Fyuque%2F0%2F2024%2Fjar%2F40555337%2F1718590924858-b35a3632-9cd8-47d9-87dd-23252547d706.jar%22%2C%22name%22%3A%22commons-logging-1.2.jar%22%2C%22size%22%3A61829%2C%22ext%22%3A%22jar%22%2C%22source%22%3A%22%22%2C%22status%22%3A%22done%22%2C%22download%22%3Atrue%2C%22taskId%22%3A%22u20f05bb0-670e-409d-bf75-818fbb2ed3c%22%2C%22taskType%22%3A%22upload%22%2C%22type%22%3A%22%22%2C%22__spacing%22%3A%22both%22%2C%22mode%22%3A%22title%22%2C%22id%22%3A%22dw4Qu%22%2C%22margin%22%3A%7B%22top%22%3Atrue%2C%22bottom%22%3Atrue%7D%2C%22card%22%3A%22file%22%7D)[spring-aop-4.3.3.RELEASE.jar](https://www.yuque.com/attachments/yuque/0/2024/jar/40555337/1718590925878-8cd07cfe-f919-4e35-b3ef-03de969d3c99.jar?_lake_card=%7B%22src%22%3A%22https%3A%2F%2Fwww.yuque.com%2Fattachments%2Fyuque%2F0%2F2024%2Fjar%2F40555337%2F1718590925878-8cd07cfe-f919-4e35-b3ef-03de969d3c99.jar%22%2C%22name%22%3A%22spring-aop-4.3.3.RELEASE.jar%22%2C%22size%22%3A379939%2C%22ext%22%3A%22jar%22%2C%22source%22%3A%22%22%2C%22status%22%3A%22done%22%2C%22download%22%3Atrue%2C%22taskId%22%3A%22u198fc08c-ffb9-43b5-9056-ee8f9069be4%22%2C%22taskType%22%3A%22upload%22%2C%22type%22%3A%22%22%2C%22__spacing%22%3A%22both%22%2C%22mode%22%3A%22title%22%2C%22id%22%3A%22EA7cv%22%2C%22margin%22%3A%7B%22top%22%3Atrue%2C%22bottom%22%3Atrue%7D%2C%22card%22%3A%22file%22%7D)[spring-aspects-4.3.3.RELEASE.jar](https://www.yuque.com/attachments/yuque/0/2024/jar/40555337/1718590925347-cc0bb564-5ff4-43d0-aa40-573130a0d90e.jar?_lake_card=%7B%22src%22%3A%22https%3A%2F%2Fwww.yuque.com%2Fattachments%2Fyuque%2F0%2F2024%2Fjar%2F40555337%2F1718590925347-cc0bb564-5ff4-43d0-aa40-573130a0d90e.jar%22%2C%22name%22%3A%22spring-aspects-4.3.3.RELEASE.jar%22%2C%22size%22%3A58720%2C%22ext%22%3A%22jar%22%2C%22source%22%3A%22%22%2C%22status%22%3A%22done%22%2C%22download%22%3Atrue%2C%22taskId%22%3A%22ud1d25041-9083-483f-88c0-da8d7405781%22%2C%22taskType%22%3A%22upload%22%2C%22type%22%3A%22%22%2C%22__spacing%22%3A%22both%22%2C%22mode%22%3A%22title%22%2C%22id%22%3A%22Shx5l%22%2C%22margin%22%3A%7B%22top%22%3Atrue%2C%22bottom%22%3Atrue%7D%2C%22card%22%3A%22file%22%7D)
@@ -83,28 +83,28 @@ Tomcat版本：9.0.87
 [mybatis-3.4.4.jar](https://www.yuque.com/attachments/yuque/0/2024/jar/40555337/1718594477323-cb52665d-ca9e-42fe-93cf-70f25b2233b9.jar?_lake_card=%7B%22src%22%3A%22https%3A%2F%2Fwww.yuque.com%2Fattachments%2Fyuque%2F0%2F2024%2Fjar%2F40555337%2F1718594477323-cb52665d-ca9e-42fe-93cf-70f25b2233b9.jar%22%2C%22name%22%3A%22mybatis-3.4.4.jar%22%2C%22size%22%3A1601160%2C%22ext%22%3A%22jar%22%2C%22source%22%3A%22%22%2C%22status%22%3A%22done%22%2C%22download%22%3Atrue%2C%22taskId%22%3A%22u333bae06-56ba-4dc9-8838-d29f0405358%22%2C%22taskType%22%3A%22upload%22%2C%22type%22%3A%22%22%2C%22__spacing%22%3A%22both%22%2C%22mode%22%3A%22title%22%2C%22id%22%3A%22ub74a6fcc%22%2C%22margin%22%3A%7B%22top%22%3Atrue%2C%22bottom%22%3Atrue%7D%2C%22card%22%3A%22file%22%7D)[mybatis-spring-1.3.0.jar](https://www.yuque.com/attachments/yuque/0/2024/jar/40555337/1718594475543-63db5732-9c05-421a-8f7b-48aacb5ac4ba.jar?_lake_card=%7B%22src%22%3A%22https%3A%2F%2Fwww.yuque.com%2Fattachments%2Fyuque%2F0%2F2024%2Fjar%2F40555337%2F1718594475543-63db5732-9c05-421a-8f7b-48aacb5ac4ba.jar%22%2C%22name%22%3A%22mybatis-spring-1.3.0.jar%22%2C%22size%22%3A53602%2C%22ext%22%3A%22jar%22%2C%22source%22%3A%22%22%2C%22status%22%3A%22done%22%2C%22download%22%3Atrue%2C%22taskId%22%3A%22uf0f590a1-e612-4ee6-9630-2b09f0f312e%22%2C%22taskType%22%3A%22upload%22%2C%22type%22%3A%22%22%2C%22__spacing%22%3A%22both%22%2C%22mode%22%3A%22title%22%2C%22id%22%3A%22u82590f89%22%2C%22margin%22%3A%7B%22top%22%3Atrue%2C%22bottom%22%3Atrue%7D%2C%22card%22%3A%22file%22%7D)[mysql-connector-java-8.0.17.jar](https://www.yuque.com/attachments/yuque/0/2024/jar/40555337/1718594475653-45269632-d96f-40ea-a0f0-9b1c4e7f0190.jar?_lake_card=%7B%22src%22%3A%22https%3A%2F%2Fwww.yuque.com%2Fattachments%2Fyuque%2F0%2F2024%2Fjar%2F40555337%2F1718594475653-45269632-d96f-40ea-a0f0-9b1c4e7f0190.jar%22%2C%22name%22%3A%22mysql-connector-java-8.0.17.jar%22%2C%22size%22%3A2321813%2C%22ext%22%3A%22jar%22%2C%22source%22%3A%22%22%2C%22status%22%3A%22done%22%2C%22download%22%3Atrue%2C%22taskId%22%3A%22u39c64508-a8d7-4d55-8c8c-0e8e2dcb52c%22%2C%22taskType%22%3A%22upload%22%2C%22type%22%3A%22%22%2C%22__spacing%22%3A%22both%22%2C%22mode%22%3A%22title%22%2C%22id%22%3A%22ua4187ec0%22%2C%22margin%22%3A%7B%22top%22%3Atrue%2C%22bottom%22%3Atrue%7D%2C%22card%22%3A%22file%22%7D)[spring-jdbc-4.3.3.RELEASE.jar](https://www.yuque.com/attachments/yuque/0/2024/jar/40555337/1718594476281-cc001dfc-0b3f-4ec8-b04c-125f55369224.jar?_lake_card=%7B%22src%22%3A%22https%3A%2F%2Fwww.yuque.com%2Fattachments%2Fyuque%2F0%2F2024%2Fjar%2F40555337%2F1718594476281-cc001dfc-0b3f-4ec8-b04c-125f55369224.jar%22%2C%22name%22%3A%22spring-jdbc-4.3.3.RELEASE.jar%22%2C%22size%22%3A426453%2C%22ext%22%3A%22jar%22%2C%22source%22%3A%22%22%2C%22status%22%3A%22done%22%2C%22download%22%3Atrue%2C%22taskId%22%3A%22u11f4ceac-8ac2-4012-8247-b551deaa16c%22%2C%22taskType%22%3A%22upload%22%2C%22type%22%3A%22%22%2C%22__spacing%22%3A%22both%22%2C%22mode%22%3A%22title%22%2C%22id%22%3A%22u9be4a61a%22%2C%22margin%22%3A%7B%22top%22%3Atrue%2C%22bottom%22%3Atrue%7D%2C%22card%22%3A%22file%22%7D)[spring-orm-4.3.3.RELEASE.jar](https://www.yuque.com/attachments/yuque/0/2024/jar/40555337/1718594476104-af394a8a-8c6b-443a-9f0c-9f9ef677cf7c.jar?_lake_card=%7B%22src%22%3A%22https%3A%2F%2Fwww.yuque.com%2Fattachments%2Fyuque%2F0%2F2024%2Fjar%2F40555337%2F1718594476104-af394a8a-8c6b-443a-9f0c-9f9ef677cf7c.jar%22%2C%22name%22%3A%22spring-orm-4.3.3.RELEASE.jar%22%2C%22size%22%3A476863%2C%22ext%22%3A%22jar%22%2C%22source%22%3A%22%22%2C%22status%22%3A%22done%22%2C%22download%22%3Atrue%2C%22taskId%22%3A%22u530f4a9b-ed07-4f7e-a2b2-bb916b505e7%22%2C%22taskType%22%3A%22upload%22%2C%22type%22%3A%22%22%2C%22__spacing%22%3A%22both%22%2C%22mode%22%3A%22title%22%2C%22id%22%3A%22u1642534d%22%2C%22margin%22%3A%7B%22top%22%3Atrue%2C%22bottom%22%3Atrue%7D%2C%22card%22%3A%22file%22%7D)[spring-tx-4.3.3.RELEASE.jar](https://www.yuque.com/attachments/yuque/0/2024/jar/40555337/1718594476312-02f5a0d7-0807-4afd-9964-af3f37a8d3af.jar?_lake_card=%7B%22src%22%3A%22https%3A%2F%2Fwww.yuque.com%2Fattachments%2Fyuque%2F0%2F2024%2Fjar%2F40555337%2F1718594476312-02f5a0d7-0807-4afd-9964-af3f37a8d3af.jar%22%2C%22name%22%3A%22spring-tx-4.3.3.RELEASE.jar%22%2C%22size%22%3A266965%2C%22ext%22%3A%22jar%22%2C%22source%22%3A%22%22%2C%22status%22%3A%22done%22%2C%22download%22%3Atrue%2C%22taskId%22%3A%22u789d802f-36da-4141-8273-5581d4d9744%22%2C%22taskType%22%3A%22upload%22%2C%22type%22%3A%22%22%2C%22__spacing%22%3A%22both%22%2C%22mode%22%3A%22title%22%2C%22id%22%3A%22uc931939e%22%2C%22margin%22%3A%7B%22top%22%3Atrue%2C%22bottom%22%3Atrue%7D%2C%22card%22%3A%22file%22%7D)[druid-1.2.8.jar](https://www.yuque.com/attachments/yuque/0/2024/jar/40555337/1718594479706-1da58a4a-6f6a-4acf-9cb9-0006607295d3.jar?_lake_card=%7B%22src%22%3A%22https%3A%2F%2Fwww.yuque.com%2Fattachments%2Fyuque%2F0%2F2024%2Fjar%2F40555337%2F1718594479706-1da58a4a-6f6a-4acf-9cb9-0006607295d3.jar%22%2C%22name%22%3A%22druid-1.2.8.jar%22%2C%22size%22%3A3702020%2C%22ext%22%3A%22jar%22%2C%22source%22%3A%22%22%2C%22status%22%3A%22done%22%2C%22download%22%3Atrue%2C%22taskId%22%3A%22uf16f4570-4a98-4310-b10d-e3bf570c943%22%2C%22taskType%22%3A%22upload%22%2C%22type%22%3A%22%22%2C%22__spacing%22%3A%22both%22%2C%22mode%22%3A%22title%22%2C%22id%22%3A%22u9a9e5edd%22%2C%22margin%22%3A%7B%22top%22%3Atrue%2C%22bottom%22%3Atrue%7D%2C%22card%22%3A%22file%22%7D)
 ### 将所需的依赖文件导入项目
 **选择全部依赖并标记**
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/398faac13caaa4807f3313b596847caa.png)
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/576ab039be40b82262f8bc1895003122.png)
+![image.png](/images/image_png_2edb5bcfaeba.png)
+![image.png](/images/image_png_8136c96f4f66.png)
 ## 准备数据库配置
 **数据库**：mysql
 **数据库管理软件**：Navicat Premium 16
 **数据库名**：schooldb
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/f13fae6f9889f514447a042ea327aee2.png)
+![image.png](/images/image_png_965ca89b9534.png)
 **表名**：sys_users
 **字段**：
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/5300dac9520c5eeac699ec22c6ffcabe.png)
+![image.png](/images/image_png_707e9b1d8479.png)
 **最后添加两条测试数据**
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/93d84d948c3fb6c31fa270b51a3a0126.png)
+![image.png](/images/image_png_67ae01633d50.png)
 ## 整合Spring框架和MyBatis框架
 ### 编写Spring配置文件
 **在resources资源目录中创建一个spring配置文件**
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/35eab0750104a212c5a4bd949e01f399.png)
+![image.png](/images/image_png_7bc6e1831afd.png)
 **如下图所示：**
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/817433a4288cdfd89857588de2602fe9.png)
+![image.png](/images/image_png_16068f7b38a6.png)
 **创建一个mysql的属性配置文件**
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/eccae0ecaedfccdb8e3e773654d6fdee.png)
+![image.png](/images/image_png_9c4a7981433c.png)
 **创建mysql.properties**
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/91890047f2895e430088643bd850be2f.png)
+![image.png](/images/image_png_de68284d4582.png)
 **写入数据库配置信息**
 ```properties
 mysql.driver=com.mysql.cj.jdbc.Driver
@@ -113,12 +113,12 @@ mysql.username=root
 mysql.password=123456
 ```
 这里的`schooldb`是数据库名
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/10296a68de9e7a10688c2ea67ce176ea.png)
+![image.png](/images/image_png_6bb4f9ab15d2.png)
 在src下新建包，分别为service，pojo，dao，controller
 例如：
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/7bac982883fcfd33be9b4e19b2341d50.png)
+![image.png](/images/image_png_e86647abe31f.png)
 **在resources目录下创建一个mappers目录用来存放映射文件**
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/6b031e92e5f1b46ce86f82435e219c9b.png)
+![image.png](/images/image_png_18502556f6e3.png)
 在applicationContext下写入以下内容
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -205,13 +205,13 @@ mysql.password=123456
 </beans>
 ```
 注意：这里报错是因为还没有在mappers目录下添加mapper映射文件
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/5f7ba370332a83e5f02886ede416c459.png)
+![image.png](/images/image_png_fa34e3d03cae.png)
 ## 整合Spring MVC框架
 ### 编写Spring MVC配置文件
 在resources目录下创建一个springmvc-config.xml的配置文件
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/b7a73184771fdb5161262a6f03250901.png)
+![image.png](/images/image_png_b9270fd5f6e3.png)
 如下图
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/b3c660c42a58df0b56c5217eb8a9c652.png)
+![image.png](/images/image_png_a9835c6cfcd0.png)
 在springmvc-config文件中写入下面的内容：
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -280,7 +280,7 @@ mysql.password=123456
 
 ```
 为了方便视图管理，这里在web/pages下存放视图，创建一个pages,如下图
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/02fb8a30af158275086d65c4a02184df.png)
+![image.png](/images/image_png_a8c846f2e7ac.png)
 # 测试
 ## 编写实体类
 在pojo包下创建一个实体类User
@@ -386,7 +386,7 @@ public interface UserDao {
 ```
 ## 编写mapper映射
 在mappers文件夹下新建一个UserMapper.xml映射文件
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/a1ab61bef31ae8fa9478b34d0a6b2d66.png)
+![image.png](/images/image_png_6c33cb2858a6.png)
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
@@ -496,5 +496,5 @@ public class UserController {
 ```
 ## 访问
 启动Tomcat并访问[http://localhost:8080/Java_ssm_Web_exploded/user/query](http://localhost:8080/Java_ssm_Web_exploded/user/query)
-![image.png](https://i-blog.csdnimg.cn/blog_migrate/57b95420a8c2cc2b0c332ae74f5dd9e5.png)
+![image.png](/images/image_png_b2c1281cc9a1.png)
 
