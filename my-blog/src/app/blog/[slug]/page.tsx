@@ -147,7 +147,7 @@ export async function generateMetadata({ params }: PageProps) {
       title: post.title,
       description: post.description,
       keywords: post.tags,
-      authors: [{ name: '天润' }],
+      authors: [{ name: 'Niutr' }],
       openGraph: {
         title: post.title,
         description: post.description,

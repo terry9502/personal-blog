@@ -80,14 +80,14 @@ export interface RssConfig {
 }
 
 export const defaultRssConfig: RssConfig = {
-  title: '天润的个人博客',
+  title: 'Niutr\'s Blog',
   description: '软件工程专业学生的技术博客，分享学习历程、项目经验和生活思考',
   siteUrl: 'https://niutr.cn',
   feedUrl: 'https://niutr.cn/rss.xml',
   author: {
-    name: '天润',
-    email: 'your@email.com'
+    name: 'Niutr',
+    email: '1958577075@qq.com'
   },
   language: 'zh-CN',
-  copyright: `© ${new Date().getFullYear()} 天润的个人博客`
+  copyright: `© ${new Date().getFullYear()} Niutr's Blog`
 }

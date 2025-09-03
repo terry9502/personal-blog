@@ -4,7 +4,7 @@ import { ArrowLeft, Home, BookOpen, User, Search, Calendar, Tag, ExternalLink } 
 
 export const metadata = {
   title: '站点地图',
-  description: '天润的个人博客完整站点地图，包含所有页面和文章链接'
+  description: 'Niutr\'s Blog完整站点地图，包含所有页面和文章链接'
 }
 
 export default function SitemapPage() {

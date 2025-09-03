@@ -11,25 +11,25 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: {
-    default: '天润的个人博客',
-    template: '%s | 天润的个人博客'
+    default: 'Niutr\'s Blog',
+    template: '%s | Niutr\'s Blog'
   },
   description: '软件工程专业学生的技术博客，分享学习历程、项目经验和生活思考',
   keywords: ['博客', '技术', '软件工程', 'Next.js', 'React', '编程', 'MapReduce', 'Hadoop', '分布式计算'],
-  authors: [{ name: '天润' }],
-  creator: '天润',
+  authors: [{ name: 'Niutr' }],
+  creator: 'Niutr',
   metadataBase: new URL('https://niutr.cn'),
   openGraph: {
     type: 'website',
     locale: 'zh_CN',
     url: 'https://niutr.cn',
-    title: '天润的个人博客',
+    title: 'Niutr\'s Blog',
     description: '软件工程专业学生的技术博客，分享学习历程、项目经验和生活思考',
-    siteName: '天润的个人博客',
+    siteName: 'Niutr\'s Blog',
   },
   twitter: {
     card: 'summary_large_image',
-    title: '天润的个人博客',
+    title: 'Niutr\'s Blog',
     description: '软件工程专业学生的技术博客',
   },
   robots: {
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
       'application/rss+xml': [
         {
           url: 'https://niutr.cn/rss.xml',
-          title: '天润的个人博客 RSS Feed'
+          title: 'Niutr\'s Blog RSS Feed'
         }
       ]
     }
@@ -75,14 +75,14 @@ export default function RootLayout({
         <link 
           rel="alternate" 
           type="application/rss+xml" 
-          title="天润的个人博客 RSS Feed" 
+          title="Niutr's Blog RSS Feed" 
           href="https://niutr.cn/rss.xml" 
         />
         {/* 额外的RSS格式支持 */}
         <link 
           rel="alternate" 
           type="application/atom+xml" 
-          title="天润的个人博客 Atom Feed" 
+          title="Niutr's Blog Atom Feed" 
           href="https://niutr.cn/rss.xml" 
         />
         {/* Feed图标 */}

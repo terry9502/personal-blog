@@ -6,7 +6,7 @@ export default function AboutPage() {
       <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-8 transition-colors">
         <div className="text-center mb-12">
           <div className="w-32 h-32 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mx-auto mb-6 flex items-center justify-center">
-            <span className="text-white text-4xl font-bold">天润</span>
+            <span className="text-white text-4xl font-bold">N</span>
           </div>
           <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">关于我</h1>
           <p className="text-xl text-slate-600 dark:text-slate-300">
@@ -18,7 +18,7 @@ export default function AboutPage() {
           <section>
             <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-4">👋 你好</h2>
             <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-              我是一名软件工程专业的学生，对编程和技术充满热情。我喜欢探索新技术，
+              我是 Niutr，一名软件工程专业的学生，对编程和技术充满热情。我喜欢探索新技术，  {/* ✅ 修改 */}
               解决复杂问题，并通过代码创造有价值的产品。这个博客是我记录学习历程、
               分享技术心得和展示项目成果的地方。
             </p>

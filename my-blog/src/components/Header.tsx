@@ -13,9 +13,9 @@ export default function Header() {
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2 font-bold text-xl">
             <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white text-sm">我</span>
+              <span className="text-white text-sm">N</span>
             </div>
-            <span className="text-slate-900 dark:text-white">的博客</span>
+            <span className="text-slate-900 dark:text-white">Niutr's Blog</span>
           </Link>
           
           {/* 桌面端导航 */}
@@ -76,7 +76,7 @@ export default function Header() {
           <div className="hidden md:flex items-center space-x-4">
             <ThemeToggle />
             <a 
-              href="https://github.com" 
+              href="https://github.com/terry9502" 
               target="_blank" 
               rel="noopener noreferrer"
               className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
@@ -84,7 +84,7 @@ export default function Header() {
               <Github size={20} />
             </a>
             <a 
-              href="mailto:your@email.com" 
+              href="mailto:1958577075@qq.com" 
               className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
             >
               <Mail size={20} />
