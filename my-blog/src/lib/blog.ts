@@ -1,3 +1,4 @@
+// src/lib/blog.ts - 支持置顶功能版本
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
@@ -48,6 +49,9 @@ export interface PostData {
     time: number
     words: number
   }
+  // 新增置顶字段
+  pinned?: boolean
+  pinnedOrder?: number // 置顶文章的排序，数字越小越靠前
 }
 
 export function getAllPosts(): PostData[] {
@@ -63,7 +67,64 @@ export function getAllPosts(): PostData[] {
       return getPostBySlug(slug)
     })
 
-  return allPosts.sort((post1, post2) => (post1.date > post2.date ? -1 : 1))
+  // 新的排序逻辑：置顶文章优先，然后按日期排序
+  return allPosts.sort((post1, post2) => {
+    // 如果两篇文章都是置顶文章，按 pinnedOrder 排序
+    if (post1.pinned && post2.pinned) {
+      const order1 = post1.pinnedOrder || 0
+      const order2 = post2.pinnedOrder || 0
+      if (order1 !== order2) {
+        return order1 - order2 // 数字越小越靠前
+      }
+      // 如果 pinnedOrder 相同，按日期排序
+      return post1.date > post2.date ? -1 : 1
+    }
+    
+    // 如果只有一篇是置顶文章，置顶文章排在前面
+    if (post1.pinned && !post2.pinned) return -1
+    if (!post1.pinned && post2.pinned) return 1
+    
+    // 如果都不是置顶文章，按日期排序
+    return post1.date > post2.date ? -1 : 1
+  })
+}
+
+// 获取置顶文章
+export function getPinnedPosts(): PostData[] {
+  const allPosts = getAllPosts()
+  return allPosts.filter(post => post.pinned)
+}
+
+// 获取非置顶文章
+export function getRegularPosts(): PostData[] {
+  const allPosts = getAllPosts()
+  return allPosts.filter(post => !post.pinned)
+}
+
+// 分页获取文章（置顶文章会在第一页优先显示）
+export function getPostsWithPagination(page: number = 1, postsPerPage: number = 10): {
+  posts: PostData[]
+  totalPages: number
+  currentPage: number
+  hasNextPage: boolean
+  hasPrevPage: boolean
+} {
+  const allPosts = getAllPosts()
+  const totalPosts = allPosts.length
+  const totalPages = Math.ceil(totalPosts / postsPerPage)
+  
+  const startIndex = (page - 1) * postsPerPage
+  const endIndex = startIndex + postsPerPage
+  
+  const posts = allPosts.slice(startIndex, endIndex)
+  
+  return {
+    posts,
+    totalPages,
+    currentPage: page,
+    hasNextPage: page < totalPages,
+    hasPrevPage: page > 1
+  }
 }
 
 export function getPostBySlug(slug: string): PostData {
@@ -82,6 +143,9 @@ export function getPostBySlug(slug: string): PostData {
     date: data.date || '',
     description: data.description || '',
     tags: data.tags || [],
+    // 处理置顶相关字段
+    pinned: data.pinned === true,
+    pinnedOrder: typeof data.pinnedOrder === 'number' ? data.pinnedOrder : 0,
   }
 }
 
@@ -97,7 +161,7 @@ export function getPostSlugs(): string[] {
 }
 
 export function getPostsByTag(tag: string): PostData[] {
-  const allPosts = getAllPosts()
+  const allPosts = getAllPosts() // 已经包含置顶排序逻辑
   return allPosts.filter((post) => post.tags.includes(tag))
 }
 
@@ -110,4 +174,10 @@ export function getAllTags(): string[] {
   })
   
   return Array.from(tags)
+}
+
+// 获取指定标签的置顶文章
+export function getTagPosts(tag: string): PostData[] {
+  const allPosts = getAllPosts() // 已经包含置顶排序
+  return allPosts.filter((post) => post.tags.includes(tag))
 }
