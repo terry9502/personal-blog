@@ -12,8 +12,12 @@ export default function Header() {
       <nav className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2 font-bold text-xl">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white text-sm">N</span>
+            <div className="w-8 h-8 rounded-lg overflow-hidden">
+              <img 
+                src="/favicon.svg" 
+                alt="Niutr's Blog" 
+                className="w-full h-full object-cover"
+              />
             </div>
             <span className="text-slate-900 dark:text-white">Niutr's Blog</span>
           </Link>

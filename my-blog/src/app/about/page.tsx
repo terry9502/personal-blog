@@ -5,8 +5,12 @@ export default function AboutPage() {
     <div className="max-w-3xl mx-auto">
       <div className="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-8 transition-colors">
         <div className="text-center mb-12">
-          <div className="w-32 h-32 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full mx-auto mb-6 flex items-center justify-center">
-            <span className="text-white text-4xl font-bold">N</span>
+          <div className="w-32 h-32 rounded-full mx-auto mb-6 overflow-hidden">
+            <img 
+              src="/avatar.jpg" 
+              alt="Niutr" 
+              className="w-full h-full object-cover"
+            />
           </div>
           <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">关于我</h1>
           <p className="text-xl text-slate-600 dark:text-slate-300">
