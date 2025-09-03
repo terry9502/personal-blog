@@ -49,101 +49,105 @@ export default function HomePage() {
 
       {/* 热门标签 */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-6 flex items-center">
-          <Tag className="mr-2 text-purple-600 dark:text-purple-400" size={24} />
-          热门标签
-        </h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-semibold text-slate-900 dark:text-white flex items-center">
+            <Tag className="mr-2 text-purple-600 dark:text-purple-400" size={24} />
+            热门标签
+          </h2>
+          <Link 
+            href="/tags" 
+            className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors flex items-center"
+          >
+            查看所有标签
+            <ArrowRight className="ml-1" size={14} />
+          </Link>
+        </div>
         <div className="flex flex-wrap gap-3">
-          {popularTags.map(([tag, count]) => {
-            const tagPosts = allPosts.filter(post => post.tags.includes(tag))
-            return (
-              <Link
-                key={tag}
-                href={`/blog?tag=${encodeURIComponent(tag)}`}
-                className="group inline-flex items-center px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-md transition-all"
-              >
-                <span className="text-slate-700 dark:text-slate-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                  {tag}
-                </span>
-                <span className="ml-2 text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-full group-hover:bg-blue-100 dark:group-hover:bg-blue-900 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                  {count}
-                </span>
-              </Link>
-            )
-          })}
+          {popularTags.map(([tag, count]) => (
+            <Link
+              key={tag}
+              href={`/blog?tag=${encodeURIComponent(tag)}`}
+              className="group inline-flex items-center px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-full hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-md transition-all"
+            >
+              <Tag className="mr-2 text-slate-600 dark:text-slate-300 group-hover:text-blue-600 dark:group-hover:text-blue-400" size={16} />
+              <span className="font-medium text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                {tag}
+              </span>
+              <span className="ml-2 text-xs bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-2 py-1 rounded-full group-hover:bg-blue-100 dark:group-hover:bg-blue-900">
+                {count}
+              </span>
+            </Link>
+          ))}
         </div>
       </section>
 
-      {/* 最新文章列表 */}
+      {/* 最新文章 */}
       <section className="mb-12">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl font-semibold text-slate-900 dark:text-white flex items-center">
-            <TrendingUp className="mr-2 text-blue-600 dark:text-blue-400" size={24} />
+            <TrendingUp className="mr-2 text-green-600 dark:text-green-400" size={24} />
             最新文章
           </h2>
           <Link 
             href="/blog" 
-            className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+            className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors flex items-center"
           >
-            查看全部
-            <ArrowRight className="ml-1" size={16} />
+            查看所有文章
+            <ArrowRight className="ml-1" size={14} />
           </Link>
         </div>
-
-        {/* 改为统一的2列网格，不让第一篇文章跨列 */}
-        <div className="grid gap-6 md:grid-cols-2">
-          {posts.length > 0 ? posts.map((post, index) => (
-            <article 
-              key={post.slug} 
-              className="group bg-white dark:bg-slate-800 rounded-lg shadow-sm hover:shadow-lg transition-all duration-300 p-6 border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500"
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {posts.length > 0 ? posts.map((post) => (
+            <article
+              key={post.slug}
+              className="group bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md hover:border-blue-300 dark:hover:border-blue-500 transition-all overflow-hidden"
             >
-              <div className="flex flex-col h-full">
-                <div className="flex-1">
-                  <Link href={`/blog/${post.slug}`}>
-                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-3 line-clamp-2">
-                      {post.title}
-                    </h3>
-                  </Link>
+              <div className="p-6">
+                {/* 文章标题 - 可点击跳转到文章 */}
+                <Link href={`/blog/${post.slug}`} className="block mb-4">
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
+                    {post.title}
+                  </h3>
                   
-                  <p className="text-sm text-slate-600 dark:text-slate-300 line-clamp-2 mb-4">
+                  <p className="text-slate-600 dark:text-slate-300 text-sm mb-4 line-clamp-3">
                     {post.description}
                   </p>
-                </div>
-
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
-                    <span className="flex items-center">
-                      <Calendar size={14} className="mr-1" />
-                      {new Date(post.date).toLocaleDateString('zh-CN')}
-                    </span>
-                    <span className="flex items-center">
-                      <Clock size={14} className="mr-1" />
-                      {post.readingTime.text}
-                    </span>
-                  </div>
                   
-                  <div className="flex flex-wrap gap-2">
-                    {post.tags.slice(0, 3).map(tag => (
-                      <Link
-                        key={tag}
-                        href={`/blog?tag=${encodeURIComponent(tag)}`}
-                        className="inline-flex items-center px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs rounded-full hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                      >
-                        <Tag size={10} className="mr-1" />
-                        {tag}
-                      </Link>
-                    ))}
-                    {post.tags.length > 3 && (
-                      <span className="text-xs text-slate-500 dark:text-slate-400 px-2 py-1">
-                        +{post.tags.length - 3} 更多
-                      </span>
-                    )}
+                  <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 mb-4">
+                    <div className="flex items-center">
+                      <Calendar size={12} className="mr-1" />
+                      {new Date(post.date).toLocaleDateString('zh-CN')}
+                    </div>
+                    <div className="flex items-center">
+                      <Clock size={12} className="mr-1" />
+                      {post.readingTime.text}
+                    </div>
                   </div>
+                </Link>
+                
+                {/* 标签 - 独立的链接区域 */}
+                <div className="flex flex-wrap gap-1">
+                  {post.tags.slice(0, 3).map((tag) => (
+                    <Link
+                      key={tag}
+                      href={`/blog?tag=${encodeURIComponent(tag)}`}
+                      className="inline-flex items-center px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs rounded-full hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                    >
+                      <Tag size={10} className="mr-1" />
+                      {tag}
+                    </Link>
+                  ))}
+                  {post.tags.length > 3 && (
+                    <span className="text-xs text-slate-500 dark:text-slate-400 px-2 py-1">
+                      +{post.tags.length - 3} 更多
+                    </span>
+                  )}
                 </div>
               </div>
             </article>
           )) : (
-            <div className="md:col-span-2 text-center py-12">
+            <div className="md:col-span-2 lg:col-span-3 text-center py-12">
               <p className="text-slate-500 dark:text-slate-400">暂无文章，开始创作第一篇吧！</p>
               <Link 
                 href="/editor" 
@@ -173,6 +177,18 @@ export default function HomePage() {
           </Link>
           
           <Link 
+            href="/tags" 
+            className="group text-center p-6 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-purple-300 dark:hover:border-purple-500 hover:shadow-md transition-all"
+          >
+            <Tag className="mx-auto mb-4 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform" size={32} />
+            <h3 className="font-semibold text-slate-900 dark:text-white mb-2">技术标签</h3>
+            <p className="text-slate-600 dark:text-slate-300 text-sm">按标签分类浏览相关内容</p>
+            <span className="inline-block mt-3 text-purple-600 dark:text-purple-400 text-sm">
+              {Object.keys(tagCounts).length} 个标签 →
+            </span>
+          </Link>
+          
+          <Link 
             href="/search" 
             className="group text-center p-6 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-green-300 dark:hover:border-green-500 hover:shadow-md transition-all"
           >
@@ -183,18 +199,6 @@ export default function HomePage() {
             <p className="text-slate-600 dark:text-slate-300 text-sm">快速找到你感兴趣的内容</p>
             <span className="inline-block mt-3 text-green-600 dark:text-green-400 text-sm">
               立即搜索 →
-            </span>
-          </Link>
-          
-          <Link 
-            href="/about" 
-            className="group text-center p-6 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-purple-300 dark:hover:border-purple-500 hover:shadow-md transition-all"
-          >
-            <User className="mx-auto mb-4 text-purple-600 dark:text-purple-400 group-hover:scale-110 transition-transform" size={32} />
-            <h3 className="font-semibold text-slate-900 dark:text-white mb-2">关于我</h3>
-            <p className="text-slate-600 dark:text-slate-300 text-sm">了解我的学习经历和技术背景</p>
-            <span className="inline-block mt-3 text-purple-600 dark:text-purple-400 text-sm">
-              了解更多 →
             </span>
           </Link>
         </div>

@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import { Home, BookOpen, User, Github, Mail, Search, Menu, X, Archive, Edit } from 'lucide-react'
+import { Home, BookOpen, User, Github, Mail, Search, Menu, X, Archive, Edit, Tag } from 'lucide-react'
 import ThemeToggle from './ThemeToggle'
 import { useState } from 'react'
 
@@ -35,13 +35,20 @@ export default function Header() {
               <span>博客</span>
             </Link>
             <Link 
+              href="/tags" 
+              className="flex items-center space-x-1 text-slate-700 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+            >
+              <Tag size={18} />
+              <span>标签</span>
+            </Link>
+            <Link 
               href="/archive" 
               className="flex items-center space-x-1 text-slate-700 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
             >
               <Archive size={18} />
               <span>归档</span>
             </Link>
-            {/* 新增编辑器链接 */}
+            {/* 编辑器链接 */}
             <Link 
               href="/editor" 
               className="flex items-center space-x-1 text-slate-700 dark:text-slate-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
@@ -117,6 +124,14 @@ export default function Header() {
                 <span>博客</span>
               </Link>
               <Link 
+                href="/tags" 
+                className="flex items-center space-x-2 text-slate-700 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Tag size={18} />
+                <span>标签</span>
+              </Link>
+              <Link 
                 href="/archive" 
                 className="flex items-center space-x-2 text-slate-700 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -124,7 +139,7 @@ export default function Header() {
                 <Archive size={18} />
                 <span>归档</span>
               </Link>
-              {/* 新增移动端编辑器链接 */}
+              {/* 移动端编辑器链接 */}
               <Link 
                 href="/editor" 
                 className="flex items-center space-x-2 text-slate-700 dark:text-slate-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
@@ -149,7 +164,9 @@ export default function Header() {
                 <Search size={18} />
                 <span>搜索</span>
               </Link>
-              <div className="flex items-center space-x-4 pt-2 border-t border-slate-200 dark:border-slate-700">
+              
+              {/* 移动端社交链接 */}
+              <div className="flex items-center space-x-4 pt-4 border-t border-slate-200 dark:border-slate-700">
                 <a 
                   href="https://github.com" 
                   target="_blank" 
