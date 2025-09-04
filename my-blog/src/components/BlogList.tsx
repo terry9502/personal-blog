@@ -68,12 +68,12 @@ export default function BlogList({ allPosts, allTags, initialSelectedTag = '' }:
       {/* 页面标题和统计 */}
       <div className="text-center">
         <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-4">
-          技术博客
+          博客分享
         </h1>
         <p className="text-lg text-slate-600 dark:text-slate-300 mb-6">
           {selectedTag 
             ? `标签「${selectedTag}」相关文章` 
-            : '分享技术学习历程和项目经验'
+            : '分享学习历程和生活经验'
           }
         </p>
         

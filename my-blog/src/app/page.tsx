@@ -49,7 +49,7 @@ export default function HomePage() {
           欢迎来到我的博客
         </h1>
         <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 mb-6 max-w-2xl mx-auto">
-          软件工程专业学生的技术日志，记录学习历程、分享项目经验
+          记录学习历程、分享生活经验
         </p>
         
         {/* 博客统计信息 */}
