@@ -15,6 +15,10 @@
   box-sizing: border-box;
   padding: 0;
   margin: 0;
+  /* 确保主题切换时的平滑过渡 */
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
 }
 
 html,
@@ -23,7 +27,6 @@ body {
   overflow-x: hidden;
 }
 
-/* 移除有问题的CSS变量背景，改用Tailwind类 */
 body {
   @apply transition-colors duration-200;
 }
@@ -33,7 +36,7 @@ a {
   text-decoration: none;
 }
 
-/* 代码块样式优化 - 针对深色模式进行改进 */
+/* 代码块样式优化 */
 pre {
   position: relative;
   @apply bg-slate-900 dark:bg-slate-800 text-slate-100 rounded-lg p-4 overflow-x-auto;
@@ -48,7 +51,7 @@ pre:hover .copy-button {
   transition: opacity 0.2s;
 }
 
-/* 代码语法高亮颜色 - 深色主题优化 */
+/* 代码语法高亮颜色 */
 pre code {
   @apply text-slate-100;
 }
@@ -70,14 +73,7 @@ code:not(pre code) {
   @apply bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 px-1 py-0.5 rounded text-sm font-mono;
 }
 
-/* 确保主题切换时的平滑过渡 */
-* {
-  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 200ms;
-}
-
-/* 修复可能的滚动条样式 */
+/* 滚动条样式 */
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -93,80 +89,104 @@ code:not(pre code) {
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-slate-400 dark:bg-slate-500;
 }
-/* 表格样式强制修复 */
-.prose table {
-  width: 100% !important;
-  margin: 2rem 0 !important;
-  border-collapse: collapse !important;
-  border: 1px solid #e5e7eb !important;
-  border-radius: 0.5rem !important;
-  overflow: hidden !important;
-}
 
-.prose thead {
-  background-color: #f9fafb !important;
-}
-
-.prose th {
-  padding: 0.75rem 1rem !important;
-  text-align: left !important;
-  font-weight: 600 !important;
-  color: #374151 !important;
-  border: 1px solid #e5e7eb !important;
-  border-bottom: 2px solid #d1d5db !important;
-}
-
-.prose td {
-  padding: 0.75rem 1rem !important;
-  border: 1px solid #e5e7eb !important;
-  color: #1f2937 !important;
-  vertical-align: top !important;
-}
-
-.prose tbody tr:nth-child(even) {
-  background-color: #f9fafb !important;
-}
-
-.prose tbody tr:hover {
-  background-color: #f3f4f6 !important;
-}
-
-/* 深色模式表格样式 */
-.dark .prose table {
-  border-color: #4b5563 !important;
-}
-
-.dark .prose thead {
-  background-color: #1f2937 !important;
-}
-
-.dark .prose th {
-  color: #d1d5db !important;
-  border-color: #4b5563 !important;
-  background-color: #1f2937 !important;
-}
-
-.dark .prose td {
-  color: #e5e7eb !important;
-  border-color: #4b5563 !important;
-}
-
-.dark .prose tbody tr:nth-child(even) {
-  background-color: #111827 !important;
-}
-
-.dark .prose tbody tr:hover {
-  background-color: #1f2937 !important;
-}
-
-/* 确保表格在小屏幕上可滚动 */
-.prose .table-wrapper {
+/* Highlight.js 代码高亮样式 */
+.hljs {
+  display: block;
   overflow-x: auto;
-  margin: 2rem 0;
-  border-radius: 0.5rem;
-  border: 1px solid #e5e7eb;
+  padding: 1rem;
+  color: #abb2bf;
+  background: #282c34;
 }
 
-.dark .prose .table-wrapper {
-  border-color: #4b5563;
+.hljs-comment,
+.hljs-quote {
+  color: #5c6370;
+  font-style: italic;
+}
+
+.hljs-doctag,
+.hljs-keyword,
+.hljs-formula {
+  color: #c678dd;
+}
+
+.hljs-section,
+.hljs-name,
+.hljs-selector-tag,
+.hljs-deletion,
+.hljs-subst {
+  color: #e06c75;
+}
+
+.hljs-literal {
+  color: #56b6c2;
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-addition,
+.hljs-attribute,
+.hljs-meta-string {
+  color: #98c379;
+}
+
+.hljs-built_in,
+.hljs-class .hljs-title {
+  color: #e6c07b;
+}
+
+.hljs-attr,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-type,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-selector-pseudo,
+.hljs-number {
+  color: #d19a66;
+}
+
+.hljs-symbol,
+.hljs-bullet,
+.hljs-link,
+.hljs-meta,
+.hljs-selector-id,
+.hljs-title {
+  color: #61aeee;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+.hljs-link {
+  text-decoration: underline;
+}
+
+/* 表格强制样式 - 确保显示（备用支持，主要样式在 EnhancedMarkdownRenderer 中） */
+table {
+  display: table !important;
+  border-collapse: collapse !important;
+}
+
+thead {
+  display: table-header-group !important;
+}
+
+tbody {
+  display: table-row-group !important;
+}
+
+tr {
+  display: table-row !important;
+}
+
+th,
+td {
+  display: table-cell !important;
 }
