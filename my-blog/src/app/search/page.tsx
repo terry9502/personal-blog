@@ -1,41 +1,31 @@
 'use client'
-import { useState, useEffect } from 'react'
-import { PostData } from '@/lib/blog'
+
+import { useState, useEffect, useMemo } from 'react'
+import { getAllPosts } from '@/lib/blog'
+import { searchPosts, SearchResult, SearchResponse } from '@/lib/clientSearch'
 import Link from 'next/link'
 import { Search, Calendar, Clock, Tag, AlertCircle, TrendingUp } from 'lucide-react'
 
-interface SearchResult extends PostData {
-  score?: number
-  snippet?: string
-  matchInfo?: {
-    titleMatch: boolean
-    descriptionMatch: boolean
-    tagMatch: boolean
-    contentMatch: boolean
-  }
-}
-
-interface SearchResponse {
-  results: SearchResult[]
-  query: string
-  total: number
-  message?: string
-  suggestion?: string
-  error?: string
-}
-
 export default function SearchPage() {
   const [query, setQuery] = useState('')
-  const [results, setResults] = useState<SearchResult[]>([])
+  const [searchResult, setSearchResult] = useState<SearchResponse>({
+    results: [],
+    query: '',
+    total: 0
+  })
   const [loading, setLoading] = useState(false)
-  const [searchInfo, setSearchInfo] = useState<{
-    total: number
-    message?: string
-    suggestion?: string
-    error?: string
-  }>({ total: 0 })
 
-  // 热门搜索关键词（示例）
+  // 在客户端获取所有文章数据
+  const allPosts = useMemo(() => {
+    try {
+      return getAllPosts()
+    } catch (error) {
+      console.error('Failed to load posts:', error)
+      return []
+    }
+  }, [])
+
+  // 热门搜索关键词
   const popularKeywords = [
     'MapReduce', 'Hadoop', 'Next.js', '分布式计算', 
     '前端', '技术', '学习', '编程'
@@ -43,40 +33,37 @@ export default function SearchPage() {
 
   useEffect(() => {
     if (!query.trim()) {
-      setResults([])
-      setSearchInfo({ total: 0 })
+      setSearchResult({
+        results: [],
+        query: '',
+        total: 0
+      })
+      setLoading(false)
       return
     }
 
-    const searchPosts = async () => {
-      setLoading(true)
+    setLoading(true)
+    
+    // 延迟搜索，避免频繁计算
+    const timeoutId = setTimeout(() => {
       try {
-        const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`)
-        const data: SearchResponse = await response.json()
-        
-        setResults(data.results || [])
-        setSearchInfo({
-          total: data.total || 0,
-          message: data.message,
-          suggestion: data.suggestion,
-          error: data.error
-        })
+        const result = searchPosts(allPosts, query)
+        setSearchResult(result)
       } catch (error) {
         console.error('Search failed:', error)
-        setResults([])
-        setSearchInfo({ 
-          total: 0, 
-          error: '搜索服务暂时不可用，请稍后重试' 
+        setSearchResult({
+          results: [],
+          query: query,
+          total: 0,
+          error: '搜索过程中出现错误，请重试'
         })
       } finally {
         setLoading(false)
       }
-    }
+    }, 300)
 
-    // 延迟搜索，避免频繁请求
-    const timeoutId = setTimeout(searchPosts, 300)
     return () => clearTimeout(timeoutId)
-  }, [query])
+  }, [query, allPosts])
 
   // 高亮搜索词
   const highlightText = (text: string, query: string) => {
@@ -84,7 +71,7 @@ export default function SearchPage() {
     
     const parts = text.split(new RegExp(`(${query})`, 'gi'))
     return parts.map((part, index) => 
-      part.toLowerCase() === query.toLowerCase() ? 
+      part.toLowerCase() === query.toLowerCase() ?
         <mark key={index} className="bg-yellow-200 dark:bg-yellow-800 px-1 rounded">{part}</mark> : 
         part
     )
@@ -95,7 +82,7 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto px-4">
       <div className="mb-12">
         <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-6">搜索文章</h1>
         
@@ -140,24 +127,24 @@ export default function SearchPage() {
       {/* 搜索结果信息 */}
       {query && (
         <div className="mb-6">
-          {searchInfo.error ? (
+          {searchResult.error ? (
             <div className="flex items-center p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
               <AlertCircle className="mr-2 text-red-500" size={20} />
-              <p className="text-red-700 dark:text-red-300">{searchInfo.error}</p>
+              <p className="text-red-700 dark:text-red-300">{searchResult.error}</p>
             </div>
-          ) : searchInfo.message ? (
+          ) : searchResult.message ? (
             <div className="flex items-center p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
               <AlertCircle className="mr-2 text-yellow-500" size={20} />
               <div>
-                <p className="text-yellow-700 dark:text-yellow-300">{searchInfo.message}</p>
-                {searchInfo.suggestion && (
-                  <p className="text-sm text-yellow-600 dark:text-yellow-400 mt-1">{searchInfo.suggestion}</p>
+                <p className="text-yellow-700 dark:text-yellow-300">{searchResult.message}</p>
+                {searchResult.suggestion && (
+                  <p className="text-sm text-yellow-600 dark:text-yellow-400 mt-1">{searchResult.suggestion}</p>
                 )}
               </div>
             </div>
           ) : (
             <p className="text-slate-600 dark:text-slate-400">
-              {loading ? '搜索中...' : `找到 ${searchInfo.total} 个结果`}
+              {loading ? '搜索中...' : `找到 ${searchResult.total} 个结果`}
             </p>
           )}
         </div>
@@ -165,7 +152,7 @@ export default function SearchPage() {
 
       {/* 搜索结果列表 */}
       <div className="grid gap-6">
-        {results.map((post) => (
+        {searchResult.results.map((post) => (
           <article 
             key={post.slug} 
             className="group bg-white dark:bg-slate-800 rounded-lg shadow-sm hover:shadow-md transition-all p-6 border border-slate-200 dark:border-slate-700"
@@ -178,7 +165,10 @@ export default function SearchPage() {
             
             {/* 使用搜索摘要或原描述 */}
             <p className="text-slate-600 dark:text-slate-300 mb-4 leading-relaxed">
-              {post.snippet ? highlightText(post.snippet, query) : post.description}
+              {post.snippet ? 
+                highlightText(post.snippet, query) : 
+                post.description
+              }
             </p>
             
             <div className="flex flex-wrap items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
@@ -195,7 +185,7 @@ export default function SearchPage() {
                 {post.tags.slice(0, 3).map((tag) => (
                   <Link
                     key={tag}
-                    href={`/tags/${encodeURIComponent(tag)}`}
+                    href={`/blog?tag=${encodeURIComponent(tag)}`}
                     className="px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-md text-xs hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
                   >
                     {highlightText(tag, query)}
@@ -205,7 +195,7 @@ export default function SearchPage() {
               
               {/* 显示搜索相关度（开发模式） */}
               {process.env.NODE_ENV === 'development' && post.score && (
-                <span className="text-xs text-blue-500">评分: {post.score}</span>
+                <span className="text-xs text-blue-500">评分: {post.score.toFixed(1)}</span>
               )}
             </div>
           </article>
@@ -213,7 +203,7 @@ export default function SearchPage() {
       </div>
 
       {/* 无结果状态 */}
-      {query && !loading && results.length === 0 && !searchInfo.message && !searchInfo.error && (
+      {query && !loading && searchResult.results.length === 0 && !searchResult.message && !searchResult.error && (
         <div className="text-center py-16">
           <div className="text-6xl mb-4">🔍</div>
           <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-2">没有找到相关文章</h2>

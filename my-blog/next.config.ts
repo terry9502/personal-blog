@@ -4,7 +4,15 @@ import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 
 const nextConfig: NextConfig = {
+  // 添加静态导出配置
+  output: 'export',
+  trailingSlash: true,
+  images: {
+    unoptimized: true, // 静态导出需要禁用图片优化
+  },
+  
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
+  
   webpack: (config: any) => {
     config.resolve.fallback = {
       ...config.resolve.fallback,
@@ -14,30 +22,20 @@ const nextConfig: NextConfig = {
     }
     return config
   },
+  
   eslint: {
     // 忽略 ESLint 报错（避免构建失败）
     ignoreDuringBuilds: true,
   },
+  
   typescript: {
     // 忽略 TS 类型检查报错
     ignoreBuildErrors: true,
   },
-    // 生成静态页面以提高SEO
-  output: 'export',
-  trailingSlash: true,
-  generateEtags: false,
-  
-  // 图片优化
-  images: {
-    unoptimized: true,
-    formats: ['image/webp', 'image/avif'],
-  },
-  
-  // 压缩和优化
-  compress: true,
-  poweredByHeader: false,
-  
-  // 自定义headers提高SEO
+
+  // 移除 headers 配置（静态导出不支持）
+  // 如果您之前有类似下面的配置，请删除：
+  /*
   async headers() {
     return [
       {
@@ -47,14 +45,12 @@ const nextConfig: NextConfig = {
             key: 'X-Content-Type-Options',
             value: 'nosniff'
           },
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY'
-          }
+          // ... 其他 headers
         ]
       }
     ]
   }
+  */
 }
 
 const withMDX = createMDX({

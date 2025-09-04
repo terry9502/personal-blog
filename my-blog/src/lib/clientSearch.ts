@@ -1,5 +1,4 @@
-import { getAllPosts } from '@/lib/blog'
-import { NextRequest, NextResponse } from 'next/server'
+import { PostData } from './blog'
 
 // 搜索配置
 const SEARCH_CONFIG = {
@@ -32,7 +31,7 @@ function cleanContent(content: string): string {
 }
 
 // 计算搜索相关度分数
-function calculateRelevanceScore(post: any, query: string): number {
+function calculateRelevanceScore(post: PostData, query: string): number {
   const lowerQuery = query.toLowerCase()
   let score = 0
   
@@ -108,64 +107,79 @@ function generateSnippet(content: string, query: string, maxLength: number = SEA
   return snippet
 }
 
-export async function GET(request: NextRequest) {
-  try {
-    const searchParams = request.nextUrl.searchParams
-    const query = searchParams.get('q')?.trim()
+// 主要的客户端搜索函数
+export interface SearchResult extends PostData {
+  score?: number
+  snippet?: string
+  matchInfo?: {
+    titleMatch: boolean
+    descriptionMatch: boolean
+    tagMatch: boolean
+    contentMatch: boolean
+  }
+}
 
-    if (!query) {
-      return NextResponse.json([])
+export interface SearchResponse {
+  results: SearchResult[]
+  query: string
+  total: number
+  message?: string
+  suggestion?: string
+  error?: string
+}
+
+export function searchPosts(posts: PostData[], query: string): SearchResponse {
+  const trimmedQuery = query.trim()
+
+  if (!trimmedQuery) {
+    return {
+      results: [],
+      query: '',
+      total: 0
     }
+  }
 
-    // 检查最小搜索长度
-    if (query.length < SEARCH_CONFIG.minQueryLength) {
-      return NextResponse.json({
-        results: [],
-        message: `搜索词至少需要 ${SEARCH_CONFIG.minQueryLength} 个字符`,
-        suggestion: '请输入更具体的关键词'
-      })
+  // 检查最小搜索长度
+  if (trimmedQuery.length < SEARCH_CONFIG.minQueryLength) {
+    return {
+      results: [],
+      query: trimmedQuery,
+      total: 0,
+      message: `搜索词至少需要 ${SEARCH_CONFIG.minQueryLength} 个字符`,
+      suggestion: '请输入更具体的关键词'
     }
+  }
 
-    const posts = getAllPosts()
-    const lowerQuery = query.toLowerCase()
-    
-    // 搜索和评分
-    const searchResults = posts
-      .map(post => {
-        const score = calculateRelevanceScore(post, query)
-        
-        if (score === 0) return null
-        
-        return {
-          ...post,
-          score,
-          snippet: generateSnippet(post.content, query),
-          // 添加匹配信息用于调试
-          matchInfo: {
-            titleMatch: post.title.toLowerCase().includes(lowerQuery),
-            descriptionMatch: post.description.toLowerCase().includes(lowerQuery),
-            tagMatch: post.tags.some((tag: string) => tag.toLowerCase().includes(lowerQuery)),
-            contentMatch: cleanContent(post.content).toLowerCase().includes(lowerQuery)
-          }
+  const lowerQuery = trimmedQuery.toLowerCase()
+  
+  // 搜索和评分
+  const searchResults: SearchResult[] = posts
+    .map(post => {
+      const score = calculateRelevanceScore(post, trimmedQuery)
+      
+      if (score === 0) return null
+      
+      return {
+        ...post,
+        score,
+        snippet: generateSnippet(post.content, trimmedQuery),
+        // 添加匹配信息用于调试
+        matchInfo: {
+          titleMatch: post.title.toLowerCase().includes(lowerQuery),
+          descriptionMatch: post.description.toLowerCase().includes(lowerQuery),
+          tagMatch: post.tags.some((tag: string) => tag.toLowerCase().includes(lowerQuery)),
+          contentMatch: cleanContent(post.content).toLowerCase().includes(lowerQuery)
         }
-      })
-      .filter(Boolean)
-      .sort((a: any, b: any) => b.score - a.score)
-      .slice(0, SEARCH_CONFIG.maxResults)
-
-    return NextResponse.json({
-      results: searchResults,
-      query,
-      total: searchResults.length,
-      suggestion: searchResults.length === 0 ? '尝试使用更常见的关键词或检查拼写' : null
+      } as SearchResult
     })
+    .filter((result): result is SearchResult => result !== null)
+    .sort((a, b) => (b.score || 0) - (a.score || 0))
+    .slice(0, SEARCH_CONFIG.maxResults)
 
-  } catch (error) {
-    console.error('搜索错误:', error)
-    return NextResponse.json({ 
-      results: [], 
-      error: '搜索服务暂时不可用',
-      query: ''
-    }, { status: 500 })
+  return {
+    results: searchResults,
+    query: trimmedQuery,
+    total: searchResults.length,
+    suggestion: searchResults.length === 0 ? '尝试使用更常见的关键词或检查拼写' : undefined
   }
 }
