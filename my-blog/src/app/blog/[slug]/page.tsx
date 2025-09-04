@@ -127,27 +127,6 @@ export default async function BlogPostPage({ params }: PageProps) {
               />
             </div>
 
-            {/* 文章底部信息 */}
-            <footer className="border-t border-slate-200 dark:border-slate-700 pt-8">
-              {/* 作者信息 */}
-              <div className="flex items-center space-x-4 mb-8">
-                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">N</span>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-slate-900 dark:text-white">Niutr</h3>
-                  <p className="text-slate-600 dark:text-slate-400 text-sm">
-                    专注前端技术分享，热爱学习新技术
-                  </p>
-                  <Link 
-                    href="/about" 
-                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 text-sm"
-                  >
-                    了解更多 →
-                  </Link>
-                </div>
-              </div>
-            </footer>
           </article>
 
           {/* 相关文章 */}
