@@ -32,25 +32,6 @@ const nextConfig: NextConfig = {
     // 忽略 TS 类型检查报错
     ignoreBuildErrors: true,
   },
-
-  // 移除 headers 配置（静态导出不支持）
-  // 如果您之前有类似下面的配置，请删除：
-  /*
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff'
-          },
-          // ... 其他 headers
-        ]
-      }
-    ]
-  }
-  */
 }
 
 const withMDX = createMDX({
