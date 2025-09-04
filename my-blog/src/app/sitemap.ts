@@ -1,3 +1,4 @@
+export const dynamic = 'force-static'
 import { getAllPosts, getAllTags } from '@/lib/blog'
 import { MetadataRoute } from 'next'
 
