@@ -1,3 +1,5 @@
+export const dynamic = 'force-static'
+export const revalidate = false
 import { getAllPosts } from '@/lib/blog'
 import { generatePostSummary, escapeXml, defaultRssConfig } from '@/lib/rss'
 import { NextResponse } from 'next/server'
