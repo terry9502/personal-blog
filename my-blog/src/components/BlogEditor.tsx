@@ -20,6 +20,10 @@ import {
   Image,
   Hash
 } from 'lucide-react';
+import { unified } from 'unified'
+import remarkParse from 'remark-parse'
+import remarkGfm from 'remark-gfm'
+import remarkHtml from 'remark-html'
 
 interface BlogPost {
   id: string;
@@ -193,17 +197,18 @@ tags: [${tags.map(tag => `'${tag}'`).join(', ')}]
 
   // 简单的Markdown渲染
   const renderMarkdown = (text: string) => {
-    return text
-      .replace(/^### (.*$)/gim, '<h3 class="text-lg font-semibold mt-6 mb-3">$1</h3>')
-      .replace(/^## (.*$)/gim, '<h2 class="text-xl font-semibold mt-8 mb-4">$1</h2>')
-      .replace(/^# (.*$)/gim, '<h1 class="text-2xl font-bold mt-8 mb-4">$1</h1>')
-      .replace(/\*\*(.*?)\*\*/gim, '<strong class="font-semibold">$1</strong>')
-      .replace(/\*(.*?)\*/gim, '<em class="italic">$1</em>')
-      .replace(/`(.*?)`/gim, '<code class="bg-slate-100 dark:bg-slate-800 px-1 py-0.5 rounded text-sm">$1</code>')
-      .replace(/^\> (.*$)/gim, '<blockquote class="border-l-4 border-blue-500 pl-4 italic my-4">$1</blockquote>')
-      .replace(/^- (.*$)/gim, '<li class="ml-4">$1</li>')
-      .replace(/\n\n/g, '</p><p class="mb-4">')
-      .replace(/\n/g, '<br>');
+    try {
+      const result = unified()
+        .use(remarkParse)
+        .use(remarkGfm)  // 这会处理表格
+        .use(remarkHtml)
+        .processSync(text)
+      
+      return result.toString()
+    } catch (error) {
+      // 降级处理
+      return text.replace(/\n/g, '<br>')
+    }
   };
 
   return (
