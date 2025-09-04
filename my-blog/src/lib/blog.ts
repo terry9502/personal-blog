@@ -52,6 +52,12 @@ export interface PostData {
   // 新增置顶字段
   pinned?: boolean
   pinnedOrder?: number // 置顶文章的排序，数字越小越靠前
+  // 新增SEO相关字段
+  coverImage?: string      // 文章封面图片
+  updatedAt?: string       // 文章更新时间
+  excerpt?: string         // 文章摘要
+  canonical?: string       // 规范链接
+  noindex?: boolean        // 是否不被搜索引擎索引
 }
 
 export function getAllPosts(): PostData[] {
@@ -146,6 +152,12 @@ export function getPostBySlug(slug: string): PostData {
     // 处理置顶相关字段
     pinned: data.pinned === true,
     pinnedOrder: typeof data.pinnedOrder === 'number' ? data.pinnedOrder : 0,
+      // 新增字段处理：
+    coverImage: data.coverImage || undefined,
+    updatedAt: data.updatedAt || undefined,
+    excerpt: data.excerpt || undefined,  
+    canonical: data.canonical || undefined,
+    noindex: data.noindex === true,
   }
 }
 

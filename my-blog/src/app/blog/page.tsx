@@ -1,30 +1,20 @@
-// src/app/blog/page.tsx
+// 移除 searchParams 和 dynamic 配置
 import { getAllPosts, getAllTags } from '@/lib/blog'
-import BlogList from '@/components/BlogList'
+import BlogListWrapper from '@/components/BlogListWrapper'
 
 export const metadata = {
   title: '技术博客 - 所有文章',
   description: '浏览所有技术文章，支持按标签筛选'
 }
 
-interface PageProps {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-}
-
-export default async function BlogPage({ searchParams }: PageProps) {
-  // 在服务端获取数据
+export default function BlogPage() {
   const allPosts = getAllPosts()
   const allTags = getAllTags()
-  
-  // 等待 searchParams
-  const params = await searchParams
-  const selectedTag = typeof params.tag === 'string' ? params.tag : ''
 
   return (
-    <BlogList 
+    <BlogListWrapper 
       allPosts={allPosts} 
       allTags={allTags} 
-      initialSelectedTag={selectedTag}
     />
   )
 }

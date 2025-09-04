@@ -172,7 +172,7 @@ export default function Header() {
               {/* 移动端社交链接 */}
               <div className="flex items-center space-x-4 pt-4 border-t border-slate-200 dark:border-slate-700">
                 <a 
-                  href="https://github.com" 
+                  href="https://github.com/terry9502" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
@@ -180,7 +180,7 @@ export default function Header() {
                   <Github size={20} />
                 </a>
                 <a 
-                  href="mailto:your@email.com" 
+                  href="mailto:1958577075@qq.com" 
                   className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
                 >
                   <Mail size={20} />
