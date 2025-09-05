@@ -1,4 +1,4 @@
-// src/app/tags/page.tsx
+// src/app/tags/page.tsx - 修复后的标签页面
 import { getAllPosts, getAllTags } from '@/lib/blog'
 import Link from 'next/link'
 import { ArrowLeft, Tag, BookOpen, TrendingUp, Hash } from 'lucide-react'
@@ -58,32 +58,35 @@ export default function TagsPage() {
       {/* 统计信息 */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
         <div className="text-center p-6 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
-          <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
+          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-2">
             {allTags.length}
           </div>
-          <div className="text-slate-600 dark:text-slate-300">个标签</div>
+          <div className="text-sm text-slate-600 dark:text-slate-300">总标签数</div>
         </div>
+        
         <div className="text-center p-6 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
-          <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-            {allPosts.length}
-          </div>
-          <div className="text-slate-600 dark:text-slate-300">篇文章</div>
-        </div>
-        <div className="text-center p-6 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
-          <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
+          <div className="text-2xl font-bold text-green-600 dark:text-green-400 mb-2">
             {popularTags.length}
           </div>
-          <div className="text-slate-600 dark:text-slate-300">热门标签</div>
+          <div className="text-sm text-slate-600 dark:text-slate-300">热门标签</div>
         </div>
+        
         <div className="text-center p-6 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
-          <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">
-            {(allPosts.length / allTags.length).toFixed(1)}
+          <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">
+            {normalTags.length}
           </div>
-          <div className="text-slate-600 dark:text-slate-300">平均文章数</div>
+          <div className="text-sm text-slate-600 dark:text-slate-300">常用标签</div>
+        </div>
+        
+        <div className="text-center p-6 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700">
+          <div className="text-2xl font-bold text-purple-600 dark:text-purple-400 mb-2">
+            {allPosts.length}
+          </div>
+          <div className="text-sm text-slate-600 dark:text-slate-300">总文章数</div>
         </div>
       </div>
 
-      {/* 热门标签 */}
+      {/* 热门标签 (≥3篇文章) */}
       {popularTags.length > 0 && (
         <section className="mb-12">
           <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-6 flex items-center">
@@ -102,10 +105,10 @@ export default function TagsPage() {
                   key={tag}
                   className="bg-white dark:bg-slate-800 rounded-lg shadow-sm p-6 border border-slate-200 dark:border-slate-700 hover:shadow-md transition-all group"
                 >
-                  {/* 标签头部 */}
+                  {/* 标签头部 - 修复链接 */}
                   <div className="flex items-center justify-between mb-4">
                     <Link
-                      href={`/blog?tag=${encodeURIComponent(tag)}`}
+                      href={`/tags/${encodeURIComponent(tag)}`}
                       className="flex items-center group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
                     >
                       <Tag className="mr-2" size={20} />
@@ -136,13 +139,12 @@ export default function TagsPage() {
                     )}
                   </div>
 
-                  {/* 查看按钮 */}
+                  {/* 查看按钮 - 修复链接 */}
                   <Link
-                    href={`/blog?tag=${encodeURIComponent(tag)}`}
+                    href={`/tags/${encodeURIComponent(tag)}`}
                     className="inline-flex items-center text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                   >
-                    <BookOpen className="mr-1" size={14} />
-                    查看全部
+                    查看全部 →
                   </Link>
                 </div>
               )
@@ -151,29 +153,27 @@ export default function TagsPage() {
         </section>
       )}
 
-      {/* 常规标签 */}
+      {/* 常用标签 (2篇文章) */}
       {normalTags.length > 0 && (
         <section className="mb-12">
           <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-6 flex items-center">
-            <Tag className="mr-2 text-blue-600 dark:text-blue-400" size={24} />
-            常规标签
+            <BookOpen className="mr-2 text-blue-600 dark:text-blue-400" size={24} />
+            常用标签
             <span className="ml-2 text-sm text-slate-500 dark:text-slate-400 font-normal">
-              ({normalTags.length} 个, 2-3 篇文章)
+              ({normalTags.length} 个, 2 篇文章)
             </span>
           </h2>
           
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-3">
             {normalTags.map(({ tag, count }) => (
               <Link
                 key={tag}
-                href={`/blog?tag=${encodeURIComponent(tag)}`}
-                className="group flex items-center px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-md transition-all"
+                href={`/tags/${encodeURIComponent(tag)}`}
+                className="inline-flex items-center px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900 hover:text-blue-700 dark:hover:text-blue-300 transition-all"
               >
-                <Tag className="mr-2 text-blue-600 dark:text-blue-400" size={16} />
-                <span className="font-medium text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                  {tag}
-                </span>
-                <span className="ml-2 px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-xs rounded-full">
+                <Tag className="mr-2" size={14} />
+                {tag}
+                <span className="ml-2 text-xs bg-slate-200 dark:bg-slate-600 px-2 py-1 rounded-full">
                   {count}
                 </span>
               </Link>
@@ -182,12 +182,12 @@ export default function TagsPage() {
         </section>
       )}
 
-      {/* 其他标签 */}
+      {/* 新兴标签 (1篇文章) */}
       {rareTags.length > 0 && (
         <section className="mb-12">
           <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-6 flex items-center">
-            <Hash className="mr-2 text-slate-500 dark:text-slate-400" size={24} />
-            其他标签
+            <Hash className="mr-2 text-green-600 dark:text-green-400" size={24} />
+            新兴标签
             <span className="ml-2 text-sm text-slate-500 dark:text-slate-400 font-normal">
               ({rareTags.length} 个, 1 篇文章)
             </span>
@@ -197,7 +197,7 @@ export default function TagsPage() {
             {rareTags.map(({ tag, count }) => (
               <Link
                 key={tag}
-                href={`/blog?tag=${encodeURIComponent(tag)}`}
+                href={`/tags/${encodeURIComponent(tag)}`}
                 className="inline-flex items-center px-3 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 hover:text-blue-600 dark:hover:text-blue-400 transition-all text-sm"
               >
                 <Tag className="mr-1" size={12} />

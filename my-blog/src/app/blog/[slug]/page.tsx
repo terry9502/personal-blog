@@ -76,7 +76,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                     {post.tags.map(tag => (
                       <Link
                         key={tag}
-                        href={`/blog?tag=${encodeURIComponent(tag)}`}
+                        href={`/tags/${encodeURIComponent(tag)}`}
                         className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-xs hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
                       >
                         {tag}
