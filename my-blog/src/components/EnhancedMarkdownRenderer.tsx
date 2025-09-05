@@ -5,14 +5,230 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import rehypeRaw from 'rehype-raw'
-import { Copy, Check } from 'lucide-react'
+import { Copy, Check, X, ZoomIn, ZoomOut, RotateCw } from 'lucide-react'
 
 interface EnhancedMarkdownRendererProps {
   content: string
   className?: string
 }
 
-// 增强的复制按钮组件
+// ===== 图片放大模态框组件 =====
+function ImageZoomModal({ src, alt, isOpen, onClose }: { 
+  src: string; 
+  alt: string; 
+  isOpen: boolean; 
+  onClose: () => void 
+}) {
+  const [scale, setScale] = React.useState(1)
+  const [rotation, setRotation] = React.useState(0)
+  const [position, setPosition] = React.useState({ x: 0, y: 0 })
+  const [isDragging, setIsDragging] = React.useState(false)
+  const [dragStart, setDragStart] = React.useState({ x: 0, y: 0 })
+
+  // 重置状态
+  const resetTransform = () => {
+    setScale(1)
+    setRotation(0)
+    setPosition({ x: 0, y: 0 })
+  }
+
+  // 关闭模态框时重置
+  React.useEffect(() => {
+    if (!isOpen) {
+      resetTransform()
+    }
+  }, [isOpen])
+
+  // ESC键关闭和快捷键
+  React.useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose()
+      } else if (e.key === '+' || e.key === '=') {
+        setScale(prev => Math.min(prev + 0.2, 3))
+      } else if (e.key === '-') {
+        setScale(prev => Math.max(prev - 0.2, 0.5))
+      } else if (e.key === 'r' || e.key === 'R') {
+        setRotation(prev => prev + 90)
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyPress)
+      document.body.style.overflow = 'hidden'
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress)
+      document.body.style.overflow = 'unset'
+    }
+  }, [isOpen, onClose])
+
+  // 鼠标拖拽
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (scale > 1) {
+      setIsDragging(true)
+      setDragStart({
+        x: e.clientX - position.x,
+        y: e.clientY - position.y
+      })
+    }
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging && scale > 1) {
+      setPosition({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y
+      })
+    }
+  }
+
+  const handleMouseUp = () => {
+    setIsDragging(false)
+  }
+
+  // 滚轮缩放
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault()
+    const delta = e.deltaY > 0 ? -0.2 : 0.2
+    setScale(prev => Math.min(Math.max(prev + delta, 0.5), 3))
+  }
+
+  // 图片点击放大/缩小
+  const handleImageClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (scale === 1) {
+      setScale(2) // 单击放大到2倍
+    } else {
+      setScale(1) // 重置到1倍
+      setPosition({ x: 0, y: 0 })
+    }
+  }
+
+  if (!isOpen) return null
+
+  return (
+    <div className="fixed inset-0 z-[9999] bg-black bg-opacity-95">
+      {/* 顶部工具栏 */}
+      <div className="absolute top-4 right-4 flex items-center space-x-2 z-10">
+        <div className="bg-black bg-opacity-80 text-white rounded-lg px-3 py-2 text-sm">
+          缩放: {Math.round(scale * 100)}%
+        </div>
+        
+        <div className="flex bg-black bg-opacity-80 rounded-lg p-1">
+          <button
+            onClick={() => setScale(prev => Math.max(prev - 0.2, 0.5))}
+            className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded transition-all"
+            title="缩小"
+          >
+            <ZoomOut size={18} />
+          </button>
+          <button
+            onClick={() => setScale(prev => Math.min(prev + 0.2, 3))}
+            className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded transition-all"
+            title="放大"
+          >
+            <ZoomIn size={18} />
+          </button>
+          <button
+            onClick={() => setRotation(prev => prev + 90)}
+            className="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded transition-all"
+            title="旋转"
+          >
+            <RotateCw size={18} />
+          </button>
+        </div>
+
+        <button
+          onClick={onClose}
+          className="p-2 bg-black bg-opacity-80 text-white rounded-lg hover:bg-opacity-100 transition-all"
+          title="关闭"
+        >
+          <X size={18} />
+        </button>
+      </div>
+
+      {/* 主要显示区域 */}
+      <div 
+        className="w-full h-full flex items-center justify-center cursor-pointer"
+        onClick={onClose}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onWheel={handleWheel}
+      >
+        <img
+          src={src}
+          alt={alt}
+          className="max-w-[90vw] max-h-[90vh] object-contain select-none transition-transform duration-300"
+          style={{
+            transform: `scale(${scale}) rotate(${rotation}deg) translate(${position.x}px, ${position.y}px)`,
+            cursor: scale > 1 ? 
+              (isDragging ? 'grabbing' : 'grab') : 'zoom-in'
+          }}
+          onClick={handleImageClick}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+        />
+      </div>
+
+      {/* 使用提示 */}
+      <div className="absolute bottom-4 right-4 bg-black bg-opacity-70 text-white text-xs p-3 rounded-lg max-w-48">
+        <div className="space-y-1">
+          <div>ESC: 关闭</div>
+          <div>滚轮: 缩放</div>
+          <div>拖拽: 移动</div>
+          <div>+/-: 缩放</div>
+          <div>R: 旋转</div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ===== 可点击图片组件 =====
+function ClickableImageInline({ src, alt }: { src: string; alt: string }) {
+  const [isModalOpen, setIsModalOpen] = React.useState(false)
+
+  return (
+    <>
+      <span className="block my-8 text-center group">
+        <div className="relative inline-block">
+          <img 
+            src={src} 
+            alt={alt || ''} 
+            className="max-w-full h-auto rounded-lg shadow-lg mx-auto hover:shadow-xl transition-all duration-300 cursor-pointer group-hover:brightness-110 group-hover:scale-[1.02]"
+            loading="lazy"
+            onClick={() => setIsModalOpen(true)}
+          />
+          
+          {/* 放大图标提示 */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black bg-opacity-20 rounded-lg pointer-events-none">
+            <div className="bg-white dark:bg-gray-800 p-2 rounded-full shadow-lg">
+              <ZoomIn size={24} className="text-gray-700 dark:text-gray-300" />
+            </div>
+          </div>
+        </div>
+        
+        {alt && (
+          <span className="block text-sm text-gray-500 dark:text-gray-400 mt-2 italic">
+            {alt} (点击查看大图)
+          </span>
+        )}
+      </span>
+
+      <ImageZoomModal
+        src={src}
+        alt={alt || ''}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
+    </>
+  )
+}
+
+// ===== 复制按钮组件 =====
 interface CopyButtonProps {
   text: string
   className?: string
@@ -67,20 +283,16 @@ const CopyButton: React.FC<CopyButtonProps> = ({
     }
   }
 
-  // 复制到剪贴板的多种方法
+  // 复制到剪贴板
   const copyToClipboard = async (textToCopy: string): Promise<boolean> => {
     try {
-      // 方法1: 现代浏览器的 Clipboard API
       if (navigator.clipboard && window.isSecureContext) {
         await navigator.clipboard.writeText(textToCopy)
         return true
       }
 
-      // 方法2: 兼容性方案 - 使用 execCommand
       const textArea = document.createElement('textarea')
       textArea.value = textToCopy
-      
-      // 设置样式使其不可见
       textArea.style.position = 'fixed'
       textArea.style.left = '-999999px'
       textArea.style.top = '-999999px'
@@ -89,13 +301,10 @@ const CopyButton: React.FC<CopyButtonProps> = ({
       textArea.setAttribute('readonly', 'readonly')
       
       document.body.appendChild(textArea)
-      
-      // 选择文本
       textArea.focus()
       textArea.select()
       textArea.setSelectionRange(0, textArea.value.length)
       
-      // 执行复制
       const successful = document.execCommand('copy')
       document.body.removeChild(textArea)
       
@@ -106,45 +315,37 @@ const CopyButton: React.FC<CopyButtonProps> = ({
     }
   }
 
-  // 处理复制操作
-  const handleCopy = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleCopy = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-
+    
     try {
       const success = await copyToClipboard(text)
-      
       if (success) {
         setCopied(true)
         setIsVisible(true)
         
-        // 清除之前的定时器
         if (timeoutRef.current !== undefined) {
           window.clearTimeout(timeoutRef.current)
         }
         
-        // 设置新的定时器
         timeoutRef.current = window.setTimeout(() => {
           setCopied(false)
           setIsVisible(false)
         }, 2000)
       }
-    } catch (error) {
-      console.error('复制操作失败:', error)
+    } catch (err) {
+      console.error('复制失败:', err)
     }
   }
-
-  const variantClasses = getVariantClasses()
-  const positionClasses = getPositionClasses()
 
   return (
     <React.Fragment>
       <button
         onClick={handleCopy}
-        className={`${positionClasses} ${variantClasses} ${className} focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1`}
+        className={`${getPositionClasses()} ${getVariantClasses()} ${className}`}
         title={copied ? '已复制!' : '复制代码'}
-        aria-label={copied ? '已复制到剪贴板' : '复制代码到剪贴板'}
-        type="button"
+        aria-label={copied ? '已复制!' : '复制代码'}
       >
         {copied ? (
           <Check className="w-4 h-4" />
@@ -153,19 +354,20 @@ const CopyButton: React.FC<CopyButtonProps> = ({
         )}
       </button>
 
-      {/* 反馈提示 */}
-      {isVisible && (
+      {/* 提示框 */}
+      {copied && isVisible && (
         <div
-          className={`${positionClasses} ${
-            position.includes('right') ? '-translate-x-16' : 'translate-x-16'
-          } bg-slate-900 text-white text-xs px-2 py-1 rounded whitespace-nowrap transition-all duration-200 pointer-events-none z-20`}
-          style={{
-            marginTop: position.includes('top') ? '0' : '-2rem',
-            marginBottom: position.includes('bottom') ? '0' : '-2rem'
-          }}
+          className={`absolute z-30 px-2 py-1 text-xs text-white bg-slate-900 rounded whitespace-nowrap ${
+            position.includes('right')
+              ? 'right-0 -translate-x-full -mr-2'
+              : 'left-0 translate-x-full ml-2'
+          } ${
+            position.includes('top')
+              ? 'top-0'
+              : 'bottom-0'
+          }`}
         >
-          {copied ? '已复制!' : '复制失败'}
-          {/* 小箭头 */}
+          已复制!
           <div
             className={`absolute w-2 h-2 bg-slate-900 transform rotate-45 ${
               position.includes('right')
@@ -183,7 +385,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
   )
 }
 
-// 代码块包装器组件
+// ===== 代码块包装器组件 =====
 interface CodeBlockWrapperProps {
   children: React.ReactNode
   code: string
@@ -227,9 +429,10 @@ const CodeBlockWrapper: React.FC<CodeBlockWrapperProps> = ({
   )
 }
 
+// ===== 工具函数 =====
+
 // 处理内容预处理
 const preprocessContent = (content: string): string => {
-  // 处理自定义组件
   let processed = content
   
   // 处理 <Highlight> 组件
@@ -250,20 +453,16 @@ const preprocessContent = (content: string): string => {
     '> $1'
   )
   
-  // 处理font标签 - 保持与原版本兼容
+  // 处理font标签
   processed = processed
-    // 处理 style 属性的 font 标签
     .replace(/<font\s+style=['"]([^'"]*?)['"][^>]*?>(.*?)<\/font>/gi, (match, style, text) => {
-      // 解析样式
       const colorMatch = style.match(/color:\s*([^;]+)/i)
       const color = colorMatch ? colorMatch[1].trim() : '#DF2A3F'
       return `<span style="color: ${color}; font-weight: bold;">${text}</span>`
     })
-    // 处理 color 属性的 font 标签
     .replace(/<font\s+color=['"]([^'"]*?)['"][^>]*?>(.*?)<\/font>/gi, (match, color, text) => {
       return `<span style="color: ${color}; font-weight: bold;">${text}</span>`
     })
-    // 处理只有内容的 font 标签
     .replace(/<font[^>]*?>(.*?)<\/font>/gi, (match, text) => {
       return `<span style="color: #DF2A3F; font-weight: bold;">${text}</span>`
     })
@@ -294,13 +493,13 @@ const detectLanguage = (className: string): string => {
   return match ? match[1] : ''
 }
 
-// 主组件 - 使用命名导出
+// ===== 主组件 =====
 export const EnhancedMarkdownRenderer: React.FC<EnhancedMarkdownRendererProps> = ({
   content,
   className = ''
 }) => {
   const components = {
-    // 表格组件 - 保持与原版本兼容的样式
+    // 表格组件
     table: ({ children }: any) => (
       <div className="overflow-x-auto my-8 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
         <table className="min-w-full border-collapse bg-white dark:bg-gray-900">
@@ -364,7 +563,7 @@ export const EnhancedMarkdownRenderer: React.FC<EnhancedMarkdownRendererProps> =
       </h4>
     ),
 
-    // 段落 - 使用div避免嵌套问题
+    // 段落
     p: ({ children }: any) => (
       <div className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed text-base">
         {children}
@@ -397,7 +596,7 @@ export const EnhancedMarkdownRenderer: React.FC<EnhancedMarkdownRendererProps> =
       </blockquote>
     ),
 
-    // 增强的代码块组件
+    // 代码块
     pre: ({ children, className, ...props }: any) => {
       const codeContent = extractCodeContent(children)
       const language = detectLanguage(className || '')
@@ -448,21 +647,9 @@ export const EnhancedMarkdownRenderer: React.FC<EnhancedMarkdownRendererProps> =
       </a>
     ),
 
-    // 图片 - 使用span避免嵌套问题
+    // ★★★ 修复的图片组件 - 现在有点击放大功能了！ ★★★
     img: ({ src, alt }: any) => (
-      <span className="block my-8 text-center">
-        <img 
-          src={src} 
-          alt={alt || ''} 
-          className="max-w-full h-auto rounded-lg shadow-lg mx-auto hover:shadow-xl transition-shadow duration-300"
-          loading="lazy"
-        />
-        {alt && (
-          <span className="block text-sm text-gray-500 dark:text-gray-400 mt-2 italic">
-            {alt}
-          </span>
-        )}
-      </span>
+      <ClickableImageInline src={src} alt={alt || ''} />
     ),
 
     // 强调
@@ -490,7 +677,7 @@ export const EnhancedMarkdownRenderer: React.FC<EnhancedMarkdownRendererProps> =
       </del>
     ),
 
-    // 处理内联HTML - span标签
+    // 处理内联HTML
     span: ({ children, style, ...props }: any) => (
       <span style={style} {...props}>
         {children}
@@ -498,7 +685,6 @@ export const EnhancedMarkdownRenderer: React.FC<EnhancedMarkdownRendererProps> =
     ),
   }
 
-  // 处理内容
   const processedContent = preprocessContent(content)
 
   return (
@@ -514,5 +700,4 @@ export const EnhancedMarkdownRenderer: React.FC<EnhancedMarkdownRendererProps> =
   )
 }
 
-// 同时提供默认导出以保持向后兼容
 export default EnhancedMarkdownRenderer
