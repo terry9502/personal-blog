@@ -24,6 +24,7 @@ import { unified } from 'unified'
 import remarkParse from 'remark-parse'
 import remarkGfm from 'remark-gfm'
 import remarkHtml from 'remark-html'
+import EnhancedMarkdownRenderer from '@/components/EnhancedMarkdownRenderer'
 
 interface BlogPost {
   id: string;
@@ -499,7 +500,7 @@ tags: [${tags.map(tag => `'${tag}'`).join(', ')}]
               <div className="p-6">
                 {isPreview ? (
                   /* 预览模式 */
-                  <div className="prose prose-slate dark:prose-invert max-w-none">
+                  <div>
                     <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
                       {title || '文章标题'}
                     </h1>
@@ -524,11 +525,10 @@ tags: [${tags.map(tag => `'${tag}'`).join(', ')}]
                       )}
                     </div>
                     
-                    <div 
-                      className="text-slate-700 dark:text-slate-300 leading-relaxed"
-                      dangerouslySetInnerHTML={{ 
-                        __html: '<p class="mb-4">' + renderMarkdown(content || '在此输入文章内容...') + '</p>' 
-                      }} 
+                    {/* 使用 EnhancedMarkdownRenderer 替代简单的 HTML 渲染 */}
+                    <EnhancedMarkdownRenderer 
+                      content={content || '在此输入文章内容...'} 
+                      className="text-slate-700 dark:text-slate-300"
                     />
                   </div>
                 ) : (
