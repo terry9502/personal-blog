@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 import { Components } from 'react-markdown'
 import { useState } from 'react'
+import rehypeRaw from 'rehype-raw'
 
 interface EnhancedMarkdownRendererProps {
   content: string
@@ -254,7 +255,7 @@ export default function EnhancedMarkdownRenderer({
     <div className={`prose prose-lg dark:prose-invert max-w-none ${className}`}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeHighlight]}
+        rehypePlugins={[rehypeHighlight,rehypeRaw]}
         components={components}
       >
         {processedContent}
