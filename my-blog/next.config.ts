@@ -4,12 +4,12 @@ import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
 
 const nextConfig: NextConfig = {
-  // 添加静态导出配置
-  output: 'export',
-  trailingSlash: true,
-  images: {
-    unoptimized: true, // 静态导出需要禁用图片优化
-  },
+  // 移除静态导出配置，使用 Vercel 的服务端渲染
+  // output: 'export', // 删除这行
+  // trailingSlash: true, // 删除这行
+  // images: {
+  //   unoptimized: true, // 删除这行
+  // },
   
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   
