@@ -4,9 +4,7 @@
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
-import rehypeRaw from 'rehype-raw'
 import { Components } from 'react-markdown'
-import { useTheme } from 'next-themes'
 import { useState } from 'react'
 
 interface EnhancedMarkdownRendererProps {
@@ -18,7 +16,6 @@ export default function EnhancedMarkdownRenderer({
   content, 
   className = '' 
 }: EnhancedMarkdownRendererProps) {
-  const { theme } = useTheme()
   const [copiedStates, setCopiedStates] = useState<{ [key: string]: boolean }>({})
 
   const copyToClipboard = async (text: string, id: string) => {
@@ -33,111 +30,126 @@ export default function EnhancedMarkdownRenderer({
     }
   }
 
+  // 预处理内容，处理font标签
+  const preprocessContent = (content: string) => {
+    return content
+      // 处理 style 属性的 font 标签
+      .replace(/<font\s+style=['"]([^'"]*?)['"][^>]*?>(.*?)<\/font>/gi, (match, style, text) => {
+        // 解析样式
+        const colorMatch = style.match(/color:\s*([^;]+)/i)
+        const color = colorMatch ? colorMatch[1].trim() : '#DF2A3F'
+        return `<span style="color: ${color}; font-weight: bold;">${text}</span>`
+      })
+      // 处理 color 属性的 font 标签
+      .replace(/<font\s+color=['"]([^'"]*?)['"][^>]*?>(.*?)<\/font>/gi, (match, color, text) => {
+        return `<span style="color: ${color}; font-weight: bold;">${text}</span>`
+      })
+      // 处理只有内容的 font 标签
+      .replace(/<font[^>]*?>(.*?)<\/font>/gi, (match, text) => {
+        return `<span style="color: #DF2A3F; font-weight: bold;">${text}</span>`
+      })
+  }
+
   const components: Components = {
     // 表格组件 - 完美样式
-    table: ({ children }) => (
+    table: ({ children }: any) => (
       <div className="overflow-x-auto my-8 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
         <table className="min-w-full border-collapse bg-white dark:bg-gray-900">
-          <style jsx>{`
-            table {
-              border-spacing: 0 !important;
-            }
-          `}</style>
           {children}
         </table>
       </div>
     ),
     
-    thead: ({ children }) => (
+    thead: ({ children }: any) => (
       <thead className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700">
         {children}
       </thead>
     ),
     
-    tbody: ({ children }) => (
+    tbody: ({ children }: any) => (
       <tbody className="divide-y divide-gray-200 dark:divide-gray-600">
         {children}
       </tbody>
     ),
     
-    tr: ({ children }) => (
+    tr: ({ children }: any) => (
       <tr className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200">
         {children}
       </tr>
     ),
     
-    th: ({ children }) => (
+    th: ({ children }: any) => (
       <th className="px-6 py-4 text-left text-sm font-bold text-gray-900 dark:text-white border-b-2 border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-gray-700">
         {children}
       </th>
     ),
     
-    td: ({ children }) => (
+    td: ({ children }: any) => (
       <td className="px-6 py-4 text-sm text-gray-800 dark:text-gray-200 border-b border-gray-200 dark:border-gray-600">
         {children}
       </td>
     ),
 
     // 标题组件
-    h1: ({ children }) => (
+    h1: ({ children }: any) => (
       <h1 className="text-4xl font-bold text-gray-900 dark:text-white mt-8 mb-6 border-b-2 border-blue-500 pb-2">
         {children}
       </h1>
     ),
     
-    h2: ({ children }) => (
+    h2: ({ children }: any) => (
       <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mt-8 mb-4 border-b border-gray-300 dark:border-gray-600 pb-2">
         {children}
       </h2>
     ),
     
-    h3: ({ children }) => (
+    h3: ({ children }: any) => (
       <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mt-6 mb-4">
         {children}
       </h3>
     ),
     
-    h4: ({ children }) => (
+    h4: ({ children }: any) => (
       <h4 className="text-xl font-semibold text-gray-900 dark:text-white mt-6 mb-3">
         {children}
       </h4>
     ),
 
-    // 段落
-    p: ({ children }) => (
-      <p className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed text-base">
+    // 段落 - 使用div避免嵌套问题
+    p: ({ children }: any) => (
+      <div className="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed text-base">
         {children}
-      </p>
+      </div>
     ),
 
     // 列表
-    ul: ({ children }) => (
+    ul: ({ children }: any) => (
       <ul className="list-disc list-inside mb-6 space-y-2 ml-4 text-gray-700 dark:text-gray-300">
         {children}
       </ul>
     ),
     
-    ol: ({ children }) => (
+    ol: ({ children }: any) => (
       <ol className="list-decimal list-inside mb-6 space-y-2 ml-4 text-gray-700 dark:text-gray-300">
         {children}
       </ol>
     ),
     
-    li: ({ children }) => (
+    li: ({ children }: any) => (
       <li className="text-gray-700 dark:text-gray-300 mb-1">
         {children}
       </li>
     ),
 
     // 引用块
-    blockquote: ({ children }) => (
+    blockquote: ({ children }: any) => (
       <blockquote className="border-l-4 border-blue-500 pl-6 py-2 my-6 bg-blue-50 dark:bg-gray-800 italic text-gray-700 dark:text-gray-300 rounded-r-lg">
         {children}
       </blockquote>
     ),
 
     // 代码块
-    pre: ({ children, ...props }) => {
+    pre: ({ children }: any) => {
       const codeContent = String(children).replace(/\n$/, '')
       const codeId = Math.random().toString(36).substr(2, 9)
       
@@ -156,25 +168,25 @@ export default function EnhancedMarkdownRenderer({
       )
     },
     
-    code: ({ children, className, ...props }: any) => {
+    code: ({ children, className }: any) => {
       const isInline = !className?.includes('language-')
       
       if (isInline) {
         return (
-          <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono text-red-600 dark:text-red-400" {...props}>
+          <code className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded text-sm font-mono text-red-600 dark:text-red-400">
             {children}
           </code>
         )
       }
       return (
-        <code className={className} {...props}>
+        <code className={className}>
           {children}
         </code>
       )
     },
 
     // 链接
-    a: ({ href, children }) => (
+    a: ({ href, children }: any) => (
       <a 
         href={href} 
         className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline hover:no-underline transition-colors duration-200"
@@ -185,9 +197,9 @@ export default function EnhancedMarkdownRenderer({
       </a>
     ),
 
-    // 图片
-    img: ({ src, alt }) => (
-      <div className="my-8 text-center">
+    // 图片 - 使用span避免嵌套问题
+    img: ({ src, alt }: any) => (
+      <span className="block my-8 text-center">
         <img 
           src={src} 
           alt={alt || ''} 
@@ -195,21 +207,21 @@ export default function EnhancedMarkdownRenderer({
           loading="lazy"
         />
         {alt && (
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 italic">
+          <span className="block text-sm text-gray-500 dark:text-gray-400 mt-2 italic">
             {alt}
-          </p>
+          </span>
         )}
-      </div>
+      </span>
     ),
 
     // 强调
-    strong: ({ children }) => (
+    strong: ({ children }: any) => (
       <strong className="font-bold text-gray-900 dark:text-white">
         {children}
       </strong>
     ),
     
-    em: ({ children }) => (
+    em: ({ children }: any) => (
       <em className="italic text-gray-700 dark:text-gray-300">
         {children}
       </em>
@@ -221,21 +233,31 @@ export default function EnhancedMarkdownRenderer({
     ),
 
     // 删除线
-    del: ({ children }) => (
+    del: ({ children }: any) => (
       <del className="text-gray-500 dark:text-gray-400 line-through">
         {children}
       </del>
     ),
+
+    // 处理内联HTML - span标签
+    span: ({ children, style, ...props }: any) => (
+      <span style={style} {...props}>
+        {children}
+      </span>
+    ),
   }
+
+  // 处理内容
+  const processedContent = preprocessContent(content)
 
   return (
     <div className={`prose prose-lg dark:prose-invert max-w-none ${className}`}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        rehypePlugins={[rehypeHighlight, rehypeRaw]}
+        rehypePlugins={[rehypeHighlight]}
         components={components}
       >
-        {content}
+        {processedContent}
       </ReactMarkdown>
     </div>
   )
