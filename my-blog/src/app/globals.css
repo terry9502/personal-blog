@@ -190,3 +190,241 @@ th,
 td {
   display: table-cell !important;
 }
+/* 表格容器优化 */
+.prose table {
+  width: 100%;
+  border-collapse: separate !important;
+  border-spacing: 0;
+  margin: 2rem 0;
+  background: transparent; /* 移除背景色 */
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+}
+
+.dark .prose table {
+  background: transparent; /* 移除背景色 */
+  border-color: #374151;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+/* 表头样式优化 - 修复字体颜色 */
+.prose thead {
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+}
+
+.dark .prose thead {
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+}
+
+.prose th {
+  padding: 1rem 1.5rem !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  color: #ffffff !important; /* 确保白色字体 */
+  text-align: left !important;
+  border: none !important;
+  position: relative;
+  background: transparent;
+}
+
+.prose th:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 25%;
+  height: 50%;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* 表体样式优化 - 移除固定背景 */
+.prose tbody {
+  background: transparent; /* 移除固定背景 */
+}
+
+.dark .prose tbody {
+  background: transparent; /* 移除固定背景 */
+}
+
+.prose td {
+  padding: 1rem 1.5rem !important;
+  border: none !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  color: #374151 !important;
+  font-size: 0.875rem !important;
+  vertical-align: middle !important;
+  background: transparent; /* 移除固定背景 */
+}
+
+.dark .prose td {
+  border-bottom-color: #334155 !important;
+  color: #d1d5db !important;
+  background: transparent; /* 移除固定背景 */
+}
+
+/* 表格行悬停效果 */
+.prose tbody tr {
+  transition: all 0.2s ease;
+  background: transparent; /* 移除固定背景 */
+}
+
+.prose tbody tr:hover {
+  background-color: rgba(248, 250, 252, 0.8) !important; /* 半透明悬停效果 */
+  transform: translateY(-1px);
+}
+
+.dark .prose tbody tr:hover {
+  background-color: rgba(51, 65, 85, 0.8) !important; /* 半透明悬停效果 */
+}
+
+.prose tbody tr:last-child td {
+  border-bottom: none !important;
+}
+
+/* 特殊单元格样式 */
+.prose td:first-child {
+  font-weight: 500;
+  color: #1f2937 !important;
+}
+
+.dark .prose td:first-child {
+  color: #f9fafb !important;
+}
+
+/* 数据类型标识颜色 */
+.prose td:contains("Int"),
+.prose td:contains("int") {
+  color: #059669 !important;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-weight: 500;
+}
+
+.prose td:contains("Varchar"),
+.prose td:contains("varchar") {
+  color: #dc2626 !important;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-weight: 500;
+}
+
+.prose td:contains("Date"),
+.prose td:contains("date") {
+  color: #7c3aed !important;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-weight: 500;
+}
+
+.dark .prose td:contains("Int"),
+.dark .prose td:contains("int") {
+  color: #34d399 !important;
+}
+
+.dark .prose td:contains("Varchar"),
+.dark .prose td:contains("varchar") {
+  color: #f87171 !important;
+}
+
+.dark .prose td:contains("Date"),
+.dark .prose td:contains("date") {
+  color: #a78bfa !important;
+}
+
+/* 表格标题优化 */
+.prose h2 + table,
+.prose h3 + table {
+  margin-top: 1rem;
+}
+
+/* 表格前的说明文字 */
+.prose p + table {
+  margin-top: 1rem;
+}
+
+/* 响应式表格 */
+@media (max-width: 768px) {
+  .prose table {
+    font-size: 0.75rem;
+    margin: 1rem 0;
+  }
+  
+  .prose th,
+  .prose td {
+    padding: 0.75rem 1rem !important;
+  }
+  
+  .prose th {
+    font-size: 0.75rem !important;
+  }
+}
+
+/* 表格滚动容器 */
+.prose .table-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 12px;
+  margin: 2rem 0;
+}
+
+.prose .table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.prose .table-container::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.prose .table-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.prose .table-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.dark .prose .table-container::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+.dark .prose .table-container::-webkit-scrollbar-thumb {
+  background: #6b7280;
+}
+
+.dark .prose .table-container::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* 字段约束标识 */
+.prose .constraint-pk {
+  background: linear-gradient(135deg, #fef3c7, #fbbf24);
+  color: #92400e;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.prose .constraint-not-null {
+  background: linear-gradient(135deg, #dcfce7, #22c55e);
+  color: #166534;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.dark .prose .constraint-pk {
+  background: linear-gradient(135deg, #451a03, #92400e);
+  color: #fbbf24;
+}
+
+.dark .prose .constraint-not-null {
+  background: linear-gradient(135deg, #052e16, #166534);
+  color: #22c55e;
+}
