@@ -206,13 +206,13 @@ export default async function TagDetailPage({ params }: PageProps) {
   )
 }
 
-// 生成静态路径
-export async function generateStaticParams() {
-  const tags = getAllTags()
-  return tags.map((tag) => ({
-    tag: encodeURIComponent(tag),
-  }))
-}
+// 移除 generateStaticParams，改为动态路由
+// export async function generateStaticParams() {
+//   const tags = getAllTags()
+//   return tags.map((tag) => ({
+//     tag: encodeURIComponent(tag),
+//   }))
+// }
 
 // 生成元数据
 export async function generateMetadata({ params }: PageProps) {

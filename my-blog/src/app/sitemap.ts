@@ -1,6 +1,9 @@
-export const dynamic = 'force-static'
+// src/app/sitemap.ts
 import { getAllPosts, getAllTags } from '@/lib/blog'
 import { MetadataRoute } from 'next'
+
+// 移除静态导出强制配置
+// export const dynamic = 'force-static'
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://niutr.cn'
