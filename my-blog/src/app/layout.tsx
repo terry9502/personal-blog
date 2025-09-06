@@ -61,6 +61,17 @@ export const metadata: Metadata = {
   category: 'technology',
   classification: 'blog',
   referrer: 'origin-when-cross-origin',
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon-96x96.png', sizes: '96x96', type: 'image/png' },
+      { url: '/web-app-manifest-192x192.png', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
 }
 
 export default function RootLayout({
@@ -71,12 +82,25 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <head>
-        <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link rel="shortcut icon" href="/favicon.ico" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <meta name="apple-mobile-web-app-title" content="Niutr's Blog" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        
+        {/* Apple 设备 */}
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        
+        {/* 现有的 PNG favicon */}
+        <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+        
+        {/* Web App 图标作为备用 */}
+        <link rel="icon" type="image/png" sizes="192x192" href="/web-app-manifest-192x192.png" />
+        <link rel="icon" type="image/png" sizes="512x512" href="/web-app-manifest-512x512.png" />
+        
+        {/* Web App Manifest */}
         <link rel="manifest" href="/site.webmanifest" />
+        
+        {/* 主题色彩 */}
+        <meta name="theme-color" content="#1e293b" />
+        <meta name="msapplication-TileColor" content="#1e293b" />
         {/* RSS Feed 自动发现 */}
         <link 
           rel="alternate" 
