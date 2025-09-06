@@ -21,17 +21,21 @@ export default function BlogListWrapper({ allPosts, allTags }: BlogListWrapperPr
   const searchParams = useSearchParams()
   
   // 从 URL 参数初始化状态
-  const [selectedTag, setSelectedTag] = useState(() => searchParams.get('tag') || '')
+  const [selectedTags, setSelectedTags] = useState(() => {
+    const tags = searchParams.get('tags')
+    return tags ? tags.split(',').filter(Boolean) : []
+  })
   const [searchTerm, setSearchTerm] = useState(() => searchParams.get('search') || '')
   const [currentPage, setCurrentPage] = useState(() => getCurrentPage(searchParams))
 
   // 同步 URL 参数到状态
   useEffect(() => {
-    const tag = searchParams.get('tag') || ''
+    const tags = searchParams.get('tags')
+    const selectedTagsFromUrl = tags ? tags.split(',').filter(Boolean) : []
     const search = searchParams.get('search') || ''
     const page = getCurrentPage(searchParams)
     
-    setSelectedTag(tag)
+    setSelectedTags(selectedTagsFromUrl)
     setSearchTerm(search)
     setCurrentPage(page)
   }, [searchParams])
@@ -40,9 +44,11 @@ export default function BlogListWrapper({ allPosts, allTags }: BlogListWrapperPr
   const filteredPosts = useMemo(() => {
     let filtered = allPosts
 
-    // 按标签过滤
-    if (selectedTag) {
-      filtered = filtered.filter(post => post.tags.includes(selectedTag))
+    // 按标签过滤 - 支持多标签筛选
+    if (selectedTags.length > 0) {
+      filtered = filtered.filter(post => 
+        selectedTags.some(tag => post.tags.includes(tag))
+      )
     }
 
     // 按搜索词过滤
@@ -60,7 +66,7 @@ export default function BlogListWrapper({ allPosts, allTags }: BlogListWrapperPr
     const regularPosts = filtered.filter(post => !post.pinned)
 
     return [...pinnedPosts, ...regularPosts]
-  }, [allPosts, selectedTag, searchTerm])
+  }, [allPosts, selectedTags, searchTerm])
 
   // 分页数据
   const paginationData = useMemo(() => {
@@ -68,10 +74,10 @@ export default function BlogListWrapper({ allPosts, allTags }: BlogListWrapperPr
   }, [filteredPosts, currentPage])
 
   // 构建新的 URL
-  const buildNewUrl = useCallback((newTag: string, newSearch: string, newPage: number) => {
+  const buildNewUrl = useCallback((newTags: string[], newSearch: string, newPage: number) => {
     const params = new URLSearchParams()
     
-    if (newTag) params.set('tag', newTag)
+    if (newTags.length > 0) params.set('tags', newTags.join(','))
     if (newSearch) params.set('search', newSearch)
     if (newPage > 1) params.set('page', newPage.toString())
     
@@ -79,17 +85,16 @@ export default function BlogListWrapper({ allPosts, allTags }: BlogListWrapperPr
   }, [])
 
   // 处理标签选择
-  const handleTagSelect = useCallback((tag: string) => {
-    const newTag = selectedTag === tag ? '' : tag
-    const newUrl = buildNewUrl(newTag, searchTerm, 1)
+  const handleTagSelect = useCallback((tags: string[]) => {
+    const newUrl = buildNewUrl(tags, searchTerm, 1)
     router.push(newUrl)
-  }, [selectedTag, searchTerm, buildNewUrl, router])
+  }, [searchTerm, buildNewUrl, router])
 
   // 处理搜索
   const handleSearch = useCallback((search: string) => {
-    const newUrl = buildNewUrl(selectedTag, search, 1)
+    const newUrl = buildNewUrl(selectedTags, search, 1)
     router.push(newUrl)
-  }, [selectedTag, buildNewUrl, router])
+  }, [selectedTags, buildNewUrl, router])
 
   // 清除所有过滤条件
   const clearFilters = useCallback(() => {
@@ -98,11 +103,11 @@ export default function BlogListWrapper({ allPosts, allTags }: BlogListWrapperPr
 
   // 处理分页变化 - 这个是关键！
   const handlePageChange = useCallback((page: number) => {
-    const newUrl = buildNewUrl(selectedTag, searchTerm, page)
+    const newUrl = buildNewUrl(selectedTags, searchTerm, page)
     router.push(newUrl)
     // 滚动到顶部
     window.scrollTo({ top: 0, behavior: 'smooth' })
-  }, [selectedTag, searchTerm, buildNewUrl, router])
+  }, [selectedTags, searchTerm, buildNewUrl, router])
 
   // 统计信息
   const pinnedCount = filteredPosts.filter(post => post.pinned).length
@@ -116,8 +121,8 @@ export default function BlogListWrapper({ allPosts, allTags }: BlogListWrapperPr
           博客分享
         </h1>
         <p className="text-lg text-slate-600 dark:text-slate-300 mb-6">
-          {selectedTag ? (
-            <>共找到 <span className="font-semibold text-blue-600 dark:text-blue-400">"{selectedTag}"</span> 标签下的 {filteredPosts.length} 篇文章</>
+          {selectedTags.length > 0 ? (
+            <>共找到包含标签 <span className="font-semibold text-blue-600 dark:text-blue-400">{selectedTags.map(tag => `"${tag}"`).join('、')}</span> 的 {filteredPosts.length} 篇文章</>
           ) : searchTerm ? (
             <>搜索 <span className="font-semibold text-blue-600 dark:text-blue-400">"{searchTerm}"</span> 找到 {filteredPosts.length} 篇文章</>
           ) : (
@@ -126,7 +131,7 @@ export default function BlogListWrapper({ allPosts, allTags }: BlogListWrapperPr
         </p>
         
         {/* 统计标签 */}
-        {(selectedTag || searchTerm) && (
+        {(selectedTags.length > 0 || searchTerm) && (
           <div className="flex flex-wrap justify-center gap-3 mb-6 text-sm">
             {pinnedCount > 0 && (
               <span className="px-3 py-1 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-full">
@@ -138,6 +143,11 @@ export default function BlogListWrapper({ allPosts, allTags }: BlogListWrapperPr
                 {regularCount} 篇普通文章
               </span>
             )}
+            {selectedTags.length > 1 && (
+              <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded-full">
+                已选择 {selectedTags.length} 个标签
+              </span>
+            )}
           </div>
         )}
       </div>
@@ -145,12 +155,12 @@ export default function BlogListWrapper({ allPosts, allTags }: BlogListWrapperPr
       {/* 搜索和过滤组件 */}
       <BlogFilters
         allTags={allTags}
-        selectedTag={selectedTag}
+        selectedTags={selectedTags}
         searchTerm={searchTerm}
         onTagSelect={handleTagSelect}
         onSearch={handleSearch}
         onClearFilters={clearFilters}
-        hasActiveFilters={!!(selectedTag || searchTerm)}
+        hasActiveFilters={!!(selectedTags.length > 0 || searchTerm)}
       />
 
       {/* 分页信息 */}
@@ -175,15 +185,15 @@ export default function BlogListWrapper({ allPosts, allTags }: BlogListWrapperPr
             没有找到相关文章
           </h2>
           <p className="text-slate-600 dark:text-slate-400 mb-6">
-            {selectedTag && searchTerm 
-              ? `没有找到标签为"${selectedTag}"且包含"${searchTerm}"的文章`
-              : selectedTag
-              ? `没有找到标签为"${selectedTag}"的文章`
+            {selectedTags.length > 0 && searchTerm 
+              ? `没有找到包含标签"${selectedTags.join('、')}"且包含"${searchTerm}"的文章`
+              : selectedTags.length > 0
+              ? `没有找到包含标签"${selectedTags.join('、')}"的文章`
               : searchTerm
               ? `没有找到包含"${searchTerm}"的文章`
               : '暂时没有文章'}
           </p>
-          {(selectedTag || searchTerm) && (
+          {(selectedTags.length > 0 || searchTerm) && (
             <button
               onClick={clearFilters}
               className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
