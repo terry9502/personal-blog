@@ -1,0 +1,41 @@
+---
+title: 'Tomcat9.0.87闪退解决方案'
+date: '2024-03-23'
+description: 'Tomcat9.0.87闪退是由于JAVA_HOME/JRE_HOME环境变量未设置。'
+tags: ['tomcat']
+
+---
+# 运行Tomcat9.0.87闪退
+
+> 报错：Neither the JAVA_HOME nor the JRE_HOME environment variable is defined
+>
+> At least one of these environment variable is needed to run this program
+
+**原因：** 使用了免安装的方法，直接运行bin目录下的startup.bat导致闪退
+
+**解决方案：**
+
+1. 进入cmd在`D:\apache-tomcat-9.0.87\bin`目录下输入`catalina.bat run`查看具体报错信息。
+2. 在系统变量中添加：`JAVA_HOME=C:\Program Files\Java\jdk-18.0.2.1`
+3. 在path中添加`%JAVA_HOME%`
+
+重新启动`startup.bat`,浏览器打开`localhost:8080`
+
+如下图：
+
+![img](/images/img_40ec3c8d9bb8.png)
+
+# Tomcat启动时出现乱码
+
+![img](/images/img_ef0969b181d2.png)
+
+解决方案：
+
+1. 找到`D:\apache-tomcat-x.x.xx\conf`目录下的`logging.properties`文件，用记事本打开
+2. 修改UTF-8为GBK，`ctrl+s`保存
+
+![img](/images/img_7f47b1bbf63d.png)
+
+重新打开`startup.bat`文件,没有乱码
+
+![img](/images/img_2000385474bd.png)

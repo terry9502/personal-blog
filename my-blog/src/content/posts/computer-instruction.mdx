@@ -1,0 +1,107 @@
+﻿---
+title: '一条计算机指令的执行过程'
+date: '2024-02-19'
+description: '计算机是由运算器、存储器、控制器、输入设备、输出设备五大部分组成。'
+tags: ['计算机组成']
+
+---
+我们要了解计算机指令的执行过程，首先要知道什么是计算机的硬件？计算机硬件是由哪些部分组成的？以及什么是计算机指令？
+# 计算机的硬件
+## 分类
+计算机是由运算器、存储器、控制器、输入设备、输出设备五大部分组成。
+![image.png](/images/image_png_d56341b51157_1.png)
+![405B1854.png](/images/405B1854_png_deff7c5fdd3a_1.png)下面我将详细的介绍各个硬件的功能和组成
+### 运算器
+![image.png](/images/image_png_3e646d436adc_1.png)
+#### **运算器的功能**
+运算器的基本功能是完成对各种数据的加工处理，例如算术四则运算，与、或、求反等逻辑运算，算术和逻辑移位操作，比较数值，变更符号，计算主存地址等。
+从图中我们可以看出来运算器是由ACC、ALU、X、MQ这四个寄存器组成，那么这些寄存器各自有什么功能呢？
+
+- [ACC]()（累加器Accumulator）：是一种寄存器，用来存储计算产生的中间结果，专门用来存放操作数或运算结果。
+- [ALU](https://zh.wikipedia.org/zh-cn/%E7%AE%97%E8%A1%93%E9%82%8F%E8%BC%AF%E5%96%AE%E5%85%83)（算数逻辑单元Arithmetic logic unit）：是一种可对二进制整数执行算数逻辑运算或位运算的组合逻辑数字电路。
+- X：这里的X指的是操作数寄存器，用于存储待操作的数据。
+- [MQ](https://baike.baidu.com/item/%E4%B9%98%E5%95%86%E5%AF%84%E5%AD%98%E5%99%A8/7210511)（乘商寄存器multiplier-quotient register）：在乘法运算时可以寄存乘数，而在除法运算时可以寄存商数的寄存器。
+
+基本操作过程表：
+
+
+![在这里插入图片描述](/images/在这里插入图片描述_1ec229b46753_1.png)
+
+#### ① 加法操作
+#### ![image.png](/images/image_png_2e5017e41cb2_1.png)
+#### ② 减法操作
+![image.png](/images/image_png_a3598c3df7a2_1.png)
+#### ③ 乘法操作
+#### ![image.png](/images/image_png_3d0f1c81698d_1.png)
+#### ④ 除法操作
+#### ![image.png](/images/image_png_ee29385a8a1e_1.png)
+### 控制器
+#### ![image.png](/images/image_png_5d91290955a4_1.png)
+#### 控制器的功能
+
+- [x] 解释指令
+- [x] 保证指令的按序进行
+
+![image.png](/images/image_png_29608dbd365f_1.png)
+
+- PC：存放当前欲执行指令的**地址**具有计数功能（PC）+1 → PC
+- IR：存放当前欲执行的指令
+
+**那么什么是指令呢？**
+在[计算机技术](https://zh.wikipedia.org/wiki/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF)中，**指令**是由[指令集架构](https://zh.wikipedia.org/wiki/%E6%8C%87%E4%BB%A4%E9%9B%86%E6%9E%B6%E6%A7%8B)定义的单个的[CPU](https://zh.wikipedia.org/wiki/CPU)操作。在更广泛的意义上，“指令”可以是任何可执行程序的元素的表述，例如[字节码](https://zh.wikipedia.org/wiki/%E5%AD%97%E8%8A%82%E7%A0%81)。
+![image.png](/images/image_png_7ec82fa370e9_1.png)
+而我们的指令又存储在存储器的存储单元里面。
+## 存储器
+![image.png](/images/image_png_baeddf2c1a94_1.png)
+
+- 存储体：是由若干个存储单元组成，而存储单元是一个存储[一位](https://zh.wikipedia.org/wiki/%E4%BD%8D%E5%85%83)二进制信息的[电子电路](https://zh.wikipedia.org/wiki/%E9%9B%BB%E5%AD%90%E9%9B%BB%E8%B7%AF)。
+- MAR：存储地址寄存器（单元的个数）
+- MDR：存储数据寄存器（和存储单元的长度相同）
+### 存储器的功能
+
+- [x] 数据存储
+- [x] 程序执行
+- [x] 数据交换
+- [x] 数据持久性
+## 主机完成一条指令的过程
+**以取数指令为例：**
+![image.png](/images/image_png_e612d4833d72_1.png)
+**操作步骤：**
+
+1. 将PC中的地址传递给MAR寄存器
+2. 由MAR将地址送给存储体，在控制器的控制下将存储体的取数指令取出来。
+3. 将存储体的取数指令送入到MDR寄存器中。
+4. 将取出的指令送入到IR寄存器中
+5. 将IR中指令的**操作码**部分（op）送入CU控制单元进行分析。
+6. 将IR中指令的**地址码**部分（A）送入MAR寄存器中
+7. 由MAR将要取数的地址传给存储体
+8. 存储体将要取的数传给MDR寄存器中
+9. 将MDR中的数据传入ACC寄存器中
+
+**以存数指令为例：**
+![image.png](/images/image_png_49188dfbb285_1.png)
+**操作步骤：**
+
+1. 将PC中的地址传入MAR寄存器中
+2. 由MAR将地址传入存储体中，在控制器的控制下，将存储器的存数指令取出来。
+3. 将存储体的存数指令送入到MDR寄存器中。
+4. 将取出的指令送入到IR寄存器中
+5. 将IR中指令的**操作码**部分（op）送入CU控制单元进行分析。
+6. 将IR中指令的**地址码**部分（A）送入MAR寄存器中
+7. 由MAR将要存数的地址传给存储体
+8. 将ACC中的内容送入到MDR寄存器中
+9. 在控制器的控制下，将MDR中的数据保存在存储体中
+## 程序的运行过程
+
+- 将程序通过输入设备送至计算机
+- 程序首地址 → PC
+- 启动程序运行
+- 取指令PC → MAR → M → MDR → IR ，（PC）+ 1 → PC
+- 分析指令OP（IR）→ CU
+- 执行指令Ad（IR）→ MAR → M → MDR → ACC
+- ……
+- 打印结果
+- 停机
+
+
+

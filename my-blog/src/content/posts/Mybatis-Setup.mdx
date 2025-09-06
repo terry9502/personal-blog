@@ -1,0 +1,328 @@
+﻿---
+title: '2024最新搭建Mybatis配置教程【超详细】'
+date: '2024-03-02'
+description: 'MyBatis是一款优秀的持久层框架，它简化了传统JDBC连接数据库的繁琐操作。'
+tags: ['Java']
+
+---
+<a name="Vr9gj"></a>
+# 为什么要学习mybatis
+首先要弄清楚什么是mybatis？我们为什么要学mybatis
+> 学习MyBatis可以帮助开发人员**更高效地进行数据库操作**，提高开发效率，并且可以使得应用程序更具可维护性和性能优势。
+
+我们知道`Java`程序操作数据库是通过`jdbc`与数据库进行交互，那么说明mybatis有传统`jdbc`所没有的优势。
+<a name="ERtm5"></a>
+# 传统`jdbc`方式
+```java
+// 1. 加载配置文件
+Properties pro=new Properties();
+pro.load(new FileReader("resource/jdbc.properties"));
+// 2. 获取配置文件中连接数据库的信息
+String url=pro.getProperty("url");
+String user=pro.getProperty("user");
+String password=pro.getProperty("password");
+String driver=pro.getProperty("driver");
+// 3. 加载数据库的驱动
+Class.forName(driver);
+// 4. 创建数据库的连接
+Connection conn = DriverManager.getConnection(url, user, password);
+ // 5. sql 语句
+String sql = "select * from s_admin where username=? and password=?";
+// 3. 创建执行sql的对象
+ps = conn.prepareStatement(sql);
+// 4. 给 ？赋值
+ps.setString(1, username);
+ps.setString(2, password);
+// 5. 执行sql
+ResultSet rs = ps.executeQuery();
+// 6. 如果查询出数据，则返回该条数据
+if (rs.next()) {
+    Admin admin = new Admin();
+    admin.setUsername(rs.getString("username"));
+    admin.setPassword(rs.getString("password"));
+    return admin;
+// 7. 否则返回空
+} else {
+    return null;
+}
+```
+我们可以看出来通过传统`jdbc`方式连接数据库比较繁琐，需要加载配置文件、获取配置文件信息、加载数据库驱动、创建数据库连接等一系列操作，还可能导致SQL查询代码混合在JAVA代码中导致代码冗长，开发的效率降低，同时也带来了维护上的一些问题。在实际的项目中SQL语句的变化可能很大，一旦发生变化就要修改JAVA代码，系统需要重新编译，不方便维护。如果映射为Java对象会比较方便。
+> 这也是我们为什么要学习Mybatis的原因
+
+<a name="udfKN"></a>
+# Mybatis简介
+Mybatis的开发文档地址：[https://mybatis.net.cn/](https://mybatis.net.cn/)<br />首先我们要知道什么是Mybatis？Mybatis原是Apache的一个开源项目ibatis，2010年迁移到Google code改名为Mybatis，2013年迁移到GitHub上。<br />MyBatis 是一款优秀的持久层框架，支持定制化 SQL、存储过程以及高级映射。MyBatis 可以使用简单的 XML 或注解来配置和映射原生信息，将接口和 Java 的 POJOs(Plain Old Java Objects,普通的 Java对象)映射成数据库中的记录。
+<a name="paMUG"></a>
+# Mybatis解决的问题
+
+1. 解决数据库驱动的问题
+2. 创建JDBC中必须使用的Connection,Statement,Result对象
+3. 从xml中获取SQL，并执行SQL语句，把ResultSet结果转化为Java对象
+4. 关闭资源
+<a name="yalDE"></a>
+# 如何使用Mybatis
+下载Mybatis：[https://github.com/mybatis/mybatis-3/releases](https://github.com/mybatis/mybatis-3/releases)<br />准备阶段：
+<a name="LdUVh"></a>
+## 数据库环境搭建
+我这里使用的是Navicat管理工具，下载地址：[https://www.navicat.com.cn/download/direct-download](https://www.navicat.com.cn/download/direct-download)<br />![image.png](/images/image_png_7440e3bc63d1.png)<br />**创建数据库和表**
+```sql
+CREATE TABLE `user` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '姓名',
+  `sex` varchar(1) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT '性别',
+  `age` int DEFAULT NULL COMMENT '年龄',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC;
+```
+![image.png](/images/image_png_451ed0a08d05.png)<br />创建Java项目<br />![image.png](/images/image_png_a87a0e02509f.png)<br />注意这里的GroupID填写你的域名，作为组的唯一标识。<br />等待Maven依赖文件下载完成。在设置中可以看到Maven的版本，我这里是3.9.5<br />![image.png](/images/image_png_6764e1736766.png)<br />可以在这个网站上搜索Maven所支持mybatis的版本[https://mvnrepository.com/](https://mvnrepository.com/)
+<a name="y9GIn"></a>
+## 添加所需依赖
+复制依赖文件到pom.xml文件中
+```xml
+<dependencies>
+  <!--  junit 测试  -->
+  <dependency>
+    <groupId>junit</groupId>
+    <artifactId>junit</artifactId>
+    <version>4.13.2</version>
+    <scope>test</scope>
+  </dependency>
+  <!--  mysql驱动  -->
+  <dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <version>8.0.33</version>
+  </dependency>
+  <!--  mybatis -->
+  <dependency>
+    <groupId>org.mybatis</groupId>
+    <artifactId>mybatis</artifactId>
+    <version>3.5.9</version>
+  </dependency>
+</dependencies>
+
+```
+如果出现了像我这样的报错，重构Maven，换到安全版本即可。<br />![image.png](/images/image_png_c592ac48898a.png)<br />![image.png](/images/image_png_077dc85df770.png)
+<a name="QkaCG"></a>
+## 配置核心文件
+创建mybatis-config.xml文件，存放位置在src/main/resources目录下<br />![image.png](/images/image_png_71ae4b347cd0.png)<br />核心文件内容，在Mybatis的开发文档，如下：
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+  <environments default="development">
+    <environment id="development">
+      <transactionManager type="JDBC"/>
+      <dataSource type="POOLED">
+        <property name="driver" value="${driver}"/>
+        <property name="url" value="${url}"/>
+        <property name="username" value="${username}"/>
+        <property name="password" value="${password}"/>
+      </dataSource>
+    </environment>
+  </environments>
+  <mappers>
+    <mapper resource="org/mybatis/example/BlogMapper.xml"/>
+  </mappers>
+</configuration>
+```
+复制内容到mybatis-config.xml中<br />![image.png](/images/image_png_569e6f218a99.png)<br />我们需要修改的是红色圈里面的内容<br />下面我简单解释一下
+
+- <?xml version="1.0" encoding="UTF-8" ?>：指定了XML的版本和编码
+- <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "[http://mybatis.org/dtd/mybatis-3-config.dtd">](http://mybatis.org/dtd/mybatis-3-config.dtd">)：指定了XML的结构，引用了 MyBatis 的配置文件的 DTD 文件
+- <transactionManager type="JDBC"/>：指定了事务管理器的类型为 JDBC，表示使用 JDBC 进行事务管理。
+- <dataSource type="POOLED">：指定了数据源的类型为 POOLED，表示使用连接池来管理数据库连接。
+- <property name="driver" value="${driver}"/>：设置数据库驱动的名称，${driver} 是一个占位符，通常在实际应用中会被具体的数据库驱动名称替换。
+- <property name="url" value="${url}"/>：设置数据库的 URL 地址，${url} 是一个占位符，通常在实际应用中会被具体的数据库 URL 地址替换。
+- <property name="username" value="${username}"/>：设置连接数据库的用户名，${username} 是一个占位符，通常在实际应用中会被具体的用户名替换。
+- <property name="password" value="${password}"/>：设置连接数据库的密码，${password} 是一个占位符，通常在实际应用中会被具体的密码替换。
+- <mapper resource="org/mybatis/example/BlogMapper.xml"/>：指定了映射器的资源，这里是一个 XML 文件的路径，表示 MyBatis 将加载该路径下的 BlogMapper.xml 文件作为映射器。
+
+在这里我先不填写映射文件的位置<br />![image.png](/images/image_png_3002cc5cde21.png)
+<a name="goRsB"></a>
+## 创建实体User类
+创建一个User类<br />![image.png](/images/image_png_007b3dada322.png)<br />![image.png](/images/image_png_a7216978b4b2.png)<br />完成创建<br />![image.png](/images/image_png_9dff73dbf9a1.png)<br />注意：我们的字段名要和我们的属性名要保持一致。<br />![image.png](/images/image_png_87867e4d4213.png)<br />添加对应的有参构造函数、无参构造函数、获取器、设置器、toSring()
+<a name="JWdxf"></a>
+## 创建Mapper接口
+首先，什么是Mapper接口？
+> 在 MyBatis 中，Mapper 接口是用于定义数据库操作的接口。Mapper 接口中的方法定义了对数据库的增删改查操作，而具体的 SQL 语句则是通过注解或者 XML 文件来进行配置和映射。
+
+
+> 通常情况下，一个 Mapper 接口对应一个数据模型（如一个数据库表），它包含了针对该数据模型的各种操作方法。这些方法的名称和参数类型通常与具体的 SQL 语句相对应，使得调用者能够直观地理解该方法所执行的操作。
+
+
+> MyBatis 提供了多种方式来配置 Mapper 接口和 SQL 语句的映射关系，包括注解方式和 XML 文件方式。通过这些配置，MyBatis 能够将接口方法与对应的 SQL 语句关联起来，从而实现数据库操作的执行。
+
+> MyBatis相当于原来的[DAO](https://www.runoob.com/note/27029)，区别是Mapper仅仅是接口，不需要提供实现类
+
+在Java文件夹下创建cn.niutr.mybatis.mapper.UserMapper接口<br />![image.png](/images/image_png_cc1bf816ce8c.png)<br />我们为什么要创建这个接口？<br />Mybatis中有面向接口编程的功能，当我们调用接口中的方法时会自动匹配一个SQL语句并执行。
+<a name="cdKhe"></a>
+## 创建Mybatis的映射文件
+我们知道Mybatis是一个ORM（Object Relational Mapping，对象 - 关系映射）框架。
+
+- Object：Java实体类对象
+- Relational：关系型数据库
+- Mapping：二者之间的对应关系
+
+| Java概念 | 数据库概念 |
+| ------------ | --------------- |
+| 类 | 表 |
+| 属性 | 字段/列 |
+| 对象 | 记录/行 |
+
+
+
+>  1、映射文件的命名规则： 表所对应的实体类的类名+Mapper.xml 
+> 例如：表user，映射的实体类为User，所对应的映射文件为UserMapper.xml 
+> 因此一个映射文件对应一个实体类，对应一张表的操作 MyBatis映射文件用于编写SQL，访问以及操作表中的数据 MyBatis映射文件存放的位置是src/main/resources/mappers目录下 
+
+我们在resources文件夹下创建一个mappers文件夹用来存储我们的映射文件，同时创建一个映射文件
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.mybatis.example.BlogMapper">
+  <select id="selectBlog" resultType="Blog">
+    select * from Blog where id = #{id}
+  </select>
+</mapper>
+```
+映射文件在官方文档中也可以找到<br />复制映射文件到UserMapper.xml下<br />![image.png](/images/image_png_2af10c8b64fa.png)<br />同时我们还要修改上面的内容，这里我简单解释一下：
+
+- <mapper namespace="org.mybatis.example.BlogMapper">：定义了一个 Mapper（映射器）元素，指定了命名空间为 "org.mybatis.example.BlogMapper"，这个命名空间通常与 Java 中的 Mapper 接口对应。
+
+我们需要改的地方：<br />假如我们要执行一个**插入操作**，我们需要再UserMapper接口中添加对应的方法<br />![image.png](/images/image_png_8e48aa4db382.png)<br />同时我们还需要在XML中创建映射关系
+> 2、MyBatis中可以面向接口操作数据，要保证两个一致： 
+> ① mapper接口的全类名和映射文件的命名空间（namespace）保持一致 
+> ② mapper接口中方法的方法名和映射文件中编写SQL的标签的id属性保持一致  
+
+![image.png](/images/image_png_6155cea7fc43.png)<br />表--实体类--mapper接口--映射文件<br />注意还要修改映射器资源位置<br />![image.png](/images/image_png_558b42b2f31c.png)<br />经过一些列操作之后，我们的Mybatis就已经配置完成了
+<a name="wP1jo"></a>
+# 通过Junit测试功能
+首先我们要在test文件夹下的java目录创建一个MybatisTest类用于测试<br />![image.png](/images/image_png_35587807b6ac.png)<br />接下来我们要创建一个测试方法
+```java
+//读取MyBatis的核心配置文件
+InputStream is = Resources.getResourceAsStream("mybatis-config.xml");
+//创建SqlSessionFactoryBuilder对象
+SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new
+SqlSessionFactoryBuilder();
+//通过核心配置文件所对应的字节输入流创建工厂类SqlSessionFactory，生产SqlSession对象
+SqlSessionFactory sqlSessionFactory = sqlSessionFactoryBuilder.build(is);
+//创建SqlSession对象，此时通过SqlSession对象所操作的sql都必须手动提交或回滚事务
+//SqlSession sqlSession = sqlSessionFactory.openSession();
+//创建SqlSession对象，此时通过SqlSession对象所操作的sql都会自动提交
+SqlSession sqlSession = sqlSessionFactory.openSession(true);
+//通过代理模式创建UserMapper接口的代理实现类对象
+UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+//调用UserMapper接口中的方法，就可以根据UserMapper的全类名匹配元素文件，通过调用的方法名匹配
+映射文件中的SQL标签，并执行标签中的SQL语句
+int result = userMapper.insertUser();
+sqlSession.commit();
+System.out.println("结果："+result);
+```
+创建结果如下：<br />![image.png](/images/image_png_cb4e668a5a49.png)<br />插入成功！<br />![image.png](/images/image_png_8ea5615f45ed.png)
+<a name="Oyurc"></a>
+# 加入log4j日志功能
+<a name="tAZoM"></a>
+## 添加所需依赖
+添加依赖到pom.xml中，[开发文档](https://logging.apache.org/log4j/2.x/maven-artifacts.html)
+```xml
+<!--log4j-->
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-api</artifactId>
+    <version>2.23.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.logging.log4j</groupId>
+    <artifactId>log4j-core</artifactId>
+    <version>2.23.0</version>
+</dependency>
+```
+<a name="PAjwS"></a>
+## 加入所需配置文件
+ log4j2的配置文件名为log4j2.properties，存放的位置是src/main/resources目录下  
+```properties
+# log4j2.properties
+
+# Set to debug or trace if log4j initialization is failing
+status = warn
+
+# Name of the configuration
+name = ConsoleLogConfigDemo
+
+# Console appender configuration
+appender.console.type = Console
+appender.console.name = consoleLogger
+appender.console.layout.type = PatternLayout
+appender.console.layout.pattern = %d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n
+
+# Root logger level
+rootLogger.level = debug
+
+# Root logger referring to console appender
+rootLogger.appenderRef.stdout.ref = consoleLogger
+```
+结果如下<br />![image.png](/images/image_png_c6a7696b9fcd.png)
+<a name="L07HF"></a>
+# MyBatis的增删改查
+<a name="ODMjh"></a>
+## 添加
+```xml
+<!--int insertUser();-->
+<insert id="insertUser">
+insert into t_user values(null,'admin','男',23)
+</insert>
+```
+<a name="h08xi"></a>
+## 删除
+```xml
+<!--int deleteUser();-->
+<delete id="deleteUser">
+delete from user where id = 18
+</delete>
+```
+<a name="yDmAu"></a>
+## 修改
+```xml
+<!--int updateUser();-->
+<update id="updateUser">
+update user set name='yxc' where id = 18
+</update>
+```
+<a name="PxTLU"></a>
+## 查询一个实体类对象
+```xml
+<!--User getUserById();-->
+<select id="getUserById" resultType="cn.niutr.mybatis.pojo.User">
+select * from user where id = 22
+</select>
+```
+<a name="Vz3jc"></a>
+## 查询所有用户信息
+```xml
+<select id="getAllUser" resultType="cn.niutr.mybatis.pojo.User">
+    select * from user
+</select>
+```
+如下测试文件
+```java
+@Test
+public void testCRUD() throws IOException {
+    InputStream is = Resources.getResourceAsStream("mybatis-config.xml");
+    SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(is);
+    SqlSession sqlSession = sqlSessionFactory.openSession(true);
+    UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+    //int result = mapper.UpdateUser();
+    //int result = mapper.deleteUser();
+    //        User user = mapper.getUserById();
+    //        System.out.println(user);
+    List<User> allUser = mapper.getAllUser();
+    for (User user : allUser) {
+        System.out.println(user);
+    }
+}
+```
