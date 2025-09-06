@@ -6,6 +6,7 @@ import Footer from '@/components/Footer'
 import { Analytics } from '@vercel/analytics/react'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import { ThemeProvider } from '@/components/ThemeProvider'
+import ScrollToTop from '@/components/ScrollToTop'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -131,6 +132,8 @@ export default function RootLayout({
               {children}
             </main>
             <Footer />
+            {/* 添加回到顶部组件 */}
+            <ScrollToTop />
           </div>
         </ThemeProvider>
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
