@@ -428,3 +428,6 @@ td {
   background: linear-gradient(135deg, #052e16, #166534);
   color: #22c55e;
 }
+.prose iframe {
+  @apply w-full aspect-video;
+}
