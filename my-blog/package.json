@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "download-images": "node scripts/download-images.js",
+    "download-yuque": "node scripts/download-yuque.js",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
