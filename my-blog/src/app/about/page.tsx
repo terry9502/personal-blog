@@ -22,7 +22,7 @@ export default function AboutPage() {
           <section>
             <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-4">👋 你好</h2>
             <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
-              我是 Niutr，一名软件工程专业的学生，对编程和技术充满热情。我喜欢探索新技术，  {/* ✅ 修改 */}
+              我是天润，一名软件工程专业的学生，对编程和技术充满热情。我喜欢探索新技术，  {/* ✅ 修改 */}
               解决复杂问题，并通过代码创造有价值的产品。这个博客是我记录学习历程、
               分享技术心得和展示项目成果的地方。
             </p>
